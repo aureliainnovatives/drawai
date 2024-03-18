@@ -1,0 +1,146 @@
+
+<div class="panel" (drop)="onDrop($event)" (dragover)="onDragOver($event)" [ngClass]="{'show': panelVisible}" [@fadeInOut]>
+
+  <div class="topbar">
+    <button mat-icon-button class="close-button" (click)="closePanel.emit()">
+  
+      <i class="material-icons">close</i>
+    </button>
+  </div>
+
+  <div class="shapeContent " *ngIf="selectedMenuItem === 'shapes'">
+
+    <h1>Elements</h1>
+    <div class="search-bar">
+      <i class="material-icons">search</i>
+      <input type="text" placeholder="Search shape" [(ngModel)]="searchTerm" />
+    </div>
+    
+
+    <mat-tab-group class="tab-group">
+
+      <!-- <mat-tab label="All Shapes">
+        <div class="shape-content-container">
+        <div class="element" *ngFor="let category of ['Squares', 'Circles','Triangles','Hexagons','Stars']">
+          <div *ngIf="getFilteredShapes(category).length > 0; else notFound">
+            <span>{{ category }}</span>
+            <div class="card-container">
+              <ng-container *ngFor="let shape of getFilteredShapes(category)">
+                <mat-card class="card-box">
+                  <mat-card-header>
+                    <div mat-card-avatar class="card-icon">
+                      <img class="cardicons" [src]="shape.icon" alt="{{ shape.shape }} icon" />
+                    </div>
+                  </mat-card-header>
+                </mat-card>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+       </div>
+      </mat-tab> -->
+   
+
+      <mat-tab label="All Shapes">
+        <div class="shape-content-container">
+        <div class="element" >
+              <ng-container *ngFor="let shapeArray of shapeArrays">
+                <span class="category-title">{{ shapeArray.category }}</span>
+                  <div class="card-container">
+                    <mat-card class="card-box" *ngFor="let shape of shapeArray.shapes">
+                      <mat-card-header>
+                      <div  class="card-icon" draggable="true" (dragstart)="onDragStart($event, shape.name)">
+                        <img class="cardicons"  [src]="shape.icon" alt="{{ shape.name }}">
+                      </div>
+                    </mat-card-header>
+                    </mat-card>
+                  </div>
+              </ng-container>
+            </div>
+         </div>
+      </mat-tab>
+
+
+    <ng-template #notFound>
+      <div class="not-found-container">
+          <div class="not-found-message"></div>
+        </div>
+      </ng-template>
+  
+      <!-- Second Tab: Additional Category 1 -->
+      <mat-tab label="Category 1">
+        <div class="card-container">
+          <span>HELLLLLLP</span>
+        </div>
+      </mat-tab>
+  
+      <!-- Third Tab: Additional Category 2 -->
+      <mat-tab label="Category 2">
+        <div class="card-container">
+          <!-- Add content for Category 2 -->
+        </div>
+      </mat-tab>
+  
+    </mat-tab-group>
+  </div>
+
+  <div class="textContent" *ngIf="selectedMenuItem === 'text'">
+    <h1>Text</h1>
+    <div class="element">
+      <textarea class="text-input" [(ngModel)]="enteredText" placeholder="Enter text here"></textarea>
+      <button class="addtextbutton" mat-raised-button color="primary" (click)="addEnteredText()">Add Text</button>
+</div>
+
+      <div class="headings"> 
+        Heading
+      </div>
+      <div class="headings2">
+        Subheading
+      </div>
+      <div class="headings3">
+        Body text
+      </div>
+      
+     <h3>Font Combinations</h3>
+
+      <div class="text-content-container">
+      <div class="text-style-thumbnails">
+        <ng-container *ngFor="let textStyle of textStyles; let i = index">
+          <div class="thumbnail-container" *ngIf="i % 2 === 0">
+            <img [src]="'assets/textstyles/' + textStyle" alt="Text Style {{i + 1}}">
+          </div>
+          <div class="thumbnail-container" *ngIf="i % 2 !== 0">
+            <img [src]="'assets/textstyles/' + textStyle" alt="Text Style {{i + 1}}">
+          </div>
+        </ng-container>
+      </div>
+  </div>
+</div>
+
+
+ <div class="imageContainer" *ngIf="selectedMenuItem === 'images'">
+    <h1>Image</h1>
+   
+    <div class="image-selector">
+      <button class="addtextbutton" mat-raised-button color="primary" (click)="openImageSelector()">Add Images</button>
+      <input type="file" id="imageInput" #imageInput style="display: none" (change)="onImageSelect($event)"  accept="image/*" multiple />
+
+    </div>
+
+    <div class="drop-area" >
+      <p>Drag & Drop Images Here</p>
+    </div>
+ 
+  <div class="image-content-container">
+  <div *ngFor="let category of imageCategories" (click)="selectedTab = category.category" [class.selected]="category.category === selectedTab" class="category-container" >
+    <span>{{ category.category }}</span>
+    
+    <div class="image-gallery">
+      <div *ngFor="let image of category.images" class="gallery-image-container" draggable="true" (dragstart)="ImageonDragStart($event, image.data)">
+        <img [src]="image.data" alt="{{ image.name }}" class="gallery-image" />
+      </div>
+    </div>
+     </div>
+</div>
+ </div>
+</div>

@@ -1,0 +1,28 @@
+.property {
+    width: 280px;
+    height:calc(100% - 173px);/* Adjust the height as needed */
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin-top: 60px;
+    margin-bottom: 60px;
+    margin-right: 75px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 7px; /* Rounded corners */
+    padding: 20px; /* Padding for all sides */
+    border: 1px solid rgba(202, 202, 202, 0.644);
+}
+
+
+.close-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 10px;
+    color: #333;
+    padding: 10px;
+    font-weight: 500;
+}

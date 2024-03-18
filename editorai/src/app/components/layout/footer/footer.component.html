@@ -1,0 +1,13 @@
+<mat-toolbar class="toolbar"> 
+  <div class="ProgressContainer">
+    <div class="progressBar">
+    <nz-slider [(ngModel)]="zoomLevel" [nzMin]="20" [nzMax]="200" [nzStep]="1" (ngModelChange)="onZoomSliderChange($event)"></nz-slider>
+    </div>
+    <div class="progress-tooltip">
+      {{ zoomLevel }}%
+    </div>
+  </div>
+</mat-toolbar>
+
+
+  

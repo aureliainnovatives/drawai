@@ -1,0 +1,74 @@
+<!-- <div>
+    <label for="canvasSize">Canvas Size:</label>
+    <select [(ngModel)]="selectedCanvasSize" (change)="onCanvasSizeChange(selectedCanvasSize)">
+        <option *ngFor="let size of predefinedSizes" [value]="size.label">{{ size.label }}</option>
+      </select>
+      
+      
+  </div> -->
+
+<!-- <select [(ngModel)]="selectedCanvasSizeOption" (change)="changeCanvasSize(selectedCanvasSizeOption)">
+  <option value="letter">Letter</option>
+  <option value="whiteboard">Whiteboard</option>
+  <option value="portrait">Portrait</option>
+</select>
+
+
+<button (click)="addNewCanvas()">
+  <span class="material-symbols-outlined">
+    note_add
+    </span></button> -->
+    <!-- Update your template to disable the button when no canvas is selected -->
+<!-- <button (click)="deleteCanvas()" [disabled]="!selectedCanvas">Delete Canvas</button> -->
+
+
+<!-- <app-toolbar (addCanvas)="addNewCanvas()" (changeCanvasSize)="changeCanvasSize($event)"
+             [selectedCanvasSizeOption]="selectedCanvasSizeOption" (deletecanvas)="deleteCanvas()">
+</app-toolbar> -->
+
+<!-- <div  >
+<canvas style="border: 3px solid black;" #canvas id="canvas" height="500" width="500"></canvas>
+</div> -->
+
+<!-- canvas.component.html -->
+
+<app-toolbar 
+  (boldToggled)="toggleBold()" 
+  (italicToggled)="toggleItalic()" 
+  (underlineToggled)="toggleUnderline()"
+  (textSizeChanged)="applySelectedTextSize($event)"
+  (textColorChanged)="applySelectedTextColor($event)"
+   (fontFamilyChanged)="applySelectedFontFamily($event)">
+</app-toolbar>
+
+
+
+<!-- <button draggable="true" (dragstart)="onDragStart($event, 'filledcircle')">
+  <span class="material-symbols-outlined">radio_button_unchecked</span>
+</button>
+
+
+<button draggable="true" (dragstart)="onDragStart($event, 'filledtriangle')">
+  <span class="material-symbols-outlined">
+    change_history
+    </span>
+</button>
+
+
+<button draggable="true" (dragstart)="onDragStart($event, 'filledsquare')">
+  <span class="material-symbols-outlined">rectangle</span>
+</button> -->
+<div class="canvas"   >
+  <div #canvasContainer  class="canvas-container" 
+       (drop)="onDrop($event)" 
+       (drop)="ImageonDrop($event)" 
+       (dragover)="onDragOver($event)">
+    <canvas id='canvas' height="700px" width="700px"></canvas>
+  </div>
+
+</div>
+<app-property></app-property>
+<app-footer></app-footer>
+
+
+  

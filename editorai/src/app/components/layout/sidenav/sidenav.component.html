@@ -1,0 +1,52 @@
+
+<mat-sidenav-container class="sidenav-container">
+
+  <mat-sidenav mode="side" opened class="sidenav">
+    
+    <mat-nav-list>
+      <mat-list-item class="sidebar-item" >
+        <div class="icon-label">
+          <i class="material-icons">home</i>
+          <span>Home</span>
+        </div>
+      </mat-list-item>
+      <mat-list-item class="sidebar-item" (click)="togglePanel('shapes')">
+        <div class="icon-label">
+          <i class="material-symbols-outlined">play_shapes</i>
+          <span>Shapes</span>
+        </div>
+      </mat-list-item>
+      <mat-list-item class="sidebar-item" (click)="togglePanel('images')">
+        <div class="icon-label">
+          <i class="material-symbols-outlined">image</i>
+          <span>Images</span>
+        </div>
+      </mat-list-item>
+      <mat-list-item class="sidebar-item" (click)="togglePanel('text')">
+        <div class="icon-label">
+          <i class="material-symbols-outlined">text_fields</i>
+          <span>Text</span>
+        </div>
+      </mat-list-item>
+    </mat-nav-list>
+
+  </mat-sidenav>
+ 
+  <mat-sidenav-content class="content-container">
+      <div class="main-content" [ngClass]="{'panel-opened': panelVisible}">
+    <app-side-panel [panelVisible]="panelVisible" [selectedMenuItem]="selectedMenuItem" (closePanel)="closePanel()"></app-side-panel>
+
+    <!-- <app-side-panel [panelVisible]="panelVisible" [shapesIcons]="['circle', 'square', 'triangle','change_history','hexagon']" (closePanel)="closePanel()"></app-side-panel> -->
+      </div>
+     <!-- <app-side-panel [panelVisible]="panelVisible" (closePanel)="closePanel()"></app-side-panel> -->
+     <div class="toolbar" [ngClass]="{'panel-opened': panelVisible}">
+      <div class="toolbar-content-container">
+      <app-canvas ></app-canvas>
+      
+    </div>
+   
+ </div>
+ 
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

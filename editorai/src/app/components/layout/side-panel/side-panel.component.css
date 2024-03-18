@@ -1,0 +1,487 @@
+body {
+  overflow: hidden;
+}
+
+
+@font-face {
+  font-family: 'bungee' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(BungeeSpice-Regular.ttf);
+}
+
+@font-face {
+  font-family: 'Kalho400' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(Kalho400.otf)format('opentype');
+}
+
+@font-face {
+  font-family: 'SuperMagic' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(SuperMagic.otf) format('opentype');
+}
+
+.panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 300px;
+    height: 100dvh;
+    background-color: #fff;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    padding-right: 10px;
+    padding-left: 12px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    z-index: 1;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    position: relative; 
+    overflow-y: hidden; /* Disable global scrollbar for the body */
+  }
+  .panel.show {
+    transform: translateX(0);
+  }
+
+  .panel-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .scrollable-content {
+    flex: 1;
+    overflow-y: auto;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    z-index: 1;  
+  }
+
+
+  .mat-sidenav-content {
+    max-height: 100%; /* Adjust the maximum height as needed */
+    overflow-y: auto;
+  }
+  
+  .card-box {
+    flex: 1;
+    max-width: calc(33.33% - 20px);
+    height: 55px !important;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #9999996e;
+  }
+
+
+  .cardicons {
+    width: 40px;
+    margin-left: 4px;
+    margin-top: -9px;
+  }
+
+
+  .shape-icon {
+    display: flex;
+    align-items: center; /* Center-align the icon vertically */
+    justify-content: center; /* Center-align the icon horizontally */
+    width: 100%; /* Ensure the icon takes up the full width of the card box */
+  }
+  
+
+  .card-container {
+    display: flex;
+
+    justify-content: start;
+  }
+
+  .card-box:hover {
+    background-color: rgba(216, 216, 216, 0.377);
+  }
+
+  .card-icon {
+    width: 48px; /* Adjust the width of the icon container */
+     /* Adjust the height of the icon container */
+  }
+
+  .mat-card-header {
+    padding: 8px; /* Adjust padding as needed */
+  }
+  
+  .mat-card-content {
+    padding: 8px; /* Adjust padding as needed */
+  }
+
+  h1 {
+      margin-bottom: -5px;
+      font-size: large;
+      font-weight: 700;
+  }
+
+.element {
+  margin-top: 15px;
+ 
+}
+
+.not-found-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 30px;
+}
+
+.not-found-icon {
+  font-size: 36px; /* Adjust the font size as needed */
+  margin-right: 10px; /* Adjust the margin as needed */
+  color: #777; /* Adjust the color as needed */
+}
+
+.not-found-message {
+  font-size: 18px;
+  color: #777; /* Adjust the color as needed */
+}
+.drop-area {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+  margin-top: 3px;
+}
+
+.drop-area.drag-over {
+  background-color: #e0f7fa; /* Change the background color as needed */
+}
+
+
+/* Customize file input as a box */
+.custom-file-input {
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #7a7a7a8e; /* Customize border color */
+  background-color: #b23ef5;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  color: #6b6b6bda;
+}
+
+.custom-file-input input[type="file"] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0;
+;
+}
+
+.file-input-label {
+  margin-right: 5px;
+
+}
+
+/* Style for selected image box */
+.selected-image-box {
+  margin-top: 10px;
+  
+}
+
+.selected-image {
+  max-width: 100%;
+  height: auto;
+
+}
+
+
+.image-selector {
+  margin-top:15px;
+  
+}
+
+.Addbutton {
+  margin-top: 8px;
+  width: 100%;
+}
+
+
+.image-name-box {
+  margin-top: 5px;
+  padding: 5px;
+  border: 1px solid #ccc; /* Customize border color */
+  border-radius: 5px;
+}
+
+
+
+
+.text-input {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  margin-bottom: 6px;
+  resize: none;
+}
+
+.add-text-button {
+  width: 100% !important;
+}
+
+.add-text-button button {
+  width: 100% !important;
+  padding: 12px 20px;
+  background-color: #007bff; /* Blue */
+  color: #fff;
+  border: 2px solid #007bff;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-text-button button:hover {
+  background-color: #d40d20; /* Darker blue on hover */
+}
+.addtextbutton{
+  width: 100%;
+}
+
+
+
+
+
+/* Style for image gallery */
+.image-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* Adjust the gap between image categories */
+}
+
+h3 {
+  margin-bottom: 5px;
+
+}
+
+.gallery-image-container {
+  flex: 0 0 calc(50% - 5px); /* 50% width with a gap of 10px between images */
+  max-height: 200px; /* Adjust the maximum height as needed */
+  overflow: hidden;
+}
+
+.gallery-image {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+/* Optional hover effect for better user experience */
+.gallery-image-container:hover {
+  filter: brightness(90%);
+  cursor: pointer;
+}
+
+.category-container {
+  margin-top: 20px;
+  margin-right: 6px;
+}
+
+.insearchbar {
+  display: flex;
+}
+
+.insearchbar .material-symbols-outlined {
+  margin-left:15px;
+  margin-top: 5px;
+  margin-right:-3px ;
+}
+
+
+
+input[type=text], select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1.6px solid #00000065;
+  border-radius: 4px;
+  box-sizing: border-box;
+  height: 35px;
+}
+
+.search-bar {
+  position: relative;
+  margin-top: 8px;
+}
+
+.search-bar i {
+  position: absolute;
+  left: 10px; /* Adjust the left position as needed */
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.search-bar input {
+  padding-left: 40px; /* Adjust the padding to leave space for the icon */
+}
+
+
+.headings {
+font-family: bungee;
+/* font-family: Poppins; */
+/* color: #007bff; */
+/* background: linear-gradient(to right, #f32170, #ff6b08,#cf23cf, #eedd44);
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    text-shadow: 2px 2px #030303; */
+padding: 10px;
+margin-top: 14px;
+font-size: xx-large;
+border: 1px solid  #e0e0e05e ;
+text-align: center;
+border-radius: 4px;
+background-color: #e0e0e054;
+font-weight: 700;
+}
+
+.headings2 {
+  font-family: SuperMagic;
+/* font-family: Poppins; */
+  color: #00faa7;
+  text-shadow: 1px 2px 2px  #000000;
+  padding: 10px;
+  margin-top: 10px;
+  font-size: large;
+  border: 1px solid  #e0e0e05e ;
+  text-align: center;
+  background-color: #e0e0e054;
+  border-radius: 4px;
+  font-weight: 500;
+}
+.headings3 {
+  font-family: Kalho400;
+  color: #007bff;
+  padding: 10px;
+  margin-top: 10px;
+  font-size: larger;
+  border: 1px solid  #e0e0e05e ;
+  text-align: center;
+  border-radius: 4px;
+  background-color: #e0e0e054;
+  font-weight: 400;
+}
+
+.headings:hover {
+   background-color: rgba(182, 180, 180, 0.418);
+}
+.headings2:hover {
+  background-color: rgba(182, 180, 180, 0.418);
+}
+.headings3:hover {
+  background-color: rgba(182, 180, 180, 0.418);
+}
+
+
+.text-style-thumbnails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* Add a 10px gap between items */
+  margin-top: 5px;
+  margin-right: 10px ;
+}
+
+.thumbnail-container {
+  width: calc(50% - 5px); /* Set width to 50% and subtract half of the gap (5px) */
+  box-sizing: border-box;
+  padding: 10px; /* Add padding for space within the card */
+  background-color: #f9f9f9; /* Optional background color for the card */
+  border: 1px solid #ccc; /* Add a border for a basic card style */
+  border-radius: 8px; /* Add border-radius for rounded corners */
+}
+
+.thumbnail-container img {
+  width: 100%; /* Make the image fill the container */
+  border-radius: 8px; /* Add border-radius for rounded corners */
+}
+
+h3 {
+  margin-top: 15px;
+  font-weight: 500;
+}
+
+
+
+.image-content-container {
+  overflow-y: auto; /* Enable scrollbar for the image content */
+  flex: 1;
+  max-height: calc(110vh - 350px); /* Adjust the value based on the height of sticky elements and padding */
+  margin-top: 15px; /* Add margin-top to create space between sticky elements and the content */
+
+}
+.image-content-container::-webkit-scrollbar {
+  width: 6px; /* Width of the scrollbar */
+}
+
+.image-content-container::-webkit-scrollbar-thumb {
+  background-color: #919191af; /* Color of the scrollbar thumb */
+  border-radius: 5px; /* Rounded corners of the thumb */
+}
+
+.image-content-container::-webkit-scrollbar-track {
+  background-color: #f0f0f0; /* Color of the scrollbar track */
+}
+
+.text-content-container {
+  overflow-y: auto; /* Enable scrollbar for the image content */
+  flex: 1;
+  max-height: calc(100vh - 500px); /* Adjust the value based on the height of sticky elements and padding */
+  margin-top: 15px; /* Add margin-top to create space between sticky elements and the content */
+}
+.text-content-container::-webkit-scrollbar {
+  width: 6px; /* Width of the scrollbar */
+}
+
+.text-content-container::-webkit-scrollbar-thumb {
+  background-color: #919191af; /* Color of the scrollbar thumb */
+  border-radius: 5px; /* Rounded corners of the thumb */
+}
+
+.text-content-container::-webkit-scrollbar-track {
+  background-color: #f0f0f0; /* Color of the scrollbar track */
+}
+
+
+.shape-content-container {
+  overflow-y: auto; /* Enable scrollbar for the image content */
+  flex: 1;
+  max-height: calc(93vh - 150px); /* Adjust the value based on the height of sticky elements and padding */
+  margin-top: 15px; /* Add margin-top to create space between sticky elements and the content */
+ 
+}
+.shape-content-container::-webkit-scrollbar {
+  width: 6px; /* Width of the scrollbar */
+}
+
+.shape-content-container::-webkit-scrollbar-thumb {
+  background-color: #919191af; /* Color of the scrollbar thumb */
+  border-radius: 5px; /* Rounded corners of the thumb */
+}
+
+.shape-content-container::-webkit-scrollbar-track {
+  background-color: #f0f0f0; /* Color of the scrollbar track */
+}

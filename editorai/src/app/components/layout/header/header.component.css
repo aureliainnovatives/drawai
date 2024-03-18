@@ -1,0 +1,71 @@
+mat-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .project-input-container {
+    flex: 2;
+    display: flex;
+    flex-grow: 2;
+    justify-content: center;
+    align-items: center;
+    position: relative; 
+  }
+  
+  .project-name {
+    border-radius: 20px;
+    
+    padding: 0 16px; /* Adjust padding to vertically center text */
+    line-height: 36px; /* Adjust as needed to match the height */
+    width: 100%; /* Subtract width of button */
+    padding-right: 48px; 
+  }
+  .project-save-btn {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    margin: 0;
+    height: 36px; /* Match the input height */
+  }
+.nav-links {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end; /* Align links to the right */
+}
+  .nav-links a {
+    margin-left: 20px;
+    color: inherit; /* Adjust color as needed */
+    text-decoration: none;
+    font-size: 1rem;
+  }
+  .material-symbols-outlined {
+    font-variant: small-caps;
+    font-size: 48px;
+    color: gray;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    cursor: pointer;
+  }
+  
+  .logo img {
+    margin-right: 8px; /* Adjust as needed */
+  }
+  
+  button.mat-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 12px; /* Adjust padding to ensure proper spacing */
+  }
+  

@@ -1,0 +1,43 @@
+ .canvas {
+    height: calc(100% - 154px);
+    width: calc(100% - 60px);
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: auto;
+    flex-direction: column; 
+}
+
+app-footer {
+    position: fixed;
+    bottom:0;
+    width: 100%;
+}
+
+app-toolbar {
+    position: relative;
+    top: 0;
+    width: 100%;
+} 
+
+.new-canvas {
+    margin: 19px;
+}
+
+.canvas-col :hover {
+    border: 3px  solid rgb(130, 0, 216);
+}
+
+.selected-canvas {
+    border: 3px solid rgb(130, 0, 216);
+  }
+
+  #canvas {
+    border: 3px solid rgb(130, 0, 216);
+  }
+
+
+
+
+
+  

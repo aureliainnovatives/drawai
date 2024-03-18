@@ -1,0 +1,59 @@
+<mat-toolbar class="toolbar mat-elevation-z2"> 
+  
+  <div class="text-formatting">
+    <button (click)="toggleItalic()" [class.active]="isItalic"> <!-- Add class "active" when isItalic is true -->
+      <span class="material-symbols-outlined">
+        format_italic
+      </span>
+    </button>
+  
+    <button (click)="toggleBold()" [class.active]="isBold"> <!-- Add class "active" when isBold is true -->
+      <span class="material-symbols-outlined">
+        format_bold
+      </span>
+    </button>
+  
+    <button (click)="toggleUnderline()" [class.active]="isUnderline"> <!-- Add class "active" when isUnderline is true -->
+      <span class="material-symbols-outlined">
+        format_underlined
+      </span>
+    </button>
+  </div>
+  
+  
+  <div class="text-style">
+    <select id="fontFamily" #fontFamilySelect (change)="changeFontFamily(fontFamilySelect)">
+      <option *ngFor="let fontFamily of fontFamilies" [value]="fontFamily">{{ fontFamily }}</option>
+     </select>
+  </div>
+  <div class="text-color">
+    <input type="color" id="fontColor" (change)="applyTextColor($event)">
+  </div>
+  
+  <div class="text-size-control">
+    <button (click)="changeTextSize(-1)">-</button>
+    <input type="text" [ngModel]="currentTextSize" readonly>
+    <button (click)="changeTextSize(1)">+</button>
+</div>
+
+  <div style="display: flex; justify-content: end; width: 100%;">
+  <button (click)="Deletecanvas()" class="custom-button">
+    <span class="material-symbols-outlined icon-background-less">
+      delete
+      </span></button>
+      <button (click)="onAddCanvas()" class="custom-button">
+        <span class="material-symbols-outlined icon-background-less">
+            note_add
+        </span>
+    </button>
+    
+<div class="CanvasSize">
+<select id="canvasSizeDropdown" [(ngModel)]="selectedCanvasSizeOption" (change)="changeCanvasSize.emit(selectedCanvasSizeOption)">
+  <option value="letter">Letter</option>
+  <option value="whiteboard">Whiteboard</option>
+  <option value="portrait">Portrait</option>
+  
+</select>
+</div>
+</div>
+  </mat-toolbar>

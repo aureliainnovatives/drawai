@@ -1,0 +1,73 @@
+
+  .sidenav {
+    width: 60px; 
+    height: 100%; 
+    /* height: 850px; */
+  }
+  
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    margin-top: 14px;
+  }
+  
+  .icon-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 11px;
+  }
+  
+  mat-icon {
+    margin-bottom: 4px;
+    font-size: 24px;
+  }
+
+  .sidenav-container {
+    display: grid;
+    grid-template-columns: 1fr auto; /* Two columns: flexible main content and fixed-width toolbar */
+    grid-template-rows: 100vh;
+  }
+  
+  .content-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  
+  .toolbar {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    margin-left: 60px;
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* .panel-opened .toolbar {
+    width: 300px; 
+  } */
+  .panel-opened .toolbar-content-container {
+    margin-left: 300px; /* Adjust this value based on your side panel width */
+    transition: margin-left 0.25s linear;
+  }
+  .main-content {
+    display: flex;
+    flex: 1;
+    margin-left: 0;
+    transition: margin-left 0.25s linear;
+  }
+  
+  /* .panel-opened .main-content {
+    margin-left: 300px
+  }
+   */
+  .toolbar-content-container {
+    margin-left: 0; /* Adjust this value based on your requirements */
+    transition: margin-left 0.25s linear;
+    min-height: 100vh;
+
+  }
+
+

@@ -1,0 +1,28 @@
+.toolbar {
+    background-color:rgb(255, 255, 255); 
+    max-height: 60px;
+    border: 1px solid rgba(202, 202, 202, 0.644); 
+    justify-content: end;
+}
+:host {
+    width: 100%; /* Ensure the slider takes the full width of its container */
+  }
+  
+  /* Adjust the width of the slider */
+  .mat-slider-horizontal {
+    width: 100%; /* Set the width to 100% */
+  }
+  
+  .progress-tooltip {
+    font-size: 14px;
+    margin-right: 50px;
+    margin-left: 15px;
+  }
+  .ProgressContainer {
+    display: flex; 
+    justify-content: end;
+
+  }
+  .progressBar {
+     width: 300px;
+  }

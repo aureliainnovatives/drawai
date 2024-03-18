@@ -1,0 +1,319 @@
+
+:root {
+  --color-primary: #DAA520; /* Given vibrant lavender */
+  --color-secondary: #8868ff; /* Complementary deeper purple */
+  --color-accent: #c7a4ff; /* A lighter, pastel lavender */
+  --color-background: #fcfcf2; /* Very light lavender for background, provides a soft contrast */
+  --color-header: #ffffff; /* Dark purple for headers, offers good readability */
+  --color-card: #ffffff; /* Pure white for card backgrounds */
+  --color-text: #333333; /* Almost black for text, to ensure maximum readability */
+  --color-footer-background: #8868ff; /* Almost black for text, to ensure maximum readability */
+  --color-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+  0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --width-left: 18rem;
+  --menu-background: #ffc706;
+  --menu-color: #000000;
+   overflow: hidden;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px; /* Setting the default font size for the document */
+}
+
+body {
+  font-family: Poppins;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  /*background: var(--color-background);*/
+  color: var(--color-text);
+  line-height: 1.6;
+
+}
+
+ 
+
+@keyframes animatedGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(270deg, #f8f8fc, #e8e6f3, #f8f8fc, #e8e6f3);
+  background-size: 800% 800%;
+  animation: animatedGradient 25s ease infinite;
+}
+
+
+
+
+
+.verify-email-message {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f8d7da; /* Light red background */
+  color: #721c24; /* Dark red text */
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+  font-size: 0.9em;
+}
+
+.menu-checkbox {
+  display: none; /* Hidden checkbox */
+}
+
+.menu-icon {
+  display: none!important; /* Initially hidden hamburger icon */
+  cursor: pointer;
+  padding: 1.25rem; /* Responsive padding using rem */
+  z-index: 3000;
+  /* Removed font-size and position to let the label flow within the content */
+}
+
+.header-bar {
+  padding: 0 1rem;
+  background-color: var(--color-header);
+  position: relative;
+  margin: 0rem;
+  width: 100%;
+  
+ }
+ 
+ .header-title {
+  /* The title should be within the flex container to align properly */
+  /* Apply card styles if needed */
+  background: var(--color-card); /* If you want the title to have a card-like appearance */
+  padding: 0.5rem 1rem; /* Adjust as necessary */
+  border-radius: 0.3rem; /* If you want rounded corners */
+  /* More styling as needed */
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  /* Add space between the items */
+  gap: 0.5rem;
+  /* Right margin to maintain spacing from the edge */
+  margin-right: 1rem;
+}
+
+.user-info {
+    display: flex;
+  align-items: center;
+  justify-content: space-between; /* This separates the children to each end */
+  width: 100%; /* Full width */
+  padding: 0rem 1rem; /* Add padding if needed */
+
+}
+
+.user-info > div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Spacing between items */
+}
+
+.user-photo {
+  border-radius: 50%; /* Makes the image circular */
+  width: 3rem; /* Adjust as necessary */
+  height: 3rem; /* Adjust as necessary */
+  object-fit: cover; /* Ensures the image covers the area properly */
+}
+
+
+/* Style for the 'Buy Credits' button */
+.buy-credits-btn {
+  background-color: var(--color-primary);
+  color: black;
+  border: none;
+  padding: 1rem 2.5rem;
+  margin: 0 1rem; /* Space from the logout link */
+  border-radius: 0.3rem;
+  cursor: pointer;
+  /* Add transition for interactive hover effect */
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+}
+
+.cdk-overlay-container {
+  position: fixed;
+  z-index: 10000!important; /* Set this value higher than the sidebar's z-index */
+}
+
+.buy-credits-btn:hover {
+  background-color: var(--color-secondary);
+  /* Optional: darken the button on hover for visual feedback */
+}
+
+.user-name {
+  margin-right: 0.9375rem; /* Responsive margin using rem */
+}
+
+.logout-link {
+  text-decoration: none;
+  color: var(--color-text);
+  font-weight: bold;
+}
+
+.menu-link {
+  text-decoration: none;
+  color: var(--color-text);
+  margin: 0 20px;
+  font-size: 14px;
+}
+
+.main-body {
+  width: 100%; /* Full width */
+  overflow: auto; /* Allows scrolling if content overflows */
+  justify-content: start;
+  align-items: flex-start;
+  padding: 1rem; /* Responsive padding using rem */
+}
+
+.customchip {
+  background-color: #673ab7;
+  color: white; /* Text color for selected state */
+  border-radius: 16px; /* Rounded corners - adjust as needed */
+  padding: 0 20px; /* Padding inside the chip */
+  font-size: 14px; /* Font size for the chip text */
+  line-height: 32px; /* Line height to vertically center the text */
+  margin: 5px; /* Margin around the chip */
+
+}
+
+
+
+.card {
+  background: var(--color-card);
+  box-shadow: var(--color-shadow);
+  border-radius: 0.3125rem; /* Responsive border-radius using rem */
+  padding: 1rem; /* Responsive padding using rem */
+  margin: 1rem; /* Responsive margin using rem */
+}
+
+.card-row {
+  display: flex;
+  justify-content: center; /* Align cards closer to each other */
+}
+
+
+.ripple-button {
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-button:hover {
+  background-color: #f0f0f0;
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple 0.6s linear;
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.footer {
+  background-color: var(--color-footer-background);
+  color:white;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 5vh; /* Fixed height for the footer */
+  z-index: 1;
+  text-align: center;
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+}
+
+.footer > p {
+  color: white
+}
+
+h1 {
+  font-weight: 400;
+  font-size: 24px;
+}
+
+
+   
+
+
+/* For responsiveness, you can have columns stack on smaller screens */
+@media (max-width: 768px) {
+  .column {
+    flex: 100%; /* Each column takes full width on small screens */
+  }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .menu-icon {
+    display: block; /* Show hamburger icon */
+    position: fixed; /* Fixed position to keep it visible */
+    top: 0;
+    left: 0;
+    z-index: 3001; /* Above sidebar's z-index */
+  }
+
+  .menu-checkbox:checked ~ .side-menu {
+    transform: translateX(0); /* Show side-menu */
+    position: fixed; /* Fixed position to overlay content */
+    width: 100%; /* Full width */
+    z-index: 3000; /* High z-index to be above other content */
+  }
+
+  .side-menu {
+    transform: translateX(-100%); /* Hide side-menu by default */
+    width: 100%; /* Set width for when it's visible */
+  }
+
+  .header-bar {
+    left: 0; /* Reset left position */
+    width: 100%; /* Full width */
+    padding: 1rem; /* Adjust padding */
+  }
+
+  .main-body {
+    padding: 0;
+    margin-top: 3.75rem; /* Push down by the header's height */
+    width: 100%; /* Full width */
+    height: auto; /* Adjust height for mobile */
+  }
+
+  .card {
+    margin: 1rem; /* Add margin to all sides */
+  }
+
+  .footer {
+    position: relative; /* Relative positioning */
+    bottom: auto; /* Clear fixed positioning */
+  }
+}
