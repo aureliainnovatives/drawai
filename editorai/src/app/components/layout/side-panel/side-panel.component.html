@@ -39,15 +39,15 @@
         </div>
        </div>
       </mat-tab> -->
-   
 
       <mat-tab label="All Shapes">
         <div class="shape-content-container">
         <div class="element" >
-              <ng-container *ngFor="let shapeArray of shapeArrays">
+              <ng-container *ngFor="let shapeArray of filteredShapeArrays">
                 <span class="category-title">{{ shapeArray.category }}</span>
+                <div class="scrollable-container">
                   <div class="card-container">
-                    <mat-card class="card-box" *ngFor="let shape of shapeArray.shapes">
+                    <mat-card class="card-box" *ngFor="let shape of shapeArray.shapes"  >
                       <mat-card-header>
                       <div  class="card-icon" draggable="true" (dragstart)="onDragStart($event, shape.name)">
                         <img class="cardicons"  [src]="shape.icon" alt="{{ shape.name }}">
@@ -55,6 +55,7 @@
                     </mat-card-header>
                     </mat-card>
                   </div>
+                </div>
               </ng-container>
             </div>
          </div>

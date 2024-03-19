@@ -58,6 +58,17 @@ export class SidePanelComponent  {
     fullfilledstar: 'assets/icons/fullfilledstar.svg',
   };
 
+  get filteredShapeArrays() {
+    if (!this.searchTerm.trim()) {
+      return this.shapeArrays;
+    }
+    return this.shapeArrays.map(shapeArray => ({
+      ...shapeArray,
+      shapes: shapeArray.shapes.filter(shape => shape.name.toLowerCase().includes(this.searchTerm.trim().toLowerCase()))
+    })).filter(shapeArray => shapeArray.shapes.length > 0);
+  }
+
+
  shapeArrays: { category: string, shapes: { name: string, icon: string }[] }[] = [
     { 
       category: 'Squares', 
@@ -99,6 +110,16 @@ export class SidePanelComponent  {
         { name: 'halfemptystar', icon: this.shapeIconsMapping['halfemptystar'] },
         { name: 'halfstarempty', icon: this.shapeIconsMapping['halfstarempty'] },
         { name: 'halffilledstar', icon: this.shapeIconsMapping['halffilledstar'] },
+        { name: 'emptystar', icon: this.shapeIconsMapping['emptystar'] },
+        { name: 'fullfilledstar', icon: this.shapeIconsMapping['fullfilledstar'] },
+        { name: 'fouremptystar', icon: this.shapeIconsMapping['fouremptystar'] },
+        { name: 'sevenedgestar', icon: this.shapeIconsMapping['sevenedgestar'] },
+        { name: 'halfemptystar', icon: this.shapeIconsMapping['halfemptystar'] },
+        { name: 'halfstarempty', icon: this.shapeIconsMapping['halfstarempty'] },
+        { name: 'halffilledstar', icon: this.shapeIconsMapping['halffilledstar'] },
+        
+
+        
       ]
     },
   ];

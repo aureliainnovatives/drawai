@@ -99,9 +99,26 @@ body {
 
   .card-container {
     display: flex;
-
+    flex-wrap: wrap;
     justify-content: start;
+    overflow-y: auto;
+    max-height: 220px; /* Adjust the height as needed */
+
   }
+  .card-container::-webkit-scrollbar {
+    width: 6px; /* Width of the scrollbar */
+  }
+  
+  .card-container::-webkit-scrollbar-thumb {
+    background-color: #919191af; /* Color of the scrollbar thumb */
+    border-radius: 5px; /* Rounded corners of the thumb */
+  }
+  
+  .card-container::-webkit-scrollbar-track {
+    background-color: #f0f0f0; /* Color of the scrollbar track */
+  }
+  
+
 
   .card-box:hover {
     background-color: rgba(216, 216, 216, 0.377);
