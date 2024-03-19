@@ -3,6 +3,7 @@ import { fabric } from 'fabric';
 import { CanvasSizeService } from '../../Services/canvas-size.service';
 import { Subscription } from 'rxjs';
 
+
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
@@ -21,6 +22,7 @@ export class CanvasComponent implements AfterViewInit {
   containerElement!: HTMLElement;
   zoomLevel = 100; // Initial zoom level (100%)
   @Output() addImageToCategory: EventEmitter<{ name: string, data: string }> = new EventEmitter<{ name: string, data: string }>();
+  @Output() textboxSelected: EventEmitter<boolean> = new EventEmitter<boolean>();
 
 
   isBold: boolean = false;
@@ -31,7 +33,7 @@ export class CanvasComponent implements AfterViewInit {
   currentTextSize: number = 20;
   selectedTextColor: string = '#000000';
 
-  
+  copiedObject: fabric.Object | null = null; 
   
   constructor(private elementRef: ElementRef,
     private cdr: ChangeDetectorRef,
@@ -556,6 +558,84 @@ if (activeObject && activeObject.type === 'textbox') {
   this.canvas.requestRenderAll(); // Use requestRenderAll to ensure proper rendering
 }
 }
+handleTextboxSelection(isSelected: boolean) {
+  // Emit the selected state of the textbox
+  this.textboxSelected.emit(isSelected);
+}
+@HostListener('document:keydown', ['$event'])
+handleKeyboardEvents(event: KeyboardEvent) {
+  // Copy: Ctrl+C or Cmd+C
+  if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
+    this.copySelected();
+  }
+  // Paste: Ctrl+V or Cmd+V
+  if ((event.ctrlKey || event.metaKey) && event.key === 'v') {
+    this.pasteCopied();
+  }
+  // Delete: Delete or Backspace
+  if (event.key === 'Delete' || event.key === 'Backspace') {
+    this.deleteSelectedObject();
+  }
+}
+
+// Function to copy the currently selected object
+copySelected() {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject) {
+    activeObject.clone((clonedObject: fabric.Object) => {
+      this.copiedObject = clonedObject;
+    });
+  }
+}
+
+
+// Function to paste the copied object slightly to the right of the original object
+pasteCopied() {
+  if (this.copiedObject) {
+    const originalObject = this.canvas.getActiveObject();
+    if (originalObject) {
+      const originalPosition = originalObject.getCenterPoint(); // Get center point of the original object
+      const xOffset = 20; // Offset value for moving to the right
+      const clonedObject = fabric.util.object.clone(this.copiedObject);
+      const newPosition = new fabric.Point(originalPosition.x + xOffset, originalPosition.y);
+      clonedObject.set({ left: newPosition.x, top: newPosition.y }); // Set new position
+      this.canvas.add(clonedObject);
+      this.canvas.setActiveObject(clonedObject);
+      this.canvas.renderAll();
+    }
+  }
+}
+
+deleteSelectedObject(): void {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject) {
+    this.canvas.remove(activeObject);
+    this.canvas.renderAll();
+  }
+}
+flipSelectedImage(): void {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject && activeObject.type === 'image') {
+    activeObject.set({ flipX: !activeObject.flipX });
+    this.canvas.renderAll();
+  }
+}
+moveObjectBackward(): void {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject) {
+    this.canvas.sendBackwards(activeObject);
+    this.canvas.renderAll();
+  }
+}
+
+moveObjectForward(): void {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject) {
+    this.canvas.bringForward(activeObject);
+    this.canvas.renderAll();
+  }
+}
 
 
 }
+

@@ -1,17 +1,15 @@
 <mat-toolbar class="toolbar mat-elevation-z2"> 
-  
+  <div *ngIf="isTextboxSelected" class="text-container">
   <div class="text-formatting">
-
-    <button (click)="toggleBold()" [class.active]="isBold"> <!-- Add class "active" when isBold is true -->
-      <span class="material-symbols-outlined">
-        format_bold
-      </span>
-    </button>
-
-    
     <button (click)="toggleItalic()" [class.active]="isItalic"> <!-- Add class "active" when isItalic is true -->
       <span class="material-symbols-outlined">
         format_italic
+      </span>
+    </button>
+  
+    <button (click)="toggleBold()" [class.active]="isBold"> <!-- Add class "active" when isBold is true -->
+      <span class="material-symbols-outlined">
+        format_bold
       </span>
     </button>
   
@@ -36,8 +34,10 @@
     <input type="text" [ngModel]="currentTextSize" readonly>
     <button (click)="changeTextSize(1)">+</button>
 </div>
+</div>
 
-  <!-- <div style="display: flex; justify-content: end; width: 100%;">
+
+  <div style="display: flex; justify-content: end; width: 100%;">
   <button (click)="Deletecanvas()" class="custom-button">
     <span class="material-symbols-outlined icon-background-less">
       delete
@@ -56,5 +56,5 @@
   
 </select>
 </div>
-</div> -->
+</div>
   </mat-toolbar>

@@ -56,8 +56,9 @@
   background-color: #eeeeee;
   border-radius: 10%; 
 } 
-
-
+.text-container{
+  display: flex;
+}
 
 
 
