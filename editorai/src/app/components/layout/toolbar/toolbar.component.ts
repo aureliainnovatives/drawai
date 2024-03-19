@@ -19,13 +19,15 @@ export class ToolbarComponent {
   @Output() textSizeChanged = new EventEmitter<number>();
   @Output() textColorChanged = new EventEmitter<string>();
   @Output() fontFamilyChanged = new EventEmitter<string>();
+
+
   @Input() currentTextSize: number=20; 
   @Input() selectedTextSize: number = 20;
 
-
   fontFamilies: string[] = ['Arial', 'Helvetica', 'Times New Roman', 'Courier New'];
   selectedFontColor: string = '#000000';
-  textSize: number = 20; 
+
+
   isBold: boolean = false;
   isItalic: boolean = false;
   isUnderline: boolean = false 
@@ -52,23 +54,21 @@ export class ToolbarComponent {
     this.isUnderline = !this.isUnderline;
     this.underlineToggled.emit();
   }
- 
-  
+
   applyTextColor(event: Event) {
     const color = (event.target as HTMLInputElement).value;
     this.textColorChanged.emit(color);
   }
-  updateTextSize(selectedTextSize: number): void {
-    this.currentTextSize = selectedTextSize;
-  }
+
   changeTextSize(delta: number): void {
     this.currentTextSize = Math.max(1, this.currentTextSize + delta);
     this.textSizeChanged.emit(this.currentTextSize);
   }
-changeFontFamily(select: HTMLSelectElement) {
-  const selectedFontFamily = select.value;
-  this.fontFamilyChanged.emit(selectedFontFamily);
-}
+
+  changeFontFamily(select: HTMLSelectElement) {
+    const selectedFontFamily = select.value;
+    this.fontFamilyChanged.emit(selectedFontFamily);
+  }
 
 
   

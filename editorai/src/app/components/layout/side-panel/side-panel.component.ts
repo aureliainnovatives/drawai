@@ -17,7 +17,6 @@ export class SidePanelComponent  {
   @Output() closePanel: EventEmitter<void> = new EventEmitter<void>();
   @Output() addText: EventEmitter<string> = new EventEmitter<string>(); // New event emitter for adding text
   @Output() shapeDragged: EventEmitter<string> = new EventEmitter<string>();
-
   @Output() addTextToCanvas: EventEmitter<string> = new EventEmitter<string>()
 
 
