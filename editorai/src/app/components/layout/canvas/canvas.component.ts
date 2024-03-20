@@ -1,8 +1,14 @@
-import { Component, ElementRef, AfterViewInit, HostListener, EventEmitter, Output, ChangeDetectorRef, Renderer2 } from '@angular/core';
+import { Component, ElementRef, AfterViewInit, HostListener, EventEmitter, Output, ChangeDetectorRef, Renderer2, ViewChild } from '@angular/core';
 import { fabric } from 'fabric';
 import { CanvasSizeService } from '../../Services/canvas-size.service';
 import { Subscription } from 'rxjs';
+<<<<<<< HEAD
 import { CanvasSelectionService } from '../../Services/canvas-selection.service';
+=======
+import { MatDialog } from '@angular/material/dialog';
+import { CanvasSelectionService } from '../../Services/canvasselection.service';
+
+>>>>>>> f4fc60c6ba92ba5b8b2edd50ce7412d1659de636
 
 @Component({
   selector: 'app-canvas',
@@ -11,7 +17,7 @@ import { CanvasSelectionService } from '../../Services/canvas-selection.service'
 })
 export class CanvasComponent implements AfterViewInit {
   textToAdd: string = '';
-  
+  @ViewChild('fileInput') fileInput!: ElementRef;
   private subscription: Subscription;
   private textboxes: fabric.Textbox[] = []; 
 
@@ -23,6 +29,10 @@ export class CanvasComponent implements AfterViewInit {
   zoomLevel = 100; // Initial zoom level (100%)
   @Output() addImageToCategory: EventEmitter<{ name: string, data: string }> = new EventEmitter<{ name: string, data: string }>();
   @Output() textboxSelected: EventEmitter<boolean> = new EventEmitter<boolean>();
+<<<<<<< HEAD
+=======
+
+>>>>>>> f4fc60c6ba92ba5b8b2edd50ce7412d1659de636
 
   isBold: boolean = false;
   isItalic: boolean = false;
@@ -32,11 +42,16 @@ export class CanvasComponent implements AfterViewInit {
   currentTextSize: number = 20;
   selectedTextColor: string = '#000000';
 
+<<<<<<< HEAD
   canvasWidth: number = 700; // Initial canvas width
   canvasHeight: number = 700; // Initial canvas height
+=======
+  copiedObject: fabric.Object | null = null; 
+>>>>>>> f4fc60c6ba92ba5b8b2edd50ce7412d1659de636
   
   constructor(private elementRef: ElementRef,
     private cdr: ChangeDetectorRef,
+    public dialog: MatDialog,
     public canvasSizeService: CanvasSizeService,
     private canvasSelectionService: CanvasSelectionService,
     private renderer: Renderer2) { 
@@ -44,6 +59,7 @@ export class CanvasComponent implements AfterViewInit {
       this.subscription = this.canvasSizeService.textToAdd$.subscribe(text => {
         this.textToAdd = text;
 
+        
       const fabricText = new fabric.Textbox(this.textToAdd, {
         left: 10,
         top: 10,
@@ -57,7 +73,18 @@ export class CanvasComponent implements AfterViewInit {
       this.canvas.renderAll();
     });
     }
+<<<<<<< HEAD
 ngAfterViewInit() {
+=======
+    
+
+    ngOnDestroy() {
+      this.subscription.unsubscribe();
+    }
+   
+
+  ngAfterViewInit() {
+>>>>>>> f4fc60c6ba92ba5b8b2edd50ce7412d1659de636
     this.containerElement = this.elementRef.nativeElement.querySelector('.canvas-container');
     this.canvas = new fabric.Canvas('canvas', {
       selection: true // Enable selection
@@ -65,7 +92,11 @@ ngAfterViewInit() {
     this.canvas.preserveObjectStacking = true;
     this.resizables();
     this.enableDragAndDrop();
+<<<<<<< HEAD
 
+=======
+   
+>>>>>>> f4fc60c6ba92ba5b8b2edd50ce7412d1659de636
     this.canvas.on('selection:created', this.updateSelectionType.bind(this));
     this.canvas.on('selection:updated', this.updateSelectionType.bind(this));
     this.canvas.on('selection:cleared', this.updateSelectionType.bind(this));
@@ -83,6 +114,7 @@ ngAfterViewInit() {
       this.canvasSelectionService.setSelectionType('none');
     }
   }
+<<<<<<< HEAD
     ngOnDestroy() {
       this.subscription.unsubscribe();
     }
@@ -96,6 +128,12 @@ ngAfterViewInit() {
       }
     
     }
+=======
+
+
+
+
+>>>>>>> f4fc60c6ba92ba5b8b2edd50ce7412d1659de636
 
   
   private resizables(): void {
@@ -630,6 +668,102 @@ if (activeObject && activeObject.type === 'textbox') {
   this.canvas.requestRenderAll(); // Use requestRenderAll to ensure proper rendering
 }
 }
+handleTextboxSelection(isSelected: boolean) {
+  // Emit the selected state of the textbox
+  this.textboxSelected.emit(isSelected);
+}
+@HostListener('document:keydown', ['$event'])
+handleKeyboardEvents(event: KeyboardEvent) {
+  // Copy: Ctrl+C or Cmd+C
+  if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
+    this.copySelected();
+  }
+  // Paste: Ctrl+V or Cmd+V
+  if ((event.ctrlKey || event.metaKey) && event.key === 'v') {
+    this.pasteCopied();
+  }
+  // Delete: Delete or Backspace
+  if (event.key === 'Delete' || event.key === 'Backspace') {
+    this.deleteSelectedObject();
+  }
+}
+
+// Function to copy the currently selected object
+copySelected() {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject) {
+    activeObject.clone((clonedObject: fabric.Object) => {
+      this.copiedObject = clonedObject;
+    });
+  }
+}
+
+
+// Function to paste the copied object slightly to the right of the original object
+pasteCopied() {
+  if (this.copiedObject) {
+    const originalObject = this.canvas.getActiveObject();
+    if (originalObject) {
+      const originalPosition = originalObject.getCenterPoint(); // Get center point of the original object
+      const xOffset = 20; // Offset value for moving to the right
+      const clonedObject = fabric.util.object.clone(this.copiedObject);
+      const newPosition = new fabric.Point(originalPosition.x + xOffset, originalPosition.y);
+      clonedObject.set({ left: newPosition.x, top: newPosition.y }); // Set new position
+      this.canvas.add(clonedObject);
+      this.canvas.setActiveObject(clonedObject);
+      this.canvas.renderAll();
+    }
+  }
+}
+
+deleteSelectedObject(): void {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject) {
+    this.canvas.remove(activeObject);
+    this.canvas.renderAll();
+  }
+}
+flipSelectedImage(): void {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject && activeObject.type === 'image') {
+    activeObject.set({ flipX: !activeObject.flipX });
+    this.canvas.renderAll();
+  }
+}
+moveObjectBackward(): void {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject) {
+    this.canvas.sendBackwards(activeObject);
+    this.canvas.renderAll();
+  }
+}
+
+moveObjectForward(): void {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject) {
+    this.canvas.bringForward(activeObject);
+    this.canvas.renderAll();
+  }
+}
+
+exportAsJSON() {
+  const json = JSON.stringify(this.canvas.toJSON());
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'canvas.json';
+  link.click();
+  window.URL.revokeObjectURL(url);
+}
+exportAsPNG() {
+  const dataURL = this.canvas.toDataURL({ format: 'png', quality: 1 });
+  const link = document.createElement('a');
+  link.href = dataURL;
+  link.download = 'canvas.png';
+  link.click();
+}
 
 
 }
+
