@@ -1,7 +1,9 @@
-import { Component, ElementRef, AfterViewInit, HostListener, EventEmitter, Output, ChangeDetectorRef, Renderer2 } from '@angular/core';
+import { Component, ElementRef, AfterViewInit, HostListener, EventEmitter, Output, ChangeDetectorRef, Renderer2, ViewChild } from '@angular/core';
 import { fabric } from 'fabric';
 import { CanvasSizeService } from '../../Services/canvas-size.service';
 import { Subscription } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { CanvasSelectionService } from '../../Services/canvasselection.service';
 
 
 @Component({
@@ -11,7 +13,7 @@ import { Subscription } from 'rxjs';
 })
 export class CanvasComponent implements AfterViewInit {
   textToAdd: string = '';
-  
+  @ViewChild('fileInput') fileInput!: ElementRef;
   private subscription: Subscription;
   private textboxes: fabric.Textbox[] = []; 
 
@@ -37,12 +39,15 @@ export class CanvasComponent implements AfterViewInit {
   
   constructor(private elementRef: ElementRef,
     private cdr: ChangeDetectorRef,
+    public dialog: MatDialog,
     public canvasSizeService: CanvasSizeService,
+    private canvasSelectionService: CanvasSelectionService,
     private renderer: Renderer2) { 
 
       this.subscription = this.canvasSizeService.textToAdd$.subscribe(text => {
         this.textToAdd = text;
 
+        
       const fabricText = new fabric.Textbox(this.textToAdd, {
         left: 10,
         top: 10,
@@ -56,12 +61,12 @@ export class CanvasComponent implements AfterViewInit {
       this.canvas.renderAll();
     });
     }
-
+    
 
     ngOnDestroy() {
       this.subscription.unsubscribe();
     }
-    
+   
 
   ngAfterViewInit() {
     this.containerElement = this.elementRef.nativeElement.querySelector('.canvas-container');
@@ -71,7 +76,30 @@ export class CanvasComponent implements AfterViewInit {
     this.canvas.preserveObjectStacking = true;
     this.resizables();
     this.enableDragAndDrop();
+   
+    this.canvas.on('selection:created', this.updateSelectionType.bind(this));
+    this.canvas.on('selection:updated', this.updateSelectionType.bind(this));
+    this.canvas.on('selection:cleared', this.updateSelectionType.bind(this));
   }
+
+  private updateSelectionType() {
+    const activeObject = this.canvas.getActiveObject();
+    if (activeObject instanceof fabric.Textbox) {
+      this.canvasSelectionService.setSelectionType('textbox');
+    } else if (activeObject instanceof fabric.Image) {
+      this.canvasSelectionService.setSelectionType('image');
+    } else if (activeObject instanceof fabric.Rect || activeObject instanceof fabric.Circle) {
+      this.canvasSelectionService.setSelectionType('shape');
+    } else {
+      this.canvasSelectionService.setSelectionType('none');
+    }
+  }
+
+
+
+
+
+  
   private resizables(): void {
     if (this.canvas) {
 
@@ -634,6 +662,24 @@ moveObjectForward(): void {
     this.canvas.bringForward(activeObject);
     this.canvas.renderAll();
   }
+}
+
+exportAsJSON() {
+  const json = JSON.stringify(this.canvas.toJSON());
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'canvas.json';
+  link.click();
+  window.URL.revokeObjectURL(url);
+}
+exportAsPNG() {
+  const dataURL = this.canvas.toDataURL({ format: 'png', quality: 1 });
+  const link = document.createElement('a');
+  link.href = dataURL;
+  link.download = 'canvas.png';
+  link.click();
 }
 
 

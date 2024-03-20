@@ -43,7 +43,7 @@ import { PropertyComponent } from './components/layout/property/property.compone
 import { FooterComponent } from './components/layout/footer/footer.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { NzSliderModule } from 'ng-zorro-antd/slider'; // Import NzSliderModule
+import { NzSliderModule } from 'ng-zorro-antd/slider';
 
 const MY_DATE_FORMATS = {
   parse: {
@@ -68,6 +68,7 @@ const MY_DATE_FORMATS = {
     CanvasComponent,
     PropertyComponent,
     FooterComponent,
+
 
  
   ],

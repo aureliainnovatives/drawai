@@ -1,4 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CanvasComponent } from '../canvas/canvas.component';
+import { Subscription } from 'rxjs';
+import { CanvasSelectionService } from '../../Services/canvasselection.service';
 
 @Component({
   selector: 'app-toolbar',
@@ -12,7 +15,7 @@ export class ToolbarComponent {
   @Output() deletecanvas: EventEmitter<void> = new EventEmitter<void>();
   @Output() fileInputChange : EventEmitter<string> = new EventEmitter<string>();
 
-  @Input() isTextboxSelected: boolean = false;
+ 
 
   @Output() boldToggled = new EventEmitter<void>();
   @Output() italicToggled = new EventEmitter<void>();
@@ -30,7 +33,21 @@ export class ToolbarComponent {
   isBold: boolean = false;
   isItalic: boolean = false;
   isUnderline: boolean = false 
+  isTextboxSelected: boolean = false;
+  isImageSelected: boolean = false;
+  isShapeSelected: boolean = false;
+  private subscription:Subscription;
 
+  constructor(private canvasComponent: CanvasComponent,private canvasSelectionService: CanvasSelectionService) {
+    this.subscription = this.canvasSelectionService.selectionType$.subscribe(selectionType => {
+      this.isTextboxSelected = selectionType === 'textbox';
+      this.isImageSelected = selectionType === 'image';
+      this.isShapeSelected = selectionType === 'shape';});
+   }
+
+   ngOnDestroy() {
+    this.subscription.unsubscribe();
+}
   onAddCanvas(): void {
     this.addCanvas.emit();
     
@@ -70,6 +87,12 @@ changeFontFamily(select: HTMLSelectElement) {
   const selectedFontFamily = select.value;
   this.fontFamilyChanged.emit(selectedFontFamily);
 }
+exportAsJSON() {
+  this.canvasComponent.exportAsJSON(); // Call exportAsJSON() from CanvasComponent
+}
 
+exportAsPNG() {
+  this.canvasComponent.exportAsPNG(); // Call exportAsPNG() from CanvasComponent
+}
   
 }

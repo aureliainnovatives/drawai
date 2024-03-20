@@ -1,5 +1,5 @@
 <mat-toolbar class="toolbar mat-elevation-z2"> 
-  <div *ngIf="isTextboxSelected" class="text-container">
+  <div style="display: flex;" class="text-container" *ngIf="isTextboxSelected">
   <div class="text-formatting">
     <button (click)="toggleItalic()" [class.active]="isItalic"> <!-- Add class "active" when isItalic is true -->
       <span class="material-symbols-outlined">
@@ -35,10 +35,17 @@
     <button (click)="changeTextSize(1)">+</button>
 </div>
 </div>
-
+<div class="image-container" *ngIf="isImageSelected">
+  <span>image-container</span>
+ </div>
+ 
+ <!-- Shape container -->
+ <div class="shape-container"  *ngIf="isShapeSelected">
+   <span>shape-container</span>
+ </div>
 
   <div style="display: flex; justify-content: end; width: 100%;">
-  <button (click)="Deletecanvas()" class="custom-button">
+  <!-- <button (click)="Deletecanvas()" class="custom-button">
     <span class="material-symbols-outlined icon-background-less">
       delete
       </span></button>
@@ -46,9 +53,24 @@
         <span class="material-symbols-outlined icon-background-less">
             note_add
         </span>
-    </button>
+    </button> -->
     
 <div class="CanvasSize">
+
+  <div class="text-formatting">
+
+    <button (click)="exportAsJSON()">
+      <span class="material-symbols-outlined">
+        code
+        </span>
+   </button>
+    <button (click)="exportAsPNG()">
+      <span class="material-symbols-outlined">
+        download
+        </span></button>
+  
+  </div>
+  
 <select id="canvasSizeDropdown" [(ngModel)]="selectedCanvasSizeOption" (change)="changeCanvasSize.emit(selectedCanvasSizeOption)">
   <option value="letter">Letter</option>
   <option value="whiteboard">Whiteboard</option>
