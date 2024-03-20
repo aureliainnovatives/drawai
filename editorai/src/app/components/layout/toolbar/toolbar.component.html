@@ -1,5 +1,5 @@
 <mat-toolbar class="toolbar mat-elevation-z2"> 
-  
+  <div style="display: flex;" class="text-container" *ngIf="isTextboxSelected">
   <div class="text-formatting">
 
     <button (click)="toggleBold()" [class.active]="isBold"> <!-- Add class "active" when isBold is true -->
@@ -21,8 +21,7 @@
       </span>
     </button>
   </div>
-  
-  
+
   <div class="text-style">
     <select id="fontFamily" #fontFamilySelect (change)="changeFontFamily(fontFamilySelect)">
       <option *ngFor="let fontFamily of fontFamilies" [value]="fontFamily">{{ fontFamily }}</option>
@@ -31,14 +30,27 @@
   <div class="text-color">
     <input type="color" id="fontColor" (input)="applyTextColor($event)">
   </div>
+  
   <div class="text-size-control">
     <button (click)="changeTextSize(-1)">-</button>
     <input type="text" [ngModel]="currentTextSize" readonly>
     <button (click)="changeTextSize(1)">+</button>
 </div>
 
-  <!-- <div style="display: flex; justify-content: end; width: 100%;">
-  <button (click)="Deletecanvas()" class="custom-button">
+
+
+</div>
+<div class="image-container" *ngIf="isImageSelected">
+ <span>image-container</span>
+</div>
+
+<!-- Shape container -->
+<div class="shape-container"  *ngIf="isShapeSelected">
+  <span>shape-container</span>
+</div>
+
+  <div style="display: flex; justify-content: end; width: 100%;">
+  <!-- <button (click)="Deletecanvas()" class="custom-button">
     <span class="material-symbols-outlined icon-background-less">
       delete
       </span></button>
@@ -46,15 +58,28 @@
         <span class="material-symbols-outlined icon-background-less">
             note_add
         </span>
-    </button>
-    
+    </button> -->
 <div class="CanvasSize">
-<select id="canvasSizeDropdown" [(ngModel)]="selectedCanvasSizeOption" (change)="changeCanvasSize.emit(selectedCanvasSizeOption)">
-  <option value="letter">Letter</option>
-  <option value="whiteboard">Whiteboard</option>
-  <option value="portrait">Portrait</option>
-  
-</select>
+
+  <div class="text-formatting">
+
+  <button (click)="exportAsJSON()">
+    <span class="material-symbols-outlined">
+      code
+      </span>
+ </button>
+  <button (click)="exportAsPNG()">
+    <span class="material-symbols-outlined">
+      download
+      </span></button>
+
 </div>
-</div> -->
+  <select id="canvasSizeDropdown" (change)="onChangeCanvasSize($event)">
+    <option value="700x700">Letter</option>
+    <option value="950x600">Landscape</option>
+    <option value="450x700">Portrait</option>
+  </select>
+  
+</div>
+</div>
   </mat-toolbar>

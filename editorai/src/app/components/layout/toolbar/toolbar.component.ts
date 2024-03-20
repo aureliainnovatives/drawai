@@ -1,4 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CanvasComponent } from '../canvas/canvas.component';
+import { Subscription } from 'rxjs';
+import { CanvasSelectionService } from '../../Services/canvas-selection.service';
 
 @Component({
   selector: 'app-toolbar',
@@ -24,13 +27,38 @@ export class ToolbarComponent {
   @Input() currentTextSize: number=20; 
   @Input() selectedTextSize: number = 20;
 
+  isTextboxSelected: boolean = false;
+  isImageSelected: boolean = false;
+  isShapeSelected: boolean = false;
+  private subscription: Subscription;
+
+  
+  @Output() canvasSizeChanged: EventEmitter<string> = new EventEmitter<string>();
+
   fontFamilies: string[] = ['Arial', 'Helvetica', 'Times New Roman', 'Courier New'];
   selectedFontColor: string = '#000000';
 
 
+  constructor(private canvasSelectionService: CanvasSelectionService , private canvasComponent : CanvasComponent) {
+    this.subscription = this.canvasSelectionService.selectionType$.subscribe(selectionType => {
+      this.isTextboxSelected = selectionType === 'textbox';
+      this.isImageSelected = selectionType === 'image';
+      this.isShapeSelected = selectionType === 'shape';
+    });
+  }
+
   isBold: boolean = false;
   isItalic: boolean = false;
   isUnderline: boolean = false 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+  onChangeCanvasSize(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    const size = target.value;
+    this.canvasSizeChanged.emit(size);
+  }
+
 
   onAddCanvas(): void {
     this.addCanvas.emit();
@@ -70,6 +98,12 @@ export class ToolbarComponent {
     this.fontFamilyChanged.emit(selectedFontFamily);
   }
 
+  exportAsJSON() {
+    this.canvasComponent.exportAsJSON(); // Call exportAsJSON() from CanvasComponent
+  }
 
+  exportAsPNG() {
+    this.canvasComponent.exportAsPNG(); // Call exportAsPNG() from CanvasComponent
+  }
   
 }

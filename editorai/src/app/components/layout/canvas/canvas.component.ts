@@ -2,6 +2,7 @@ import { Component, ElementRef, AfterViewInit, HostListener, EventEmitter, Outpu
 import { fabric } from 'fabric';
 import { CanvasSizeService } from '../../Services/canvas-size.service';
 import { Subscription } from 'rxjs';
+import { CanvasSelectionService } from '../../Services/canvas-selection.service';
 
 @Component({
   selector: 'app-canvas',
@@ -21,7 +22,7 @@ export class CanvasComponent implements AfterViewInit {
   containerElement!: HTMLElement;
   zoomLevel = 100; // Initial zoom level (100%)
   @Output() addImageToCategory: EventEmitter<{ name: string, data: string }> = new EventEmitter<{ name: string, data: string }>();
-
+  @Output() textboxSelected: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   isBold: boolean = false;
   isItalic: boolean = false;
@@ -31,11 +32,13 @@ export class CanvasComponent implements AfterViewInit {
   currentTextSize: number = 20;
   selectedTextColor: string = '#000000';
 
-  
+  canvasWidth: number = 700; // Initial canvas width
+  canvasHeight: number = 700; // Initial canvas height
   
   constructor(private elementRef: ElementRef,
     private cdr: ChangeDetectorRef,
     public canvasSizeService: CanvasSizeService,
+    private canvasSelectionService: CanvasSelectionService,
     private renderer: Renderer2) { 
 
       this.subscription = this.canvasSizeService.textToAdd$.subscribe(text => {
@@ -54,14 +57,7 @@ export class CanvasComponent implements AfterViewInit {
       this.canvas.renderAll();
     });
     }
-
-
-    ngOnDestroy() {
-      this.subscription.unsubscribe();
-    }
-    
-
-  ngAfterViewInit() {
+ngAfterViewInit() {
     this.containerElement = this.elementRef.nativeElement.querySelector('.canvas-container');
     this.canvas = new fabric.Canvas('canvas', {
       selection: true // Enable selection
@@ -69,7 +65,39 @@ export class CanvasComponent implements AfterViewInit {
     this.canvas.preserveObjectStacking = true;
     this.resizables();
     this.enableDragAndDrop();
+
+    this.canvas.on('selection:created', this.updateSelectionType.bind(this));
+    this.canvas.on('selection:updated', this.updateSelectionType.bind(this));
+    this.canvas.on('selection:cleared', this.updateSelectionType.bind(this));
   }
+
+  private updateSelectionType() {
+    const activeObject = this.canvas.getActiveObject();
+    if (activeObject instanceof fabric.Textbox) {
+      this.canvasSelectionService.setSelectionType('textbox');
+    } else if (activeObject instanceof fabric.Image) {
+      this.canvasSelectionService.setSelectionType('image');
+    } else if (activeObject instanceof fabric.Rect || activeObject instanceof fabric.Circle) {
+      this.canvasSelectionService.setSelectionType('shape');
+    } else {
+      this.canvasSelectionService.setSelectionType('none');
+    }
+  }
+    ngOnDestroy() {
+      this.subscription.unsubscribe();
+    }
+    
+    onChangeCanvasSize(size: string) {
+      if (size) {
+        const [width, height] = size.split('x').map(Number);
+        this.canvasWidth = width;
+        this.canvasHeight = height;
+        this.canvas.setDimensions({ width, height });
+      }
+    
+    }
+
+  
   private resizables(): void {
     if (this.canvas) {
 
@@ -91,7 +119,7 @@ export class CanvasComponent implements AfterViewInit {
           cornerStyle: 'circle',
           cornerColor: 'white', // Change corner color to white
           cornerSize: 10,
-          borderColor: 'darkblue',
+          borderColor: 'red',
           cornerStrokeColor: 'gray',
           transparentCorners: false, 
           borderScaleFactor: 2,
@@ -102,6 +130,52 @@ export class CanvasComponent implements AfterViewInit {
     }
   }
 
+  exportAsJSON() {
+    const json = JSON.stringify(this.canvas.toJSON());
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'canvas.json';
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  exportAsPNG() {
+    if (this.canvas) {
+      const tempCanvas = document.createElement('canvas');
+      const canvasWidth = this.canvas.width || 0; // Default to 0 if canvas width is undefined
+      const canvasHeight = this.canvas.height || 0; // Default to 0 if canvas height is undefined
+  
+      tempCanvas.width = canvasWidth;
+      tempCanvas.height = canvasHeight;
+      const tempFabricCanvas = new fabric.Canvas(tempCanvas);
+  
+      // Clone objects without resizable properties
+      this.canvas.getObjects().forEach((obj) => {
+        const clone = fabric.util.object.clone(obj);
+        clone.setControlsVisibility({ mt: false, mb: false, ml: false, mr: false, bl: false, br: false, tl: false, tr: false });
+        tempFabricCanvas.add(clone);
+      });
+  
+      // Use fabric.js toDataURL method to export the canvas as a data URL
+      const dataUrl = tempFabricCanvas.toDataURL({
+        format: 'png',
+        quality: 1, // Set quality to 1 for maximum quality
+        multiplier: 1 // Set multiplier to 1 for original size
+      });
+  
+      // Create a link element to trigger download
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = 'canvas_image.png';
+      link.click();
+  
+      // Dispose the temporary fabric canvas
+      tempFabricCanvas.dispose();
+}
+
+  }
   private enableDragAndDrop(): void {
     this.containerElement.addEventListener('dragover', (event) => {
       event.preventDefault();

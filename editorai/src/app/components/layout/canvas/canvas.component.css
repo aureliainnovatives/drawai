@@ -24,10 +24,12 @@ app-toolbar {
 
 
   #canvas {
+    position: fixed;
     border: 2px solid rgb(130, 0, 216);
     overflow: auto;
     background-color: rgb(255, 255, 255);
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+
   }
 
   /* .canvas-container {

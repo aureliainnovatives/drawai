@@ -3,24 +3,6 @@ body {
 }
 
 
-@font-face {
-  font-family: 'bungee' ;
-  /* src: url(BungeeSpice-Regular.ttf); */
-  src: url(BungeeSpice-Regular.ttf);
-}
-
-@font-face {
-  font-family: 'Kalho400' ;
-  /* src: url(BungeeSpice-Regular.ttf); */
-  src: url(Kalho400.otf)format('opentype');
-}
-
-@font-face {
-  font-family: 'SuperMagic' ;
-  /* src: url(BungeeSpice-Regular.ttf); */
-  src: url(SuperMagic.otf) format('opentype');
-}
-
 .panel {
     position: absolute;
     top: 0;
@@ -102,23 +84,8 @@ body {
     flex-wrap: wrap;
     justify-content: start;
     overflow-y: auto;
-    max-height: 220px; /* Adjust the height as needed */
 
   }
-  .card-container::-webkit-scrollbar {
-    width: 6px; /* Width of the scrollbar */
-  }
-  
-  .card-container::-webkit-scrollbar-thumb {
-    background-color: #919191af; /* Color of the scrollbar thumb */
-    border-radius: 5px; /* Rounded corners of the thumb */
-  }
-  
-  .card-container::-webkit-scrollbar-track {
-    background-color: #f0f0f0; /* Color of the scrollbar track */
-  }
-  
-
 
   .card-box:hover {
     background-color: rgba(216, 216, 216, 0.377);
@@ -359,13 +326,13 @@ input[type=text], select {
 
 
 .headings {
-font-family: bungee;
 /* font-family: Poppins; */
 /* color: #007bff; */
 /* background: linear-gradient(to right, #f32170, #ff6b08,#cf23cf, #eedd44);
     -webkit-text-fill-color: transparent;
     -webkit-background-clip: text;
     text-shadow: 2px 2px #030303; */
+font-family: Poppins;
 padding: 10px;
 margin-top: 14px;
 font-size: xx-large;
@@ -377,10 +344,8 @@ font-weight: 700;
 }
 
 .headings2 {
-  font-family: SuperMagic;
-/* font-family: Poppins; */
-  color: #00faa7;
-  text-shadow: 1px 2px 2px  #000000;
+font-family: Poppins;
+
   padding: 10px;
   margin-top: 10px;
   font-size: large;
@@ -391,8 +356,7 @@ font-weight: 700;
   font-weight: 500;
 }
 .headings3 {
-  font-family: Kalho400;
-  color: #007bff;
+  font-family: Poppins;
   padding: 10px;
   margin-top: 10px;
   font-size: larger;
@@ -400,7 +364,7 @@ font-weight: 700;
   text-align: center;
   border-radius: 4px;
   background-color: #e0e0e054;
-  font-weight: 400;
+  font-weight: 300;
 }
 
 .headings:hover {
@@ -482,11 +446,11 @@ h3 {
   background-color: #f0f0f0; /* Color of the scrollbar track */
 }
 
-
 .shape-content-container {
   overflow-y: auto; /* Enable scrollbar for the image content */
   flex: 1;
-  max-height: calc(93vh - 150px); /* Adjust the value based on the height of sticky elements and padding */
+  height: 100%;
+  max-height: calc(93vh - 160px); /* Adjust the value based on the height of sticky elements and padding */
   margin-top: 15px; /* Add margin-top to create space between sticky elements and the content */
  
 }

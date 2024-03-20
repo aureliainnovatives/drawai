@@ -1,5 +1,3 @@
-
-
 <!-- <div>
     <label for="canvasSize">Canvas Size:</label>
     <select [(ngModel)]="selectedCanvasSize" (change)="onCanvasSizeChange(selectedCanvasSize)">
@@ -34,15 +32,29 @@
 
 <!-- canvas.component.html -->
 
+
+<!-- <div>
+  <select (change)="onChangeCanvasSize($event)">
+    <option value="700x700">Letter</option>
+    <option value="950x600">Landscape</option>
+    <option value="450x700">Portrait</option>
+  </select>
+</div> -->
+
+<!-- <button (click)="exportAsJSON()">Export as JSON</button>
+  <button (click)="exportAsPNG()">Export as PNG</button> -->
 <app-toolbar 
+
+(canvasSizeChanged)="onChangeCanvasSize($event)"
   (boldToggled)="toggleBold()" 
   (italicToggled)="toggleItalic()" 
   (underlineToggled)="toggleUnderline()"
   (textSizeChanged)="applySelectedTextSize($event)"
   (textColorChanged)="applySelectedTextColor($event)"
-   (fontFamilyChanged)="applySelectedFontFamily($event)">
+   (fontFamilyChanged)="applySelectedFontFamily($event)"
+  >
 </app-toolbar>
-
+ <!-- (canvasSizeChanged)="onChangeCanvasSize($event)" -->
 
 
 <!-- <button draggable="true" (dragstart)="onDragStart($event, 'filledcircle')">
@@ -65,10 +77,12 @@
        (drop)="onDrop($event)" 
        (drop)="ImageonDrop($event)" 
        (dragover)="onDragOver($event)">
-    <canvas id='canvas' height="700px" width="700px"></canvas>
+    <canvas #canvasElement id='canvas' [height]="canvasHeight" [width]="canvasWidth"></canvas>
   </div>
 
 </div>
 <app-property></app-property>
 <app-footer></app-footer>
 
+
+  
