@@ -54,42 +54,14 @@
    (fontFamilyChanged)="applySelectedFontFamily($event)"
   >
 </app-toolbar>
- <!-- (canvasSizeChanged)="onChangeCanvasSize($event)" -->
 
-
-<!-- <button draggable="true" (dragstart)="onDragStart($event, 'filledcircle')">
-  <span class="material-symbols-outlined">radio_button_unchecked</span>
-</button>
-
-
-<button draggable="true" (dragstart)="onDragStart($event, 'filledtriangle')">
-  <span class="material-symbols-outlined">
-    change_history
-    </span>
-</button>
-
-
-<button draggable="true" (dragstart)="onDragStart($event, 'filledsquare')">
-  <span class="material-symbols-outlined">rectangle</span>
-</button> -->
 <div class="canvas"   >
-  <div #canvasContainer  class="canvas-container" 
-  
-       (drop)="onDrop($event)" 
-       (drop)="ImageonDrop($event)" 
-       (dragover)="onDragOver($event)">
-<<<<<<< HEAD
-    <canvas #canvasElement id='canvas' [height]="canvasHeight" [width]="canvasWidth"></canvas>
-  </div>
-=======
-    
-       
+
   <div class="buttons">    
   <!-- <button class="custom-button" (click)="deleteSelectedObject()">
   <span class="material-symbols-outlined icon-background-less">
    delete
   </span></button> -->
->>>>>>> f4fc60c6ba92ba5b8b2edd50ce7412d1659de636
 
   <button  class="custom-button" (click)="flipSelectedImage()">
     <span class="material-symbols-outlined icon-background-less" >
@@ -108,14 +80,17 @@
     flip_to_back
     </span>
 </button>
-
-
-
-</div> 
- 
-<canvas #canvasEl id='canvas' height="700px" width="700px"></canvas>
   </div>
+
+<div #canvasContainer  class="canvas-container" 
+  
+(drop)="onDrop($event)" 
+(drop)="ImageonDrop($event)" 
+(dragover)="onDragOver($event)">
+
+<canvas  id='canvas' [height]="canvasHeight" [width]="canvasWidth"></canvas>
 </div>
+
 <app-property></app-property>
 <app-footer></app-footer>
 

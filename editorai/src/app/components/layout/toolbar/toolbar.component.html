@@ -44,21 +44,6 @@
    <span>shape-container</span>
  </div>
 
-<<<<<<< HEAD
-
-
-</div>
-<div class="image-container" *ngIf="isImageSelected">
- <span>image-container</span>
-</div>
-
-<!-- Shape container -->
-<div class="shape-container"  *ngIf="isShapeSelected">
-  <span>shape-container</span>
-</div>
-
-=======
->>>>>>> f4fc60c6ba92ba5b8b2edd50ce7412d1659de636
   <div style="display: flex; justify-content: end; width: 100%;">
   <!-- <button (click)="Deletecanvas()" class="custom-button">
     <span class="material-symbols-outlined icon-background-less">
@@ -69,15 +54,11 @@
             note_add
         </span>
     </button> -->
-<<<<<<< HEAD
-=======
-    
->>>>>>> f4fc60c6ba92ba5b8b2edd50ce7412d1659de636
+
 <div class="CanvasSize">
 
   <div class="text-formatting">
 
-<<<<<<< HEAD
   <button (click)="exportAsJSON()">
     <span class="material-symbols-outlined">
       code
@@ -88,7 +69,7 @@
       download
       </span></button>
 
-</div>
+
   <select id="canvasSizeDropdown" (change)="onChangeCanvasSize($event)">
     <option value="700x700">Letter</option>
     <option value="950x600">Landscape</option>
@@ -97,19 +78,7 @@
   
 </div>
 </div>
-=======
-    <button (click)="exportAsJSON()">
-      <span class="material-symbols-outlined">
-        code
-        </span>
-   </button>
-    <button (click)="exportAsPNG()">
-      <span class="material-symbols-outlined">
-        download
-        </span></button>
-  
-  </div>
-  
+
 <select id="canvasSizeDropdown" [(ngModel)]="selectedCanvasSizeOption" (change)="changeCanvasSize.emit(selectedCanvasSizeOption)">
   <option value="letter">Letter</option>
   <option value="whiteboard">Whiteboard</option>
@@ -117,6 +86,4 @@
   
 </select>
 </div>
-</div>
->>>>>>> f4fc60c6ba92ba5b8b2edd50ce7412d1659de636
   </mat-toolbar>

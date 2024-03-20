@@ -2,13 +2,8 @@ import { Component, ElementRef, AfterViewInit, HostListener, EventEmitter, Outpu
 import { fabric } from 'fabric';
 import { CanvasSizeService } from '../../Services/canvas-size.service';
 import { Subscription } from 'rxjs';
-<<<<<<< HEAD
 import { CanvasSelectionService } from '../../Services/canvas-selection.service';
-=======
-import { MatDialog } from '@angular/material/dialog';
-import { CanvasSelectionService } from '../../Services/canvasselection.service';
 
->>>>>>> f4fc60c6ba92ba5b8b2edd50ce7412d1659de636
 
 @Component({
   selector: 'app-canvas',
@@ -29,10 +24,6 @@ export class CanvasComponent implements AfterViewInit {
   zoomLevel = 100; // Initial zoom level (100%)
   @Output() addImageToCategory: EventEmitter<{ name: string, data: string }> = new EventEmitter<{ name: string, data: string }>();
   @Output() textboxSelected: EventEmitter<boolean> = new EventEmitter<boolean>();
-<<<<<<< HEAD
-=======
-
->>>>>>> f4fc60c6ba92ba5b8b2edd50ce7412d1659de636
 
   isBold: boolean = false;
   isItalic: boolean = false;
@@ -42,16 +33,13 @@ export class CanvasComponent implements AfterViewInit {
   currentTextSize: number = 20;
   selectedTextColor: string = '#000000';
 
-<<<<<<< HEAD
   canvasWidth: number = 700; // Initial canvas width
   canvasHeight: number = 700; // Initial canvas height
-=======
+
   copiedObject: fabric.Object | null = null; 
->>>>>>> f4fc60c6ba92ba5b8b2edd50ce7412d1659de636
   
   constructor(private elementRef: ElementRef,
     private cdr: ChangeDetectorRef,
-    public dialog: MatDialog,
     public canvasSizeService: CanvasSizeService,
     private canvasSelectionService: CanvasSelectionService,
     private renderer: Renderer2) { 
@@ -73,10 +61,6 @@ export class CanvasComponent implements AfterViewInit {
       this.canvas.renderAll();
     });
     }
-<<<<<<< HEAD
-ngAfterViewInit() {
-=======
-    
 
     ngOnDestroy() {
       this.subscription.unsubscribe();
@@ -84,7 +68,6 @@ ngAfterViewInit() {
    
 
   ngAfterViewInit() {
->>>>>>> f4fc60c6ba92ba5b8b2edd50ce7412d1659de636
     this.containerElement = this.elementRef.nativeElement.querySelector('.canvas-container');
     this.canvas = new fabric.Canvas('canvas', {
       selection: true // Enable selection
@@ -92,11 +75,6 @@ ngAfterViewInit() {
     this.canvas.preserveObjectStacking = true;
     this.resizables();
     this.enableDragAndDrop();
-<<<<<<< HEAD
-
-=======
-   
->>>>>>> f4fc60c6ba92ba5b8b2edd50ce7412d1659de636
     this.canvas.on('selection:created', this.updateSelectionType.bind(this));
     this.canvas.on('selection:updated', this.updateSelectionType.bind(this));
     this.canvas.on('selection:cleared', this.updateSelectionType.bind(this));
@@ -114,10 +92,7 @@ ngAfterViewInit() {
       this.canvasSelectionService.setSelectionType('none');
     }
   }
-<<<<<<< HEAD
-    ngOnDestroy() {
-      this.subscription.unsubscribe();
-    }
+
     
     onChangeCanvasSize(size: string) {
       if (size) {
@@ -128,12 +103,6 @@ ngAfterViewInit() {
       }
     
     }
-=======
-
-
-
-
->>>>>>> f4fc60c6ba92ba5b8b2edd50ce7412d1659de636
 
   
   private resizables(): void {
@@ -745,25 +714,6 @@ moveObjectForward(): void {
     this.canvas.renderAll();
   }
 }
-
-exportAsJSON() {
-  const json = JSON.stringify(this.canvas.toJSON());
-  const blob = new Blob([json], { type: 'application/json' });
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'canvas.json';
-  link.click();
-  window.URL.revokeObjectURL(url);
-}
-exportAsPNG() {
-  const dataURL = this.canvas.toDataURL({ format: 'png', quality: 1 });
-  const link = document.createElement('a');
-  link.href = dataURL;
-  link.download = 'canvas.png';
-  link.click();
-}
-
 
 }
 
