@@ -99,20 +99,25 @@
         Body text
       </div>
       
+      <!-- side-panel.component.html -->
+<!-- side-panel.component.html -->
+<!-- <div draggable="true" (dragstart)=" onTextDragStart($event, 'Hello', 'roguedash', '#007bff', '2px 2px 4px rgba(3, 2, 2, 1)')">Hello Text</div>
+<div draggable="true" (dragstart)=" onTextDragStart($event, 'Thanks', 'cathilda', 'black', '2px 2px 4px rgba(3, 2, 2, 1)')">Thanks Text</div>
+<div draggable="true" (dragstart)=" onTextDragStart($event, 'Open', 'myford', 'yellow', '2px 2px 4px rgba(3, 2, 2, 1)')">Open Text</div> -->
+
      <h3>Font Combinations</h3>
 
-      <div class="text-content-container">
+     <div class="text-content-container">
       <div class="text-style-thumbnails">
         <ng-container *ngFor="let textStyle of textStyles; let i = index">
-          <div class="thumbnail-container" *ngIf="i % 2 === 0">
-            <img [src]="'assets/textstyles/' + textStyle" alt="Text Style {{i + 1}}">
-          </div>
-          <div class="thumbnail-container" *ngIf="i % 2 !== 0">
-            <img [src]="'assets/textstyles/' + textStyle" alt="Text Style {{i + 1}}">
+          <div class="thumbnail-container" 
+               draggable="true" 
+               (dragstart)="onTextDragStart($event, textStyle)">
+            <img [src]="'assets/textstyles/' + textStyle" [alt]="'Text Style ' + (i + 1)">
           </div>
         </ng-container>
       </div>
-  </div>
+    </div>
 </div>
 
 

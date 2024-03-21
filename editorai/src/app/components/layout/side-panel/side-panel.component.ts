@@ -3,6 +3,7 @@
 import { Component,Renderer2, Input, Output, EventEmitter, ElementRef, AfterViewInit } from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { CanvasSizeService } from '../../Services/canvas-size.service';
+import { TextAdditionService } from '../../Services/text-addition.service';
 
 @Component({
   selector: 'app-side-panel',
@@ -18,6 +19,9 @@ export class SidePanelComponent  {
   @Output() addText: EventEmitter<string> = new EventEmitter<string>(); // New event emitter for adding text
   @Output() shapeDragged: EventEmitter<string> = new EventEmitter<string>();
   @Output() addTextToCanvas: EventEmitter<string> = new EventEmitter<string>()
+
+
+  constructor(private renderer: Renderer2, private el: ElementRef,private textAdditionService: TextAdditionService, private canvasSizeService : CanvasSizeService) {}
 
 
   selectedImage: { name: string, data: string } | null = null;
@@ -57,6 +61,14 @@ export class SidePanelComponent  {
     halffilledstar: 'assets/icons/halffilledstar.svg',
     fullfilledstar: 'assets/icons/fullfilledstar.svg',
   };
+
+  addstylishText(text: string, fontFamily: string, fill: string, shadow: string) {
+    this.textAdditionService.addTextWithStyle.next({ text, fontFamily, fill, shadow });
+  }
+  onTextDragStart(event: DragEvent, textStyle: string) {
+    event.dataTransfer?.setData('textStyle', textStyle);
+  }
+ 
 
   get filteredShapeArrays() {
     if (!this.searchTerm.trim()) {
@@ -123,7 +135,6 @@ export class SidePanelComponent  {
   ];
 
 
-  constructor(private renderer: Renderer2, private el: ElementRef, private canvasSizeService : CanvasSizeService) {}
   onDragStart(event: DragEvent, shape: string) {
     event.dataTransfer!.setData('text/plain', shape);
   }

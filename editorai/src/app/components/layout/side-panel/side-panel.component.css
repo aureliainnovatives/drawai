@@ -323,7 +323,6 @@ input[type=text], select {
   padding-left: 40px; /* Adjust the padding to leave space for the icon */
 }
 
-w
 .headings {
 /* font-family: Poppins; */
 /* color: #007bff; */
@@ -374,8 +373,6 @@ font-weight: 700;
 .headings3:hover {
   background-color: rgba(182, 180, 180, 0.418);
 }
-
-
 .text-style-thumbnails {
   display: flex;
   flex-wrap: wrap;

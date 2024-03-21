@@ -4,6 +4,7 @@ import { CanvasSizeService } from '../../Services/canvas-size.service';
 import { Subscription } from 'rxjs';
 import { CanvasSelectionService } from '../../Services/canvas-selection.service';
 import { SelectedColorService } from '../../Services/selected-color.service';
+import { TextAdditionService } from '../../Services/text-addition.service';
 
 
 @Component({
@@ -17,10 +18,8 @@ export class CanvasComponent implements AfterViewInit {
   private subscription: Subscription;
   private textboxes: fabric.Textbox[] = []; 
 
-
   selectedColor: string = '#000000';
 
-  
   canvas!: fabric.Canvas;
   scaleFactor = 1.1; // Zoom factor
   maxZoom = 10; // Maximum zoom
@@ -31,7 +30,7 @@ export class CanvasComponent implements AfterViewInit {
   @Output() textboxSelected: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() zoomLevelChanged = new EventEmitter<number>();
 
-  
+    selectedBorderColor: string = '#000000'; // Default border color
   isBold: boolean = false;
   isItalic: boolean = false;
   isUnderline: boolean = false;
@@ -50,6 +49,7 @@ export class CanvasComponent implements AfterViewInit {
     private changeDetectorRef: ChangeDetectorRef,
     public canvasSizeService: CanvasSizeService,
     private selectedColorService: SelectedColorService,
+    private textAdditionService: TextAdditionService,
     private canvasSelectionService: CanvasSelectionService,
     private renderer: Renderer2) { 
 
@@ -82,7 +82,7 @@ export class CanvasComponent implements AfterViewInit {
     });
     this.canvas.preserveObjectStacking = true;
     this.resizables();
-    this.enableDragAndDrop();
+    // this.enableDragAndDrop();
     this.canvas.on('selection:created', this.updateSelectionType.bind(this));
     this.canvas.on('selection:updated', this.updateSelectionType.bind(this));
     this.canvas.on('selection:cleared', this.updateSelectionType.bind(this));
@@ -91,6 +91,10 @@ export class CanvasComponent implements AfterViewInit {
     this.canvas.on('selection:updated', this.onSelectionChange.bind(this));
     this.canvas.on('selection:cleared', this.onSelectionChange.bind(this));
     
+    this.canvas.on('selection:created', () => this.updateSelectedBorderColor());
+    this.canvas.on('selection:updated', () => this.updateSelectedBorderColor());
+    this.canvas.on('selection:cleared', () => this.selectedColorService.setBorderColor('')); // Reset when no selection
+
     this.selectedColorService.selectedColor$.subscribe(color => {
       this.selectedColor = color;
       this.changeShapeColor(color); // Call method to change shape color
@@ -100,25 +104,128 @@ export class CanvasComponent implements AfterViewInit {
       const fillColor = activeObject.get('fill') as string;
       this.selectedColorService.setSelectedColor(fillColor);
     }
-
-    this.addText('Hello', 50, 50, 'roguedash', '#007bff', '2px 2px 4px rgba(3, 2, 2, 1)');
-    this.addText('Thanks', 50, 100, 'cathilda', 'black', '2px 2px 4px rgba(3, 2, 2, 1)');
-    this.addText('Open', 50, 150, 'myford', 'yellow', '2px 2px 4px rgba(3, 2, 2, 1)');
-
- 
-  }
- addText(content: string, left: number, top: number, fontFamily: string, fill: string, shadow: string) {
-    const text = new fabric.Textbox(content, {
-      left,
-      top,
-      fontFamily,
-      fill,
-      shadow
+    this.subscription = this.textAdditionService.addTextWithStyle.subscribe(data => {
+      this.addTextWithStyle(data.text, data.fontFamily, data.fill, data.shadow);
     });
-    this.textboxes.push(text); 
-    this.canvas.add(text);
+
+    this.selectedColorService.borderColor$.subscribe(color => {
+      console.log('Received border color in canvas:', color); // Debugging statement
+      this.changeBorderColor(color);
+    });
+    
+  }
+
+
+  // Method to add text to canvas on button click with specified styles
+
+  addTextWithStyle(text: string, fontFamily: string, fill: string, shadow: string) {
+    const left = 50;
+    const top = 50 + this.canvas.getObjects().length * 50;
+    const newText = new fabric.Textbox(text, {
+      left: left,
+      top: top,
+      fontFamily: fontFamily,
+      fill: fill,
+      shadow: shadow,
+      fontSize: 90 // Set the desired font size
+    });
+    
+       setTimeout(() => {
+    this.canvas.add(newText);
+      this.canvas.renderAll();
+    }, 100);
   }
   
+  onTextDrop(event: DragEvent) {
+    event.preventDefault();
+    const textStyle = event.dataTransfer?.getData('textStyle') || '';
+    let text = '';
+    let fontFamily = '';
+    let fill = '';
+    let shadow = '';
+    switch (textStyle) {
+      case 'style1.png':
+        text = 'Hello';
+        fontFamily = 'roguedash';
+        fill = '#007bff';
+        shadow = '2px 2px 4px rgba(3, 2, 2, 1)';
+        break;
+        case 'style2.png':
+          text = 'Thanks';
+          fontFamily = 'cathilda';
+          fill = 'black';
+          shadow = '2px 2px 4px rgba(3, 2, 2, 1)';
+          break;
+  
+      case 'style3.png':
+          text = 'Open';
+          fontFamily = 'myford';
+          fill = 'yellow';
+          shadow = '2px 2px 4px rgba(3, 2, 2, 1)';
+          break;
+  
+      case 'style4.png':
+          text = 'WOW!';
+          fontFamily = 'catcut';
+          fill = 'rgba(255, 20, 147, 0.9)';
+          shadow = '2px 2px 4px rgba(0, 0, 0, 0.5)';
+          break;
+  
+      case 'style5.png':
+          text = 'Do What YOU LoVE';
+          fontFamily = 'rainbow';
+          fill = 'red';
+          shadow = '';
+          break;
+  
+      case 'style6.png':
+          text = 'ChiLL!!';
+          fontFamily = 'chunkfive';
+          fill = 'purple';
+          shadow = '';
+          break;
+  
+      case 'style7.png':
+          text = 'Happy Birthday';
+          fontFamily = 'milvasten';
+          fill = 'rgb(248, 110, 5)';
+          shadow = '2px 2px 4px rgba(0, 0, 0, 0.5)';
+          break;
+  
+      case 'style8.png':
+          text = 'enjoy';
+          fontFamily = 'kleptocracy';
+          fill = 'rgb(255, 0, 85)';
+          shadow = '2px 2px 4px rgba(5, 5, 5, 3)';
+          break;
+  
+      case 'style9.png':
+          text = 'Coming Soon';
+          fontFamily = 'ph';
+          fill = 'blue';
+          shadow = '2px 2px 4px rgba(255, 20, 147, 0.9)';
+          break;
+  
+      case 'style10.png':
+          text = 'Party';
+          fontFamily = 'prida01';
+          fill = 'rgb(6, 243, 239)';
+          shadow = '2px 2px 4px rgba(255, 43, 20, 0.9)';
+          break;
+  
+      case 'style11.png':
+          text = 'PLAY';
+          fontFamily = 'prida';
+          fill = 'rgb(32, 1, 33)';
+          shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+          break;
+        
+    
+    }
+    this.addTextWithStyle(text, fontFamily, fill, shadow);
+  
+      this.canvas.renderAll();
+  }
 
 private updateSelectionType() {
   const activeObject = this.canvas.getActiveObject();
@@ -143,8 +250,13 @@ onSelectionChange() {
   if (activeObject) {
     const fillColor = activeObject.get('fill') as string;
     this.selectedColorService.setSelectedColor(fillColor);
+    
+    if (activeObject.stroke) {
+      this.selectedBorderColor = activeObject.stroke;
+    }
   }
 }
+
 changeShapeColor(color: string) {
   const activeObject = this.canvas.getActiveObject();
   if (activeObject) {
@@ -153,31 +265,40 @@ changeShapeColor(color: string) {
   }
 }
 
-
-onColorChange(event: Event) {
-  // Assert event.target as HTMLInputElement
+onColorChange(event: Event, isBorderColor: boolean = false) {
   const target = event.target as HTMLInputElement;
+  if (isBorderColor) {
+    this.selectedBorderColor = target.value;
+    this.changeBorderColor(this.selectedBorderColor); // Apply border color
+  } else {
+    this.selectedColor = target.value;
+    this.changeShapeColor(this.selectedColor); // Apply fill color
+  }
+}
 
-  // Update the selected color
-  this.selectedColor = target.value;
-
-  // Apply the color to the selected fabric shape
+changeBorderColor(color: string) {
   const activeObject = this.canvas.getActiveObject();
-  if (activeObject) {
-    activeObject.set('fill', this.selectedColor); // Change fill color
+  if (activeObject && activeObject.stroke) {
+    activeObject.set('stroke', color); // Change border color
     this.canvas.renderAll(); // Render canvas to reflect changes
   }
 }
 
-    onChangeCanvasSize(size: string) {
-      if (size) {
-        const [width, height] = size.split('x').map(Number);
-        this.canvasWidth = width;
-        this.canvasHeight = height;
-        this.canvas.setDimensions({ width, height });
-      }
-    
-    }
+updateSelectedBorderColor() {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject && activeObject.stroke) {
+    this.selectedColorService.setBorderColor(activeObject.stroke); // Update selected border color
+  }
+}
+onChangeCanvasSize(size: string) {
+  if (size) {
+    const [width, height] = size.split('x').map(Number);
+    this.canvasWidth = width;
+    this.canvasHeight = height;
+    this.canvas.setDimensions({ width, height });
+  }
+
+}
 
   
   private resizables(): void {
@@ -258,19 +379,19 @@ onColorChange(event: Event) {
 }
 
   }
-  private enableDragAndDrop(): void {
-    this.containerElement.addEventListener('dragover', (event) => {
-      event.preventDefault();
-    });
+  // private enableDragAndDrop(): void {
+  //   this.containerElement.addEventListener('dragover', (event) => {
+  //     event.preventDefault();
+  //   });
 
-    this.containerElement.addEventListener('drop', (event) => {
-      event.preventDefault();
-      const file = event.dataTransfer?.files[0];
-      if (file) {
-        this.loadImageFromFile(file);
-      }
-    });
-  }
+  //   this.containerElement.addEventListener('drop', (event) => {
+  //     event.preventDefault();
+  //     const file = event.dataTransfer?.files[0];
+  //     if (file) {
+  //       this.loadImageFromFile(file);
+  //     }
+  //   });
+  // }
 
   
   private loadImageFromFile(file: File): void {

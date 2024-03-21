@@ -44,6 +44,10 @@
 
 <input type="color" [(ngModel)]="selectedColor" (ngModelChange)="onColorChange()">
 
+<div class="color-picker-container">
+  <div class="color-picker-inner-square"></div>
+  <input type="color" [(ngModel)]="selectedBorderColor" (input)="changeBorderColor($event)">
+</div>
  </div>
 
   <div style="display: flex; justify-content: end; width: 100%;">

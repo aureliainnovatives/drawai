@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CanvasComponent } from '../canvas/canvas.component';
 import { Subscription } from 'rxjs';
 import { CanvasSelectionService } from '../../Services/canvas-selection.service';
@@ -9,7 +9,7 @@ import { SelectedColorService } from '../../Services/selected-color.service';
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.css']
 })
-export class ToolbarComponent {
+export class ToolbarComponent implements OnInit {
   @Output() addCanvas: EventEmitter<void> = new EventEmitter<void>();
   @Output() changeCanvasSize: EventEmitter<string> = new EventEmitter<string>();
   @Input() selectedCanvasSizeOption: string = 'letter';
@@ -27,6 +27,7 @@ export class ToolbarComponent {
   @Input() currentTextSize: number=20; 
   @Input() selectedTextSize: number = 20;
 
+  selectedBorderColor: string = '';
   isTextboxSelected: boolean = false;
   isImageSelected: boolean = false;
   isShapeSelected: boolean = false;
@@ -50,6 +51,11 @@ export class ToolbarComponent {
 
   textSize: number = 20; 
   constructor(private canvasComponent: CanvasComponent,private selectedColorService: SelectedColorService,private canvasSelectionService: CanvasSelectionService) {
+   
+    this.selectedColorService.borderColor$.subscribe(color => {
+      this.selectedBorderColor = color;
+    });
+    
     this.subscription = this.canvasSelectionService.selectionType$.subscribe(selectionType => {
       this.isTextboxSelected = selectionType === 'textbox';
       this.isImageSelected = selectionType === 'image';
@@ -63,6 +69,10 @@ export class ToolbarComponent {
 ngOnInit() {
   this.selectedColorService.selectedColor$.subscribe(color => {
     this.selectedColor = color;
+  });
+
+  this.selectedColorService.borderColor$.subscribe(color => {
+    this.selectedBorderColor = color;
   });
 }
   onAddCanvas(): void {
@@ -113,5 +123,11 @@ exportAsJSON() {
   }
   onColorChange() {
     this.selectedColorService.setSelectedColor(this.selectedColor);
+  }
+  changeBorderColor(event: any) {
+    const color = event?.target?.value; // Check for null or undefined before accessing value
+    if (color !== null && color !== undefined) {
+      this.selectedColorService.setBorderColor(color);
+    }
   }
 }

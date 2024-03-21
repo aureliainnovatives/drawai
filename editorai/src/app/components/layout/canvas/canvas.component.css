@@ -59,6 +59,64 @@ app-toolbar {
 
   }
 
+  @font-face {
+    font-family: 'roguedash' ;
+    src: url(/assets/textFonts/Roguedash-Solid.otf);
+  }
 
-
-  
+@font-face {
+    font-family: 'cathilda' ;
+      /* src: url(BungeeSpice-Regular.ttf); */
+    src: url(/assets/textFonts/Cathilda-400.otf);
+  }
+    
+@font-face {
+    font-family: 'myford' ;
+    /* src: url(BungeeSpice-Regular.ttf); */
+    src: url(/assets/textFonts/Mayford-Display-Regular-400.otf);
+  }
+  @font-face {
+    font-family: 'catcut' ;
+    /* src: url(BungeeSpice-Regular.ttf); */
+    src: url(/assets/textFonts/Catcut-400.otf);
+  }
+  @font-face {
+    font-family: 'rainbow' ;
+    /* src: url(BungeeSpice-Regular.ttf); */
+    src: url(/assets/textFonts/Rainbow-Layer-400.otf);
+  }    
+  @font-face {
+    font-family: 'chunkfive' ;
+    /* src: url(BungeeSpice-Regular.ttf); */
+    src: url(/assets/textFonts/Chunk-Five-Print.otf);
+  }  
+  @font-face {
+    font-family: 'chunkfive' ;
+    /* src: url(BungeeSpice-Regular.ttf); */
+    src: url(/assets/textFonts/Chunk-Five-Print.otf);
+  } 
+  @font-face {
+    font-family: 'milvasten' ;
+    /* src: url(BungeeSpice-Regular.ttf); */
+    src: url(/assets/textFonts/Milvasten-Regular-400.otf);
+ } 
+ @font-face {
+    font-family: 'kleptocracy' ;
+    /* src: url(BungeeSpice-Regular.ttf); */
+    src: url(/assets/textFonts/kleptocracy-titling-ex-bd.otf);
+  } 
+  @font-face {
+    font-family: 'ph' ;
+    /* src: url(BungeeSpice-Regular.ttf); */
+    src: url(/assets/textFonts/PH-300-Cond-Caps.otf);
+  }
+  @font-face {
+    font-family: 'prida01' ;
+    /* src: url(BungeeSpice-Regular.ttf); */
+    src: url(/assets/textFonts/Prida01.otf);
+  }
+  @font-face {
+    font-family: 'prida' ;
+    /* src: url(BungeeSpice-Regular.ttf); */
+    src: url(/assets/textFonts/Prida01Light.otf);
+}

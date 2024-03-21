@@ -168,3 +168,23 @@ input[type="color"]::-webkit-color-swatch {
   font-size: 16px;
   user-select: none;
 }
+
+.shape-container {
+  display: flex;
+  gap: 7px;
+}
+
+.color-picker-container {
+  display: inline-block;
+  position: relative; /* To position the inner square */
+}
+
+.color-picker-inner-square {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centers the square */
+  width: 80%;  /* Adjust percentage for the desired empty space */
+  height: 80%;
+  background-color: white;
+}

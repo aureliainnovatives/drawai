@@ -45,7 +45,7 @@
   <button (click)="exportAsPNG()">Export as PNG</button> -->
 <!-- <input type="color" [(ngModel)]="selectedColor" (input)="onColorChange($event)"> -->
 
-  <app-toolbar
+<app-toolbar
     (canvasSizeChanged)="onChangeCanvasSize($event)"
     (boldToggled)="toggleBold()" 
     (italicToggled)="toggleItalic()" 
@@ -61,6 +61,7 @@
   
 (drop)="onDrop($event)" 
 (drop)="ImageonDrop($event)" 
+(drop)="onTextDrop($event)"
 (dragover)="onDragOver($event)">
   <div class="buttons">    
   <!-- <button class="custom-button" (click)="deleteSelectedObject()">
@@ -76,18 +77,16 @@
 
   <button  class="custom-button" (click)="moveObjectBackward()">
     <span class="material-symbols-outlined icon-background-less">
-      flip_to_front
+      flip_to_back
       </span>
 </button>
 
 <button  class="custom-button" (click)="moveObjectForward()">
-  <span class="material-symbols-outlined icon-background-less">
-    flip_to_back
-    </span>
+ <span class="material-symbols-outlined icon-background-less">
+      flip_to_front
+      </span>
 </button>
   </div>
-
-
 
 <canvas  id='canvas' [height]="canvasHeight" [width]="canvasWidth"></canvas>
 
