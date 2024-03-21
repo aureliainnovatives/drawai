@@ -4,6 +4,7 @@
   border: 1px solid #cacacaa4;  
   display: flex;
   justify-content: start;
+  position: relative;
 }
   .progress-tooltip {
     font-size: 14px;
@@ -11,19 +12,10 @@
     margin-left: 15px;
   }
   .ProgressContainer {
-    display: flex;
-    justify-content: end;
+    display: flex ;
+    justify-content: end ;
     width: 100%;
   }
   .progressBar {
-     width: 300px;
-  }
-
-  ::ng-deep .ant-slider-handle {
-    background-color: #a8a8a8; /* Change to your desired color */
-  }
-  
-  /* Change progress line color */
-  ::ng-deep .ant-slider-track {
-    background-color:  rgb(130, 0, 216);/* Change to your desired color */
+     width: 270px;
   }

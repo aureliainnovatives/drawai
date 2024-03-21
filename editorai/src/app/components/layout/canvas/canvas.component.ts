@@ -3,6 +3,7 @@ import { fabric } from 'fabric';
 import { CanvasSizeService } from '../../Services/canvas-size.service';
 import { Subscription } from 'rxjs';
 import { CanvasSelectionService } from '../../Services/canvas-selection.service';
+import { SelectedColorService } from '../../Services/selected-color.service';
 
 
 @Component({
@@ -16,6 +17,10 @@ export class CanvasComponent implements AfterViewInit {
   private subscription: Subscription;
   private textboxes: fabric.Textbox[] = []; 
 
+
+  selectedColor: string = '#000000';
+
+  
   canvas!: fabric.Canvas;
   scaleFactor = 1.1; // Zoom factor
   maxZoom = 10; // Maximum zoom
@@ -24,7 +29,9 @@ export class CanvasComponent implements AfterViewInit {
   zoomLevel = 100; // Initial zoom level (100%)
   @Output() addImageToCategory: EventEmitter<{ name: string, data: string }> = new EventEmitter<{ name: string, data: string }>();
   @Output() textboxSelected: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() zoomLevelChanged = new EventEmitter<number>();
 
+  
   isBold: boolean = false;
   isItalic: boolean = false;
   isUnderline: boolean = false;
@@ -40,14 +47,15 @@ export class CanvasComponent implements AfterViewInit {
   
   constructor(private elementRef: ElementRef,
     private cdr: ChangeDetectorRef,
+    private changeDetectorRef: ChangeDetectorRef,
     public canvasSizeService: CanvasSizeService,
+    private selectedColorService: SelectedColorService,
     private canvasSelectionService: CanvasSelectionService,
     private renderer: Renderer2) { 
 
       this.subscription = this.canvasSizeService.textToAdd$.subscribe(text => {
         this.textToAdd = text;
 
-        
       const fabricText = new fabric.Textbox(this.textToAdd, {
         left: 10,
         top: 10,
@@ -78,22 +86,89 @@ export class CanvasComponent implements AfterViewInit {
     this.canvas.on('selection:created', this.updateSelectionType.bind(this));
     this.canvas.on('selection:updated', this.updateSelectionType.bind(this));
     this.canvas.on('selection:cleared', this.updateSelectionType.bind(this));
-  }
 
-  private updateSelectionType() {
-    const activeObject = this.canvas.getActiveObject();
-    if (activeObject instanceof fabric.Textbox) {
-      this.canvasSelectionService.setSelectionType('textbox');
-    } else if (activeObject instanceof fabric.Image) {
-      this.canvasSelectionService.setSelectionType('image');
-    } else if (activeObject instanceof fabric.Rect || activeObject instanceof fabric.Circle) {
-      this.canvasSelectionService.setSelectionType('shape');
-    } else {
-      this.canvasSelectionService.setSelectionType('none');
-    }
-  }
-
+    this.canvas.on('selection:created', this.onSelectionChange.bind(this));
+    this.canvas.on('selection:updated', this.onSelectionChange.bind(this));
+    this.canvas.on('selection:cleared', this.onSelectionChange.bind(this));
     
+    this.selectedColorService.selectedColor$.subscribe(color => {
+      this.selectedColor = color;
+      this.changeShapeColor(color); // Call method to change shape color
+    });
+    const activeObject = this.canvas.getActiveObject();
+    if (activeObject) {
+      const fillColor = activeObject.get('fill') as string;
+      this.selectedColorService.setSelectedColor(fillColor);
+    }
+
+    this.addText('Hello', 50, 50, 'roguedash', '#007bff', '2px 2px 4px rgba(3, 2, 2, 1)');
+    this.addText('Thanks', 50, 100, 'cathilda', 'black', '2px 2px 4px rgba(3, 2, 2, 1)');
+    this.addText('Open', 50, 150, 'myford', 'yellow', '2px 2px 4px rgba(3, 2, 2, 1)');
+
+ 
+  }
+ addText(content: string, left: number, top: number, fontFamily: string, fill: string, shadow: string) {
+    const text = new fabric.Textbox(content, {
+      left,
+      top,
+      fontFamily,
+      fill,
+      shadow
+    });
+    this.textboxes.push(text); 
+    this.canvas.add(text);
+  }
+  
+
+private updateSelectionType() {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject instanceof fabric.Textbox) {
+    this.canvasSelectionService.setSelectionType('textbox');
+  } else if (activeObject instanceof fabric.Image) {
+    this.canvasSelectionService.setSelectionType('image');
+  } else if (
+    activeObject instanceof fabric.Rect ||
+    activeObject instanceof fabric.Polygon ||
+    activeObject instanceof fabric.Circle ||
+    activeObject instanceof fabric.Triangle 
+  ) {
+    this.canvasSelectionService.setSelectionType('shape');
+  } else {
+    this.canvasSelectionService.setSelectionType('none');
+  }
+}
+
+onSelectionChange() {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject) {
+    const fillColor = activeObject.get('fill') as string;
+    this.selectedColorService.setSelectedColor(fillColor);
+  }
+}
+changeShapeColor(color: string) {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject) {
+    activeObject.set('fill', color);
+    this.canvas.renderAll(); // Render canvas to reflect changes
+  }
+}
+
+
+onColorChange(event: Event) {
+  // Assert event.target as HTMLInputElement
+  const target = event.target as HTMLInputElement;
+
+  // Update the selected color
+  this.selectedColor = target.value;
+
+  // Apply the color to the selected fabric shape
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject) {
+    activeObject.set('fill', this.selectedColor); // Change fill color
+    this.canvas.renderAll(); // Render canvas to reflect changes
+  }
+}
+
     onChangeCanvasSize(size: string) {
       if (size) {
         const [width, height] = size.split('x').map(Number);
@@ -264,10 +339,10 @@ export class CanvasComponent implements AfterViewInit {
     this.applyZoom();
   }
 
-  // Apply zoom transformation to the container element
   applyZoom() {
     const scaleValue = this.zoomLevel / 100;
     this.containerElement.style.transform = `scale(${scaleValue})`;
+    this.zoomLevelChanged.emit(this.zoomLevel); // Emitting zoom level change
   }
   // Host listener for wheel events
   @HostListener('wheel', ['$event'])
@@ -400,8 +475,6 @@ ImageonDrop(event: DragEvent) {
                     left: event.offsetX,
                     top: event.offsetY,
                     fill: 'black',
-                    stroke :'black',
-                    strokeWidth :2,
                     width: 100,
                     height: 100,
                    

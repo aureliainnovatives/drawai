@@ -10,10 +10,7 @@
 
   } 
 
-  .CanvasSize :hover {
-    background-color: #ececec;
-  }
-  
+
   .CanvasSize {
     display: flex;
     justify-content: end;
@@ -24,7 +21,7 @@
   #canvasSizeDropdown {
       margin-right: 50px;
       margin-left: 2px;
-      padding-right: 22px;
+      padding-right: 29px;
       font-weight: 400;
       color: #000000;
   }
@@ -112,6 +109,7 @@ select {
 }
 
 /* Styling for the dropdown arrow */
+.canvas-style select,
 .text-style select {
   padding-right: 22px;
   background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');

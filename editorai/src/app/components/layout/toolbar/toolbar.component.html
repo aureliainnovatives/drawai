@@ -41,7 +41,9 @@
  
  <!-- Shape container -->
  <div class="shape-container"  *ngIf="isShapeSelected">
-   <span>shape-container</span>
+
+<input type="color" [(ngModel)]="selectedColor" (ngModelChange)="onColorChange()">
+
  </div>
 
   <div style="display: flex; justify-content: end; width: 100%;">
@@ -68,15 +70,14 @@
     <span class="material-symbols-outlined">
       download
       </span></button>
-
-
+</div>
+  <div class="canvas-style">
   <select id="canvasSizeDropdown" (change)="onChangeCanvasSize($event)">
     <option value="700x700">Letter</option>
     <option value="950x600">Landscape</option>
     <option value="450x700">Portrait</option>
   </select>
-  
-</div>
+  </div>
 </div>
 
 </div>

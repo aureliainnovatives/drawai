@@ -35,7 +35,6 @@ body {
   
   .scrollable-content {
     flex: 1;
-    overflow-y: auto;
   }
   
   .close-button {
@@ -324,7 +323,7 @@ input[type=text], select {
   padding-left: 40px; /* Adjust the padding to leave space for the icon */
 }
 
-
+w
 .headings {
 /* font-family: Poppins; */
 /* color: #007bff; */
@@ -344,8 +343,7 @@ font-weight: 700;
 }
 
 .headings2 {
-font-family: Poppins;
-
+  font-family: Poppins;
   padding: 10px;
   margin-top: 10px;
   font-size: large;
@@ -447,12 +445,11 @@ h3 {
 }
 
 .shape-content-container {
-  overflow-y: auto; /* Enable scrollbar for the image content */
+  overflow-y: auto;
   flex: 1;
   height: 100%;
   max-height: calc(93vh - 160px); /* Adjust the value based on the height of sticky elements and padding */
   margin-top: 15px; /* Add margin-top to create space between sticky elements and the content */
- 
 }
 .shape-content-container::-webkit-scrollbar {
   width: 6px; /* Width of the scrollbar */

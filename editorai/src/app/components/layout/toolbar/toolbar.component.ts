@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CanvasComponent } from '../canvas/canvas.component';
 import { Subscription } from 'rxjs';
 import { CanvasSelectionService } from '../../Services/canvas-selection.service';
+import { SelectedColorService } from '../../Services/selected-color.service';
 
 @Component({
   selector: 'app-toolbar',
@@ -14,7 +15,7 @@ export class ToolbarComponent {
   @Input() selectedCanvasSizeOption: string = 'letter';
   @Output() deletecanvas: EventEmitter<void> = new EventEmitter<void>();
   @Output() fileInputChange : EventEmitter<string> = new EventEmitter<string>();
-
+  selectedColor$ = this.selectedColorService.selectedColor$;
  
 
   @Output() boldToggled = new EventEmitter<void>();
@@ -40,7 +41,7 @@ export class ToolbarComponent {
   isBold: boolean = false;
   isItalic: boolean = false;
   isUnderline: boolean = false 
-
+  selectedColor: string = '#000000';
   onChangeCanvasSize(event: Event) {
     const target = event.target as HTMLSelectElement;
     const size = target.value;
@@ -48,7 +49,7 @@ export class ToolbarComponent {
   }
 
   textSize: number = 20; 
-  constructor(private canvasComponent: CanvasComponent,private canvasSelectionService: CanvasSelectionService) {
+  constructor(private canvasComponent: CanvasComponent,private selectedColorService: SelectedColorService,private canvasSelectionService: CanvasSelectionService) {
     this.subscription = this.canvasSelectionService.selectionType$.subscribe(selectionType => {
       this.isTextboxSelected = selectionType === 'textbox';
       this.isImageSelected = selectionType === 'image';
@@ -57,6 +58,12 @@ export class ToolbarComponent {
 
    ngOnDestroy() {
     this.subscription.unsubscribe();
+}
+
+ngOnInit() {
+  this.selectedColorService.selectedColor$.subscribe(color => {
+    this.selectedColor = color;
+  });
 }
   onAddCanvas(): void {
     this.addCanvas.emit();
@@ -104,6 +111,7 @@ exportAsJSON() {
   exportAsPNG() {
     this.canvasComponent.exportAsPNG(); // Call exportAsPNG() from CanvasComponent
   }
-
-  
+  onColorChange() {
+    this.selectedColorService.setSelectedColor(this.selectedColor);
+  }
 }

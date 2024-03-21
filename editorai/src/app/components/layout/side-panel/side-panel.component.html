@@ -45,7 +45,6 @@
         <div class="element" >
               <ng-container *ngFor="let shapeArray of filteredShapeArrays">
                 <span class="category-title">{{ shapeArray.category }}</span>
-                <div class="scrollable-container">
                   <div class="card-container">
                     <mat-card class="card-box" *ngFor="let shape of shapeArray.shapes"  >
                       <mat-card-header>
@@ -55,7 +54,6 @@
                     </mat-card-header>
                     </mat-card>
                   </div>
-                </div>
               </ng-container>
             </div>
          </div>
