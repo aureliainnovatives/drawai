@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { CanvasSelectionService } from '../../Services/canvas-selection.service';
 import { SelectedColorService } from '../../Services/selected-color.service';
 import { TextAdditionService } from '../../Services/text-addition.service';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -29,8 +30,9 @@ export class CanvasComponent implements AfterViewInit {
   @Output() addImageToCategory: EventEmitter<{ name: string, data: string }> = new EventEmitter<{ name: string, data: string }>();
   @Output() textboxSelected: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() zoomLevelChanged = new EventEmitter<number>();
+  @Output() canvasColorChanged: EventEmitter<string> = new EventEmitter<string>();
 
-    selectedBorderColor: string = '#000000'; // Default border color
+  selectedBorderColor: string = '#000000'; // Default border color
   isBold: boolean = false;
   isItalic: boolean = false;
   isUnderline: boolean = false;
@@ -38,7 +40,9 @@ export class CanvasComponent implements AfterViewInit {
   selectedTextSize: number = 20;
   currentTextSize: number = 20;
   selectedTextColor: string = '#000000';
+  showColorChooser: boolean = true;
 
+  
   canvasWidth: number = 700; // Initial canvas width
   canvasHeight: number = 700; // Initial canvas height
 
@@ -50,6 +54,7 @@ export class CanvasComponent implements AfterViewInit {
     public canvasSizeService: CanvasSizeService,
     private selectedColorService: SelectedColorService,
     private textAdditionService: TextAdditionService,
+    private http: HttpClient,
     private canvasSelectionService: CanvasSelectionService,
     private renderer: Renderer2) { 
 
@@ -112,7 +117,14 @@ export class CanvasComponent implements AfterViewInit {
       console.log('Received border color in canvas:', color); // Debugging statement
       this.changeBorderColor(color);
     });
-    
+
+    this.selectedColorService.canvasColor$.subscribe(color => {
+      if (this.canvas) {
+        this.canvas.backgroundColor = color;
+        this.canvas.renderAll();
+      }
+    });
+
   }
 
 
@@ -332,6 +344,14 @@ onChangeCanvasSize(size: string) {
       };
     }
   }
+  changeCanvasColor(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (target) {
+      const color = target.value;
+      this.selectedColorService.updateCanvasColor(color);
+    }
+  }
+
 
   exportAsJSON() {
     const json = JSON.stringify(this.canvas.toJSON());
@@ -379,6 +399,7 @@ onChangeCanvasSize(size: string) {
 }
 
   }
+  
   // private enableDragAndDrop(): void {
   //   this.containerElement.addEventListener('dragover', (event) => {
   //     event.preventDefault();
@@ -489,35 +510,51 @@ onDragOver(event: DragEvent) {
 
 ImageonDrop(event: DragEvent) {
   event.preventDefault();
-  const imageData = event.dataTransfer!.getData('text/plain');
-  const img = new Image();
-  img.src = imageData;
-  const canvas = this.canvas;
+  const imageURL = event.dataTransfer!.getData('text/plain');
 
-  img.onload = () => {
-    const fabricImg = new fabric.Image(img, {
-      left: event.offsetX,
-      top: event.offsetY,
-    });
+  // Load the image URL using HttpClient to avoid CORS issues
+  this.http.get(imageURL, { responseType: 'blob' }).subscribe((blob: Blob) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64Data = reader.result as string;
 
-    // Scale the image to fit within the canvas dimensions
-    fabricImg.scaleToWidth(canvas.getWidth() * 0.4); // Adjust the scale as needed
-    fabricImg.scaleToHeight(canvas.getHeight() * 0.4); // Adjust the scale as needed
+      // Create a Fabric.js Image object with base64 data
+      fabric.Image.fromURL(base64Data, (fabricImg) => {
+        const canvasWidth = this.canvas.getWidth();
+        const canvasHeight = this.canvas.getHeight();
+        const imgWidth = fabricImg.width || fabricImg.getScaledWidth();
+        const imgHeight = fabricImg.height || fabricImg.getScaledHeight();
 
-    // Center the image within the canvas
-    fabricImg.set({
-      originX: 'center',
-      originY: 'center',
-    });
+        // Check if the canvas dimensions are available
+        if (canvasWidth && canvasHeight) {
+          // Check if the image exceeds canvas dimensions
+          if (imgWidth > canvasWidth || imgHeight > canvasHeight) {
+            // Scale down the image to fit within the canvas dimensions
+            const scale = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight);
+            fabricImg.scale(scale);
+          }
+        }
 
-    canvas.add(fabricImg);
-    canvas.setActiveObject(fabricImg); // Select the added image
-    canvas.renderAll();
+        // Set position
+        fabricImg.set({
+          left: event.offsetX,
+          top: event.offsetY,
+        });
 
-    // Emit event to add the image to the "Added Images" category
-    this.addImageToCategory.emit({ name: 'New Image', data: imageData });
-  };
+        // Add the Fabric.js Image object to the canvas
+        this.canvas.add(fabricImg);
+        this.canvas.setActiveObject(fabricImg);
+        this.canvas.renderAll();
+
+        // Emit event to add the image to the "Added Images" category
+        this.addImageToCategory.emit({ name: 'New Image', data: base64Data });
+      });
+    };
+    reader.readAsDataURL(blob);
+  });
 }
+
+
 
 ///shape section
   onDrop(event: DragEvent) {
@@ -557,7 +594,7 @@ ImageonDrop(event: DragEvent) {
                   height: 100,
               });
               break;
-              case 'emptytriangle':
+              case 'roundedtriangle':
                 fabricShape = new fabric.Triangle({ 
                     left: event.offsetX,
                     top: event.offsetY,
@@ -579,18 +616,6 @@ ImageonDrop(event: DragEvent) {
                     height: 100, // Specify the height of the triangle
                   });
                   break;
-                  case 'roundedtriangle':
-                    fabricShape = new fabric.Triangle({ 
-                        left: event.offsetX,
-                        top: event.offsetY,
-                        fill: 'black', // You can specify a color for the fill if needed
-                        stroke: 'black',
-                        strokeWidth: 2,
-                        width: 100,
-                        height: 100,// Specify the height of the triangle
-            
-                    });
-                    break;
               case 'filledsquare':
                 fabricShape = new fabric.Rect({ 
                     left: event.offsetX,
@@ -758,6 +783,8 @@ ImageonDrop(event: DragEvent) {
                     top: event.offsetY,
                   });
                   break;
+
+                  
     
   
 
@@ -804,33 +831,31 @@ applySelectedTextStyle() {
 }
 applySelectedTextSize(textSize: number) {
   const activeObject = this.canvas.getActiveObject();
-  if (activeObject && activeObject.type === 'textbox') {
-    const textObject = activeObject as fabric.Textbox;
-    textObject.set({
-      fontSize: textSize
-    });
-    this.currentTextSize = textSize; // Update currentTextSize
-    this.canvas.requestRenderAll(); // Use requestRenderAll to ensure proper rendering
+  if (activeObject instanceof fabric.Textbox) {
+    activeObject.set('fontSize', textSize); // Set fontSize instead of fill
+    this.selectedTextSize = textSize; // Update selected text size
+    this.canvas.renderAll();
   }
 }
 
 applySelectedTextColor(color: string) {
-const activeObject = this.canvas.getActiveObject();
-if (activeObject instanceof fabric.Textbox) {
-  activeObject.set('fill', color);
-  this.canvas.renderAll();
-}
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject instanceof fabric.Textbox) {
+    activeObject.set('fill', color);
+    this.selectedTextColor = color; // Update selected text color
+    this.canvas.renderAll();
+  }
 }
 applySelectedFontFamily(fontFamily: string) {
-const activeObject = this.canvas.getActiveObject();
-if (activeObject && activeObject.type === 'textbox') {
-  const textObject = activeObject as fabric.Textbox;
-  textObject.set({
-    fontFamily: fontFamily
-  });
-  this.canvas.requestRenderAll(); // Use requestRenderAll to ensure proper rendering
-}
-}
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject && activeObject.type === 'textbox') {
+    const textObject = activeObject as fabric.Textbox;
+    textObject.set({
+      fontFamily: fontFamily
+    });
+    this.canvas.requestRenderAll(); // Use requestRenderAll to ensure proper rendering
+  }
+  }
 handleTextboxSelection(isSelected: boolean) {
   // Emit the selected state of the textbox
   this.textboxSelected.emit(isSelected);
@@ -846,7 +871,7 @@ handleKeyboardEvents(event: KeyboardEvent) {
     this.pasteCopied();
   }
   // Delete: Delete or Backspace
-  if (event.key === 'Delete' || event.key === 'Backspace') {
+  if (event.key === 'Delete') {
     this.deleteSelectedObject();
   }
 }

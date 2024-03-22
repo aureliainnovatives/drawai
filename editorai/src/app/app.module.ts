@@ -45,6 +45,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
 
+
 const MY_DATE_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -110,7 +111,7 @@ const MY_DATE_FORMATS = {
     ImageCropperModule,
     MatSliderModule,
     DragDropModule,
-    NzSliderModule
+    NzSliderModule,
 
    ],
   providers: [

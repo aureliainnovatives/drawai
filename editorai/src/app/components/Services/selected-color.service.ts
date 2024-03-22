@@ -13,6 +13,15 @@ export class SelectedColorService {
   private selectedColorSubject = new BehaviorSubject<string>('#000000');
   selectedColor$ = this.selectedColorSubject.asObservable();
 
+
+  private canvasColorSubject = new BehaviorSubject<string>('#ffffff');
+  canvasColor$ = this.canvasColorSubject.asObservable();
+
+
+  
+  constructor() { }
+
+  
   setSelectedColor(color: string) {
     this.selectedColorSubject.next(color);
   }
@@ -23,5 +32,11 @@ export class SelectedColorService {
 
   getBorderColor(): string {
     return this.borderColorSubject.value;
+  }
+
+
+
+  updateCanvasColor(color: string) {
+    this.canvasColorSubject.next(color);
   }
 }

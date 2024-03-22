@@ -3,7 +3,7 @@ import { CanvasComponent } from '../canvas/canvas.component';
 import { Subscription } from 'rxjs';
 import { CanvasSelectionService } from '../../Services/canvas-selection.service';
 import { SelectedColorService } from '../../Services/selected-color.service';
-
+import { fabric } from 'fabric';
 @Component({
   selector: 'app-toolbar',
   templateUrl: './toolbar.component.html',
@@ -26,6 +26,11 @@ export class ToolbarComponent implements OnInit {
   @Output() fontFamilyChanged = new EventEmitter<string>();
   @Input() currentTextSize: number=20; 
   @Input() selectedTextSize: number = 20;
+  @Input() selectedFontFamily: string = 'Arial'; 
+  @Input() selectedTextColor: string = '#000000'; 
+
+  isCanvasContainerVisible: boolean = true;
+
 
   selectedBorderColor: string = '';
   isTextboxSelected: boolean = false;
@@ -52,6 +57,7 @@ export class ToolbarComponent implements OnInit {
   textSize: number = 20; 
   constructor(private canvasComponent: CanvasComponent,private selectedColorService: SelectedColorService,private canvasSelectionService: CanvasSelectionService) {
    
+    
     this.selectedColorService.borderColor$.subscribe(color => {
       this.selectedBorderColor = color;
     });
@@ -59,7 +65,23 @@ export class ToolbarComponent implements OnInit {
     this.subscription = this.canvasSelectionService.selectionType$.subscribe(selectionType => {
       this.isTextboxSelected = selectionType === 'textbox';
       this.isImageSelected = selectionType === 'image';
-      this.isShapeSelected = selectionType === 'shape';});
+      this.isShapeSelected = selectionType === 'shape';
+    
+        this.isTextboxSelected = selectionType === 'textbox';
+        if (this.isTextboxSelected) {
+        const activeObject = this.canvasComponent.canvas.getActiveObject();
+        if (activeObject instanceof fabric.Textbox) {
+          this.selectedTextColor = activeObject.get('fill') as string;
+        }
+        if (activeObject && activeObject.type === 'textbox') {
+          this.selectedFontFamily = (activeObject as fabric.Textbox).fontFamily || 'Arial';
+        }
+        if (activeObject instanceof fabric.Textbox) {
+          this.currentTextSize = activeObject.get('fontSize') || 20; // Get font size of selected text
+        }
+      }
+  });
+
    }
 
    ngOnDestroy() {
@@ -74,6 +96,7 @@ ngOnInit() {
   this.selectedColorService.borderColor$.subscribe(color => {
     this.selectedBorderColor = color;
   });
+  this.subscribeToSelectionType();
 }
   onAddCanvas(): void {
     this.addCanvas.emit();
@@ -98,22 +121,23 @@ ngOnInit() {
     this.underlineToggled.emit();
   }
  
-  
   applyTextColor(event: Event) {
     const color = (event.target as HTMLInputElement).value;
     this.textColorChanged.emit(color);
   }
-  updateTextSize(selectedTextSize: number): void {
-    this.currentTextSize = selectedTextSize;
+  updateTextSize(size: number): void {
+    this.currentTextSize = size;
+    this.changeTextSize(0); 
   }
   changeTextSize(delta: number): void {
     this.currentTextSize = Math.max(1, this.currentTextSize + delta);
     this.textSizeChanged.emit(this.currentTextSize);
   }
-changeFontFamily(select: HTMLSelectElement) {
-  const selectedFontFamily = select.value;
-  this.fontFamilyChanged.emit(selectedFontFamily);
-}
+  changeFontFamily(select: HTMLSelectElement) {
+    const selectedFontFamily = select.value;
+    this.selectedFontFamily = selectedFontFamily;
+    this.canvasComponent.applySelectedFontFamily(selectedFontFamily); // You may need to call a method in your canvas component to apply the font family
+  }
 exportAsJSON() {
   this.canvasComponent.exportAsJSON(); // Call exportAsJSON() from CanvasComponent
 }
@@ -129,5 +153,22 @@ exportAsJSON() {
     if (color !== null && color !== undefined) {
       this.selectedColorService.setBorderColor(color);
     }
+  }
+  changeCanvasColor(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (target) {
+      const color = target.value;
+      this.selectedColorService.updateCanvasColor(color);
+    }
+  }
+  private subscribeToSelectionType(): void {
+    this.canvasSelectionService.selectionType$.subscribe(selectionType => {
+      this.isTextboxSelected = selectionType === 'textbox';
+      this.isImageSelected = selectionType === 'image';
+      this.isShapeSelected = selectionType === 'shape';
+
+      // Check visibility of other containers and toggle canvas container visibility accordingly
+      this.isCanvasContainerVisible = !(this.isTextboxSelected || this.isImageSelected || this.isShapeSelected);
+    });
   }
 }

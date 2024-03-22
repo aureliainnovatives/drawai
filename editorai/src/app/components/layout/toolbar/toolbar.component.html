@@ -21,18 +21,19 @@
   </div>
 
   <div class="text-style">
-    <select id="fontFamily" #fontFamilySelect (change)="changeFontFamily(fontFamilySelect)">
+    <select id="fontFamily" #fontFamilySelect (change)="changeFontFamily(fontFamilySelect)" [ngModel]="selectedFontFamily">
       <option *ngFor="let fontFamily of fontFamilies" [value]="fontFamily">{{ fontFamily }}</option>
+   
      </select>
   </div>
   <div class="text-color">
-    <input type="color" id="fontColor" (input)="applyTextColor($event)">
+    <input type="color" id="fontColor" [(ngModel)]="selectedTextColor" (ngModelChange)="textColorChanged.emit(selectedTextColor)">
   </div>
   
   <div class="text-size-control">
     <button (click)="changeTextSize(-1)">-</button>
-    <input type="text" [ngModel]="currentTextSize" readonly>
-    <button (click)="changeTextSize(1)">+</button>
+    <input type="number" [(ngModel)]="currentTextSize" (input)="updateTextSize(currentTextSize)">
+   <button (click)="changeTextSize(1)">+</button>
 </div>
 </div>
 <div class="image-container" *ngIf="isImageSelected">
@@ -50,6 +51,8 @@
 </div>
  </div>
 
+
+
   <div style="display: flex; justify-content: end; width: 100%;">
   <!-- <button (click)="Deletecanvas()" class="custom-button">
     <span class="material-symbols-outlined icon-background-less">
@@ -62,6 +65,12 @@
     </button> -->
 
 <div class="CanvasSize">
+  <div class="canvas-container" *ngIf="isCanvasContainerVisible">
+    <div class="toolbar-color-container" >
+      <input type="color" (input)="changeCanvasColor($event)" class="toolbar-color-button">
+    </div>
+  
+     </div>
 
   <div class="text-formatting">
 

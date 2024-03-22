@@ -49,7 +49,6 @@ export class SidePanelComponent  {
     filledcircle: 'assets/icons/filledcircle.svg',
     emptycircle: 'assets/icons/Circle2.svg',
     filledtriangle: 'assets/icons/filledtriangle.svg',
-    emptytriangle: 'assets/icons/emptytriangle.svg',
     filledhexa: 'assets/icons/filledhexa.svg',
     emptyhexa: 'assets/icons/emptyhexa.svg',
     roundedtriangle: 'assets/icons/roundedtriangle.svg',
@@ -102,7 +101,6 @@ export class SidePanelComponent  {
       category: 'Triangles', 
       shapes: [
         { name: 'filledtriangle', icon: this.shapeIconsMapping['filledtriangle'] },
-        { name: 'emptytriangle', icon: this.shapeIconsMapping['emptytriangle'] },
         { name: 'roundedtriangle', icon: this.shapeIconsMapping['roundedtriangle'] }
       ]
     }, { 
@@ -122,13 +120,6 @@ export class SidePanelComponent  {
         { name: 'halfemptystar', icon: this.shapeIconsMapping['halfemptystar'] },
         { name: 'halfstarempty', icon: this.shapeIconsMapping['halfstarempty'] },
         { name: 'halffilledstar', icon: this.shapeIconsMapping['halffilledstar'] },
-        { name: 'emptystar', icon: this.shapeIconsMapping['emptystar'] },
-        { name: 'fullfilledstar', icon: this.shapeIconsMapping['fullfilledstar'] },
-        { name: 'fouremptystar', icon: this.shapeIconsMapping['fouremptystar'] },
-        { name: 'sevenedgestar', icon: this.shapeIconsMapping['sevenedgestar'] },
-        { name: 'halfemptystar', icon: this.shapeIconsMapping['halfemptystar'] },
-        { name: 'halfstarempty', icon: this.shapeIconsMapping['halfstarempty'] },
-        { name: 'halffilledstar', icon: this.shapeIconsMapping['halffilledstar'] },
   
       ]
     },
@@ -139,12 +130,10 @@ export class SidePanelComponent  {
     event.dataTransfer!.setData('text/plain', shape);
   }
   ImageonDragStart(event: DragEvent, imageData: string) {
+    console.log(imageData)
     event.dataTransfer!.setData('text/plain', imageData);
   }
   
-  
-
-
 
   // onTabSelected(tab: string) {
   //   this.selectedTab = tab;
@@ -291,7 +280,7 @@ imageCategories: { category: string, images: { name: string, data: string }[] }[
     category: 'Sky',
     images: [
       { name: 'Image 1', data: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQV6-DQF2pBwNFV9KzPafu9RghrNF1tZ8J3AA&usqp=CAU' },
-      { name: 'Image 2', data: 'https://wallpaper-mania.com/wp-content/uploads/2018/09/High_resolution_wallpaper_background_ID_77701311660.jpg' },
+      { name: 'Image 3', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
     ]
   },
     {
@@ -300,18 +289,18 @@ imageCategories: { category: string, images: { name: string, data: string }[] }[
         { name: 'Image 3', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
         { name: 'Image 4', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
         { name: 'Image 5', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTILI-pwHf8xieo5W7YKa4_4GzUd1O2_T_Z3w&usqp=CAU' },
-        { name: 'Image 3', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
-        { name: 'Image 4', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
-        { name: 'Image 3', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
-        { name: 'Image 4', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
-        { name: 'Image 3', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
-        { name: 'Image 4', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
-        { name: 'Image 3', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
-        { name: 'Image 4', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
-        { name: 'Image 3', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
-        { name: 'Image 4', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
-        { name: 'Image 3', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
-        { name: 'Image 4', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
+        { name: 'Image 6', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
+        { name: 'Image 7', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
+        { name: 'Image 8', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
+        { name: 'Image 9', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
+        { name: 'Image 10', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
+        { name: 'Image 11', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
+        { name: 'Image 12', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
+        { name: 'Image 13', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
+        { name: 'Image 14', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
+        { name: 'Image 15', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
+        { name: 'Image 16', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
+        { name: 'Image 17', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
       ]
     },
    
