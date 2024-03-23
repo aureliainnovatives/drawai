@@ -87,9 +87,8 @@
   color: #000000; /* dark grey color for icons */
 }
 
-.text-formatting button:focus,
-.text-formatting button:hover {
-  background-color: #e0e0e0; /* light grey background on hover/focus */
+.text-formatting button.active {
+  background-color: #e0e0e0; /* Change to the desired active color */
 }
 
 .text-style label,
@@ -177,6 +176,7 @@ input[type="color"]::-webkit-color-swatch {
 .color-picker-container {
   display: inline-block;
   position: relative; /* To position the inner square */
+  cursor: pointer;
 }
 
 .color-picker-inner-square {

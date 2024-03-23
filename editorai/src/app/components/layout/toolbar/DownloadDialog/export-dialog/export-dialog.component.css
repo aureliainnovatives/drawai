@@ -1,0 +1,33 @@
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    overflow: hidden;
+    padding: 10px;
+    justify-content:center ;
+    align-items: center;
+}
+
+button {
+    width: 300px;
+    margin: 3px;
+}
+
+.heading {
+  font-size: larger;
+  font-family: poppins;
+  margin: 15px;
+}
+
+.mat-checkbox-label .example-margin {
+    font-size: 12px;
+  }
+
+  .example-margin {
+   
+    width: 100%;
+    border-radius: 5px;
+  }
+  
+

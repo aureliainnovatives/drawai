@@ -117,7 +117,7 @@ export class SidePanelComponent  {
         { name: 'fullfilledstar', icon: this.shapeIconsMapping['fullfilledstar'] },
         { name: 'fouremptystar', icon: this.shapeIconsMapping['fouremptystar'] },
         { name: 'sevenedgestar', icon: this.shapeIconsMapping['sevenedgestar'] },
-        { name: 'halfemptystar', icon: this.shapeIconsMapping['halfemptystar'] },
+        // { name: 'halfemptystar', icon: this.shapeIconsMapping['halfemptystar'] },
         { name: 'halfstarempty', icon: this.shapeIconsMapping['halfstarempty'] },
         { name: 'halffilledstar', icon: this.shapeIconsMapping['halffilledstar'] },
   

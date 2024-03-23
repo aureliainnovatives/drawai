@@ -4,27 +4,30 @@ import { Subscription } from 'rxjs';
 import { CanvasSelectionService } from '../../Services/canvas-selection.service';
 import { SelectedColorService } from '../../Services/selected-color.service';
 import { fabric } from 'fabric';
+import { MatDialog } from '@angular/material/dialog';
+import { ExportDialogComponent } from './DownloadDialog/export-dialog/export-dialog.component';
 @Component({
   selector: 'app-toolbar',
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.css']
 })
 export class ToolbarComponent implements OnInit {
+
+  color: string = '#ffffff'; 
   @Output() addCanvas: EventEmitter<void> = new EventEmitter<void>();
   @Output() changeCanvasSize: EventEmitter<string> = new EventEmitter<string>();
   @Input() selectedCanvasSizeOption: string = 'letter';
   @Output() deletecanvas: EventEmitter<void> = new EventEmitter<void>();
   @Output() fileInputChange : EventEmitter<string> = new EventEmitter<string>();
   selectedColor$ = this.selectedColorService.selectedColor$;
- 
+  @Output() textSizeResized: EventEmitter<number> = new EventEmitter<number>();
 
   @Output() boldToggled = new EventEmitter<void>();
   @Output() italicToggled = new EventEmitter<void>();
   @Output() underlineToggled = new EventEmitter<void>();
-  @Output() textSizeChanged = new EventEmitter<number>();
+
   @Output() textColorChanged = new EventEmitter<string>();
   @Output() fontFamilyChanged = new EventEmitter<string>();
-  @Input() currentTextSize: number=20; 
   @Input() selectedTextSize: number = 20;
   @Input() selectedFontFamily: string = 'Arial'; 
   @Input() selectedTextColor: string = '#000000'; 
@@ -41,12 +44,14 @@ export class ToolbarComponent implements OnInit {
   
   @Output() canvasSizeChanged: EventEmitter<string> = new EventEmitter<string>();
 
-  fontFamilies: string[] = ['Arial', 'Helvetica', 'Times New Roman', 'Courier New'];
+  fontFamilies: string[] = ['Arial', 'Helvetica', 'Times New Roman', 'Courier New','roguedash','cathilda','myford','catcut','rainbow','chunkfive','milvasten','kleptocracy','ph','prida01','poppins'];
   selectedFontColor: string = '#000000';
 
   isBold: boolean = false;
   isItalic: boolean = false;
-  isUnderline: boolean = false 
+  isUnderline: boolean = false;
+
+
   selectedColor: string = '#000000';
   onChangeCanvasSize(event: Event) {
     const target = event.target as HTMLSelectElement;
@@ -55,7 +60,7 @@ export class ToolbarComponent implements OnInit {
   }
 
   textSize: number = 20; 
-  constructor(private canvasComponent: CanvasComponent,private selectedColorService: SelectedColorService,private canvasSelectionService: CanvasSelectionService) {
+  constructor(private canvasComponent: CanvasComponent,private dialog: MatDialog ,private selectedColorService: SelectedColorService,private canvasSelectionService: CanvasSelectionService) {
    
     
     this.selectedColorService.borderColor$.subscribe(color => {
@@ -76,9 +81,6 @@ export class ToolbarComponent implements OnInit {
         if (activeObject && activeObject.type === 'textbox') {
           this.selectedFontFamily = (activeObject as fabric.Textbox).fontFamily || 'Arial';
         }
-        if (activeObject instanceof fabric.Textbox) {
-          this.currentTextSize = activeObject.get('fontSize') || 20; // Get font size of selected text
-        }
       }
   });
 
@@ -89,6 +91,8 @@ export class ToolbarComponent implements OnInit {
 }
 
 ngOnInit() {
+
+  
   this.selectedColorService.selectedColor$.subscribe(color => {
     this.selectedColor = color;
   });
@@ -108,31 +112,25 @@ ngOnInit() {
   }
   toggleBold() {
     this.isBold = !this.isBold;
-    this.boldToggled.emit();
+    this.boldToggled.emit(); // Emit event without passing arguments
   }
 
   toggleItalic() {
     this.isItalic = !this.isItalic;
-    this.italicToggled.emit();
+    this.italicToggled.emit(); // Emit event without passing arguments
   }
 
   toggleUnderline() {
     this.isUnderline = !this.isUnderline;
-    this.underlineToggled.emit();
+    this.underlineToggled.emit(); // Emit event without passing arguments
   }
- 
+
+
   applyTextColor(event: Event) {
     const color = (event.target as HTMLInputElement).value;
     this.textColorChanged.emit(color);
   }
-  updateTextSize(size: number): void {
-    this.currentTextSize = size;
-    this.changeTextSize(0); 
-  }
-  changeTextSize(delta: number): void {
-    this.currentTextSize = Math.max(1, this.currentTextSize + delta);
-    this.textSizeChanged.emit(this.currentTextSize);
-  }
+
   changeFontFamily(select: HTMLSelectElement) {
     const selectedFontFamily = select.value;
     this.selectedFontFamily = selectedFontFamily;
@@ -154,6 +152,18 @@ exportAsJSON() {
       this.selectedColorService.setBorderColor(color);
     }
   }
+
+  openColorPicker() {
+    // Access the color input element
+    const colorInputElement = document.querySelector('.color-picker-container input[type="color"]') as HTMLInputElement;
+    
+    // Trigger the click event on the color input element
+    if (colorInputElement) {
+      colorInputElement.click();
+    }
+  }
+
+
   changeCanvasColor(event: Event) {
     const target = event.target as HTMLInputElement;
     if (target) {
@@ -169,6 +179,16 @@ exportAsJSON() {
 
       // Check visibility of other containers and toggle canvas container visibility accordingly
       this.isCanvasContainerVisible = !(this.isTextboxSelected || this.isImageSelected || this.isShapeSelected);
+    });
+  }
+
+  toggleShapeBorderStyle() {
+    this.canvasComponent.toggleShapeBorderStyle();
+  }
+
+  openExportDialog(): void {
+    this.dialog.open(ExportDialogComponent, {
+      data: this.canvasComponent // Pass the CanvasComponent instance to the dialog
     });
   }
 }

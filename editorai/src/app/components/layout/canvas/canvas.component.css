@@ -90,11 +90,7 @@ app-toolbar {
     /* src: url(BungeeSpice-Regular.ttf); */
     src: url(/assets/textFonts/Chunk-Five-Print.otf);
   }  
-  @font-face {
-    font-family: 'chunkfive' ;
-    /* src: url(BungeeSpice-Regular.ttf); */
-    src: url(/assets/textFonts/Chunk-Five-Print.otf);
-  } 
+ 
   @font-face {
     font-family: 'milvasten' ;
     /* src: url(BungeeSpice-Regular.ttf); */
@@ -106,7 +102,7 @@ app-toolbar {
     src: url(/assets/textFonts/kleptocracy-titling-ex-bd.otf);
   } 
   @font-face {
-    font-family: 'ph' ;
+    font-family:  'ph';
     /* src: url(BungeeSpice-Regular.ttf); */
     src: url(/assets/textFonts/PH-300-Cond-Caps.otf);
   }
@@ -119,4 +115,22 @@ app-toolbar {
     font-family: 'prida' ;
     /* src: url(BungeeSpice-Regular.ttf); */
     src: url(/assets/textFonts/Prida01Light.otf);
+}
+
+.transparent-option {
+  cursor: pointer;
+}
+
+.transparent-square {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #000;
+  background-color: #fff; /* Default background color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.transparent-square.selected {
+  background-color: transparent;
 }

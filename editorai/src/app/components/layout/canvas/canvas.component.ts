@@ -33,9 +33,13 @@ export class CanvasComponent implements AfterViewInit {
   @Output() canvasColorChanged: EventEmitter<string> = new EventEmitter<string>();
 
   selectedBorderColor: string = '#000000'; // Default border color
+
   isBold: boolean = false;
   isItalic: boolean = false;
   isUnderline: boolean = false;
+
+  exportTransparentBackground: boolean = false;
+
   currentTextStyle: string = '';
   selectedTextSize: number = 20;
   currentTextSize: number = 20;
@@ -65,7 +69,7 @@ export class CanvasComponent implements AfterViewInit {
         left: 10,
         top: 10,
         fontFamily: 'Arial',
-        fontSize:25,
+        fontSize:45,
         fill: 'black',
       });
      
@@ -79,7 +83,10 @@ export class CanvasComponent implements AfterViewInit {
       this.subscription.unsubscribe();
     }
    
-
+    onTransparentBackgroundChange(event: Event) {
+      const detail = (event as CustomEvent).detail;
+      this.exportTransparentBackground = detail;
+    }
   ngAfterViewInit() {
     this.containerElement = this.elementRef.nativeElement.querySelector('.canvas-container');
     this.canvas = new fabric.Canvas('canvas', {
@@ -87,17 +94,41 @@ export class CanvasComponent implements AfterViewInit {
     });
     this.canvas.preserveObjectStacking = true;
     this.resizables();
+    const selectionChangeHandler = () => {
+      const activeObjects = this.canvas.getActiveObjects(); // Get currently selected objects
+
+      
+      if (activeObjects.length > 1) {
+        // Multi-select action
+        console.log('Multiple objects selected:', activeObjects);
+        // Perform actions on selected objects
+      } else if (activeObjects.length === 1) {
+        // Single object selected
+        console.log('Single object selected:', activeObjects[0]);
+        // Perform actions on single selected object
+      } else {
+        // No objects selected
+        console.log('No objects selected');
+      }
+
+      this.onSelectionChange();
+      this.updateSelectedBorderColor();
+  };
     // this.enableDragAndDrop();
     this.canvas.on('selection:created', this.updateSelectionType.bind(this));
     this.canvas.on('selection:updated', this.updateSelectionType.bind(this));
     this.canvas.on('selection:cleared', this.updateSelectionType.bind(this));
 
-    this.canvas.on('selection:created', this.onSelectionChange.bind(this));
-    this.canvas.on('selection:updated', this.onSelectionChange.bind(this));
-    this.canvas.on('selection:cleared', this.onSelectionChange.bind(this));
+    this.canvas.on('selection:created', selectionChangeHandler);
+    this.canvas.on('selection:updated', selectionChangeHandler);
+    this.canvas.on('selection:cleared', selectionChangeHandler);
     
-    this.canvas.on('selection:created', () => this.updateSelectedBorderColor());
-    this.canvas.on('selection:updated', () => this.updateSelectedBorderColor());
+
+      this.canvas.on('selection:created', selectionChangeHandler);
+      this.canvas.on('selection:updated', selectionChangeHandler);
+      this.canvas.on('selection:cleared', selectionChangeHandler);
+
+
     this.canvas.on('selection:cleared', () => this.selectedColorService.setBorderColor('')); // Reset when no selection
 
     this.selectedColorService.selectedColor$.subscribe(color => {
@@ -126,10 +157,7 @@ export class CanvasComponent implements AfterViewInit {
     });
 
   }
-
-
-  // Method to add text to canvas on button click with specified styles
-
+  
   addTextWithStyle(text: string, fontFamily: string, fill: string, shadow: string) {
     const left = 50;
     const top = 50 + this.canvas.getObjects().length * 50;
@@ -157,7 +185,7 @@ export class CanvasComponent implements AfterViewInit {
     let shadow = '';
     switch (textStyle) {
       case 'style1.png':
-        text = 'Hello';
+        text = 'HELLO';
         fontFamily = 'roguedash';
         fill = '#007bff';
         shadow = '2px 2px 4px rgba(3, 2, 2, 1)';
@@ -170,7 +198,7 @@ export class CanvasComponent implements AfterViewInit {
           break;
   
       case 'style3.png':
-          text = 'Open';
+          text = 'Love you';
           fontFamily = 'myford';
           fill = 'yellow';
           shadow = '2px 2px 4px rgba(3, 2, 2, 1)';
@@ -184,7 +212,7 @@ export class CanvasComponent implements AfterViewInit {
           break;
   
       case 'style5.png':
-          text = 'Do What YOU LoVE';
+          text = 'Welcome';
           fontFamily = 'rainbow';
           fill = 'red';
           shadow = '';
@@ -205,21 +233,21 @@ export class CanvasComponent implements AfterViewInit {
           break;
   
       case 'style8.png':
-          text = 'enjoy';
+          text = 'Enjoy';
           fontFamily = 'kleptocracy';
           fill = 'rgb(255, 0, 85)';
           shadow = '2px 2px 4px rgba(5, 5, 5, 3)';
           break;
   
       case 'style9.png':
-          text = 'Coming Soon';
+          text = 'Welcome To India';
           fontFamily = 'ph';
           fill = 'blue';
           shadow = '2px 2px 4px rgba(255, 20, 147, 0.9)';
           break;
   
       case 'style10.png':
-          text = 'Party';
+          text = 'Good';
           fontFamily = 'prida01';
           fill = 'rgb(6, 243, 239)';
           shadow = '2px 2px 4px rgba(255, 43, 20, 0.9)';
@@ -316,7 +344,7 @@ onChangeCanvasSize(size: string) {
   private resizables(): void {
     if (this.canvas) {
 
-      this.canvas.selection = false;
+      this.canvas.selection = true;
        // Apply resizable properties to any object added to the canvas
        this.canvas.on('object:added', (event) => {
         const addedObject = event.target;
@@ -352,19 +380,25 @@ onChangeCanvasSize(size: string) {
     }
   }
 
+  // exportAsJSON() {
+  //   if (this.canvas) {
+  //     const json = JSON.stringify(this.canvas.toJSON());
+  //     const blob = new Blob([json], { type: 'application/json' });
+  //     const url = window.URL.createObjectURL(blob);
+  
+  //     // Create a link element to trigger download
+  //     const link = document.createElement('a');
+  //     link.href = url;
+  //     link.download = 'canvas.json';
+  //     link.click();
+  
+  //     // Clean up
+  //     window.URL.revokeObjectURL(url);
+  //   }
+  // }
+
 
   exportAsJSON() {
-    const json = JSON.stringify(this.canvas.toJSON());
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'canvas.json';
-    link.click();
-    window.URL.revokeObjectURL(url);
-  }
-
-  exportAsPNG() {
     if (this.canvas) {
       const tempCanvas = document.createElement('canvas');
       const canvasWidth = this.canvas.width || 0; // Default to 0 if canvas width is undefined
@@ -374,6 +408,13 @@ onChangeCanvasSize(size: string) {
       tempCanvas.height = canvasHeight;
       const tempFabricCanvas = new fabric.Canvas(tempCanvas);
   
+      // Set background color or transparency
+      if (this.exportTransparentBackground) {
+        tempFabricCanvas.backgroundColor = 'rgba(0, 0, 0, 0)'; // Transparent background
+      } else {
+        tempFabricCanvas.backgroundColor = this.canvas.backgroundColor; // Use original canvas background color
+      }
+  
       // Clone objects without resizable properties
       this.canvas.getObjects().forEach((obj) => {
         const clone = fabric.util.object.clone(obj);
@@ -381,85 +422,123 @@ onChangeCanvasSize(size: string) {
         tempFabricCanvas.add(clone);
       });
   
+      const json = JSON.stringify(tempFabricCanvas.toJSON());
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+  
+      // Create a link element to trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'canvas.json';
+      link.click();
+  
+      // Clean up
+      window.URL.revokeObjectURL(url);
+      tempFabricCanvas.dispose();
+    }
+  }
+  
+  
+
+  exportAsPNG() {
+    if (this.canvas) {
+      const tempCanvas = document.createElement('canvas');
+      const canvasWidth = this.canvas.width || 0; // Default to 0 if canvas width is undefined
+      const canvasHeight = this.canvas.height || 0; // Default to 0 if canvas height is undefined
+
+      tempCanvas.width = canvasWidth;
+      tempCanvas.height = canvasHeight;
+      const tempFabricCanvas = new fabric.Canvas(tempCanvas);
+
+      // Set background color or transparency
+      if (this.exportTransparentBackground) {
+        tempFabricCanvas.backgroundColor = 'rgba(0, 0, 0, 0)'; // Transparent background
+      } else {
+        tempFabricCanvas.backgroundColor = this.canvas.backgroundColor; // Use original canvas background color
+      }
+
+      // Clone objects without resizable properties
+      this.canvas.getObjects().forEach((obj) => {
+        const clone = fabric.util.object.clone(obj);
+        clone.setControlsVisibility({ mt: false, mb: false, ml: false, mr: false, bl: false, br: false, tl: false, tr: false });
+        tempFabricCanvas.add(clone);
+      });
+
       // Use fabric.js toDataURL method to export the canvas as a data URL
       const dataUrl = tempFabricCanvas.toDataURL({
         format: 'png',
         quality: 1, // Set quality to 1 for maximum quality
         multiplier: 1 // Set multiplier to 1 for original size
       });
-  
+
       // Create a link element to trigger download
       const link = document.createElement('a');
       link.href = dataUrl;
       link.download = 'canvas_image.png';
       link.click();
-  
+
       // Dispose the temporary fabric canvas
       tempFabricCanvas.dispose();
-}
-
+    }
   }
   
-  // private enableDragAndDrop(): void {
-  //   this.containerElement.addEventListener('dragover', (event) => {
-  //     event.preventDefault();
-  //   });
 
-  //   this.containerElement.addEventListener('drop', (event) => {
-  //     event.preventDefault();
-  //     const file = event.dataTransfer?.files[0];
-  //     if (file) {
-  //       this.loadImageFromFile(file);
-  //     }
-  //   });
+//   private enableDragAndDrop(): void {
+//     this.containerElement.addEventListener('dragover', (event) => {
+//       event.preventDefault();
+//     });
+
+//     this.containerElement.addEventListener('drop', (event) => {
+//       event.preventDefault();
+//       const file = event.dataTransfer?.files[0];
+//       if (file) {
+//         this.loadImageFromFile(file);
+//    }
+// });
+// }
+  
+  
+  // private loadImageFromFile(file: File): void {
+  //   const reader = new FileReader();
+  //   reader.onload = (event: any) => {
+  //     const imgURL = event.target.result;
+  
+  //     fabric.Image.fromURL(imgURL, (img) => {
+  //       if (this.canvas && this.canvas.width && this.canvas.height && img.width && img.height) {
+  //         // Define fixed width and height for all images
+  //         const fixedWidth = 200; // Adjust as needed
+  //         const fixedHeight = 200; // Adjust as needed
+  
+  //         // Calculate scaling factors to fit the image within the fixed dimensions
+  //         const scaleX = fixedWidth / img.width;
+  //         const scaleY = fixedHeight / img.height;
+  //         const scale = Math.min(scaleX, scaleY);
+  
+  //         // Scale the image proportionally
+  //         const scaledWidth = img.width * scale;
+  //         const scaledHeight = img.height * scale;
+  
+  //         // Calculate position to center the image within the canvas
+  //         const left = (this.canvas.width - scaledWidth) / 2;
+  //         const top = (this.canvas.height - scaledHeight) / 2;
+  
+  //         // Set image properties
+  //         img.set({
+  //           left: left,
+  //           top: top,
+  //           scaleX: scale,
+  //           scaleY: scale,
+  //         });
+  
+  //         // Add image to canvas
+  //         this.canvas.add(img);
+  //         this.canvas.renderAll();
+  //       }
+  //     });
+  //   };
+  //   reader.readAsDataURL(file);
   // }
 
-  
-  private loadImageFromFile(file: File): void {
-    const reader = new FileReader();
-    reader.onload = (event: any) => {
-      const imgURL = event.target.result;
-  
-      fabric.Image.fromURL(imgURL, (img) => {
-        if (this.canvas && this.canvas.width && this.canvas.height && img.width && img.height) {
-          // Define fixed width and height for all images
-          const fixedWidth = 200; // Adjust as needed
-          const fixedHeight = 200; // Adjust as needed
-  
-          // Calculate scaling factors to fit the image within the fixed dimensions
-          const scaleX = fixedWidth / img.width;
-          const scaleY = fixedHeight / img.height;
-          const scale = Math.min(scaleX, scaleY);
-  
-          // Scale the image proportionally
-          const scaledWidth = img.width * scale;
-          const scaledHeight = img.height * scale;
-  
-          // Calculate position to center the image within the canvas
-          const left = (this.canvas.width - scaledWidth) / 2;
-          const top = (this.canvas.height - scaledHeight) / 2;
-  
-          // Set image properties
-          img.set({
-            left: left,
-            top: top,
-            scaleX: scale,
-            scaleY: scale,
-          });
-  
-          // Add image to canvas
-          this.canvas.add(img);
-          this.canvas.renderAll();
-        }
-      });
-    };
-    reader.readAsDataURL(file);
-  }
-  
-  
-  
-  
-  // Function to handle zoom in
   zoomIn() {
     if (this.zoomLevel < 200) {
       this.zoomLevel += 1;
@@ -508,46 +587,43 @@ onDragOver(event: DragEvent) {
   event.preventDefault();
 }
 
+
 ImageonDrop(event: DragEvent) {
   event.preventDefault();
-  const imageURL = event.dataTransfer!.getData('text/plain');
+  const imageURL2 = event.dataTransfer!.getData('text/plain');
 
-  // Load the image URL using HttpClient to avoid CORS issues
-  this.http.get(imageURL, { responseType: 'blob' }).subscribe((blob: Blob) => {
+  this.http.get(imageURL2, { responseType: 'blob' }).subscribe((blob: Blob) => {
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64Data = reader.result as string;
 
-      // Create a Fabric.js Image object with base64 data
       fabric.Image.fromURL(base64Data, (fabricImg) => {
         const canvasWidth = this.canvas.getWidth();
         const canvasHeight = this.canvas.getHeight();
         const imgWidth = fabricImg.width || fabricImg.getScaledWidth();
         const imgHeight = fabricImg.height || fabricImg.getScaledHeight();
 
-        // Check if the canvas dimensions are available
+     
         if (canvasWidth && canvasHeight) {
-          // Check if the image exceeds canvas dimensions
+    
           if (imgWidth > canvasWidth || imgHeight > canvasHeight) {
-            // Scale down the image to fit within the canvas dimensions
+
             const scale = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight);
             fabricImg.scale(scale);
           }
         }
 
-        // Set position
+
         fabricImg.set({
           left: event.offsetX,
           top: event.offsetY,
         });
 
-        // Add the Fabric.js Image object to the canvas
+
         this.canvas.add(fabricImg);
         this.canvas.setActiveObject(fabricImg);
         this.canvas.renderAll();
 
-        // Emit event to add the image to the "Added Images" category
-        this.addImageToCategory.emit({ name: 'New Image', data: base64Data });
       });
     };
     reader.readAsDataURL(blob);
@@ -555,9 +631,8 @@ ImageonDrop(event: DragEvent) {
 }
 
 
-
 ///shape section
-  onDrop(event: DragEvent) {
+  onshapeDrop(event: DragEvent) {
     event.preventDefault();
     const shapeName = event.dataTransfer!.getData('text/plain');
     let fabricShape: fabric.Object | undefined;
@@ -568,6 +643,8 @@ ImageonDrop(event: DragEvent) {
                 left: event.offsetX,
                 top: event.offsetY,
                 fill: 'black',
+                stroke: 'black',
+                strokeWidth: 2,
                 radius: 50,
                 selectable: true
             });
@@ -621,6 +698,8 @@ ImageonDrop(event: DragEvent) {
                     left: event.offsetX,
                     top: event.offsetY,
                     fill: 'black',
+                    stroke: 'black',
+                    strokeWidth: 2,
                     width: 100,
                     height: 100,
                    
@@ -753,6 +832,130 @@ ImageonDrop(event: DragEvent) {
                             strokeWidth: 2
                         });
                         break;
+                        
+                        
+                      case 'halfstarempty':
+                        const starRadius5 = 50;
+                        const innerRadius5 = 20;
+                        const numberOfPoints5 = 5;
+                        const angleIncrement5 = (2 * Math.PI) / (numberOfPoints5 * 2);
+                    
+                        const outerStarPoints5 = [];
+                        const innerStarPoints5 = [];
+                    
+                        for (let i = 0; i < numberOfPoints5 * 2; i++) {
+                          const radius = i % 2 === 0 ? starRadius5 : innerRadius5;
+                          const angle = i * angleIncrement5 - Math.PI / 2;
+                    
+                          const point = {
+                            x: starRadius5 + radius * Math.cos(angle),
+                            y: starRadius5 + radius * Math.sin(angle),
+                    stroke: 'black',
+                            strokeWidth: 2,
+                          };
+                    
+                          if (i <= numberOfPoints5) {
+                            innerStarPoints5.push(point);
+                          } else {
+                            outerStarPoints5.push(point);
+                          }
+                        }
+                        fabricShape = new fabric.Polygon(innerStarPoints5, {
+                          fill: '',
+                          stroke: 'black',
+                          strokeWidth: 3,
+                          left: 250,
+                          top: 250,
+                        });
+
+                        break;
+
+                        case 'emptystar':
+                        const starRadius6 = 50;
+                        const innerRadius6 = 20;
+                        const numberOfPoints6 = 5;
+                        const angleIncrement6 = (2 * Math.PI) / (numberOfPoints6 * 2);
+                    
+                        const starPoints6 = [];
+                    
+                        for (let i = 0; i < numberOfPoints6 * 2; i++) {
+                          const radius = i % 2 === 0 ? starRadius6 : innerRadius6;
+                          const angle = i * angleIncrement6 - Math.PI / 2;
+                    
+                          const point = {
+                            x: starRadius6 + radius * Math.cos(angle),
+                            y: starRadius6 + radius * Math.sin(angle),
+                            stroke: 'blue',
+                            strokeWidth: 2,
+                          };
+                    
+                          starPoints6.push(point);
+                        }
+                    
+                        fabricShape = new fabric.Polygon(starPoints6, {
+                          fill: '',
+                          stroke : 'black',
+                          strokeWidth: 2,
+                    
+                          left: 250,
+                          top: 250,
+                        });
+
+                        break;
+
+                        case 'fullfilledstar':
+                        const starRadius7 = 50;
+                        const innerRadius7 = 20;
+                        const numberOfPoints7= 5;
+                        const angleIncrement7 = (2 * Math.PI) / (numberOfPoints7 * 2);
+                    
+                        const starPoints7 = [];
+                    
+                        for (let i = 0; i < numberOfPoints7 * 2; i++) {
+                          const radius = i % 2 === 0 ? starRadius7 : innerRadius7;
+                          const angle = i * angleIncrement7 - Math.PI / 2;
+                    
+                          const point = {
+                            x: starRadius7 + radius * Math.cos(angle),
+                            y: starRadius7 + radius * Math.sin(angle),
+                            stroke: 'blue',
+                            strokeWidth: 2,
+                          };
+                    
+                          starPoints7.push(point);
+                        }
+                    
+                        fabricShape = new fabric.Polygon(starPoints7, {
+                          fill: 'black',
+                          stroke : 'black',
+                          strokeWidth: 2,
+                          left: 250,
+                          top: 250,
+                        });
+                    
+                        break;
+
+                        
+                        case 'halfemptystar':
+                          const svgUrl = '/assets/Svgs/halfstar.svg';
+
+                        fabric.loadSVGFromURL(svgUrl, (objects, options) => {
+                          const [halfFilledStar] = objects as fabric.Object[];
+
+                          // Adjust the scale to make the star smaller
+                          const scaleRatio = 4.0; // Change this value as needed
+                          halfFilledStar.scaleX = scaleRatio;
+                          halfFilledStar.scaleY = scaleRatio;
+
+                          halfFilledStar.set({
+                            left: this.canvas?.width ? this.canvas.width / 2 : 0,
+                            top: this.canvas?.height ? this.canvas.height / 2 : 0,
+                            originX: 'center',
+                            originY: 'center',
+                          });
+                          
+                        })        
+                        break;
                     
                   
                   case 'sevenedgestar':
@@ -784,10 +987,6 @@ ImageonDrop(event: DragEvent) {
                   });
                   break;
 
-                  
-    
-  
-
         default:
             console.error('Unknown shape:', shapeName);
             return;
@@ -799,7 +998,19 @@ ImageonDrop(event: DragEvent) {
     }
 }
 
-
+toggleShapeBorderStyle() {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject instanceof fabric.Object) {
+    if (activeObject.strokeDashArray && activeObject.strokeDashArray.length > 0) {
+      // If shape already has dashed border, remove the dashed border
+      activeObject.set('strokeDashArray', []);
+    } else {
+      // If shape doesn't have dashed border, add dashed border
+      activeObject.set('strokeDashArray', [5, 5]); // Set the border line style to dashed
+    }
+    this.canvas.renderAll();
+}
+}
 
 
 toggleBold() {
@@ -832,8 +1043,13 @@ applySelectedTextStyle() {
 applySelectedTextSize(textSize: number) {
   const activeObject = this.canvas.getActiveObject();
   if (activeObject instanceof fabric.Textbox) {
-    activeObject.set('fontSize', textSize); // Set fontSize instead of fill
-    this.selectedTextSize = textSize; // Update selected text size
+    const scaleFactor = textSize / (activeObject.fontSize || 20); // Default font size if undefined
+    activeObject.set({
+      fontSize: textSize,
+      width: (activeObject.width || 200) * scaleFactor // Default width if undefined
+    });
+    this.selectedTextSize = textSize;
+    this.currentTextSize = textSize; // Update currentTextSize
     this.canvas.renderAll();
   }
 }

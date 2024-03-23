@@ -13,6 +13,7 @@ export class FooterComponent {
       this.zoomLevel = zoomLevel;
     });
   }
+  
   onZoomSliderChange(value: number) {
     this.zoomLevel = value;
     this.canvasComponent.onZoomSliderChange(value);

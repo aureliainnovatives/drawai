@@ -1,19 +1,20 @@
 <mat-toolbar class="toolbar mat-elevation-z2"> 
   <div style="display: flex;" class="text-container" *ngIf="isTextboxSelected">
   <div class="text-formatting">
-    <button (click)="toggleItalic()" [class.active]="isItalic"> <!-- Add class "active" when isItalic is true -->
-      <span class="material-symbols-outlined">
-        format_italic
-      </span>
-    </button>
-  
-    <button (click)="toggleBold()" [class.active]="isBold"> <!-- Add class "active" when isBold is true -->
+    
+    <button (click)="toggleBold()" [ngClass]="{'active': isBold}">
       <span class="material-symbols-outlined">
         format_bold
       </span>
     </button>
-  
-    <button (click)="toggleUnderline()" [class.active]="isUnderline"> <!-- Add class "active" when isUnderline is true -->
+    
+    <button (click)="toggleItalic()" [ngClass]="{'active': isItalic}">
+      <span class="material-symbols-outlined">
+        format_italic
+      </span>
+    </button>
+    
+    <button (click)="toggleUnderline()" [ngClass]="{'active': isUnderline}">
       <span class="material-symbols-outlined">
         format_underlined
       </span>
@@ -29,12 +30,11 @@
   <div class="text-color">
     <input type="color" id="fontColor" [(ngModel)]="selectedTextColor" (ngModelChange)="textColorChanged.emit(selectedTextColor)">
   </div>
+<!-- <div class="text-color">
+  <color-picker [(color)]="selectedTextColor" (colorChange)="textColorChanged.emit($event)"></color-picker>
+</div> -->
+
   
-  <div class="text-size-control">
-    <button (click)="changeTextSize(-1)">-</button>
-    <input type="number" [(ngModel)]="currentTextSize" (input)="updateTextSize(currentTextSize)">
-   <button (click)="changeTextSize(1)">+</button>
-</div>
 </div>
 <div class="image-container" *ngIf="isImageSelected">
   <span>image-container</span>
@@ -45,10 +45,16 @@
 
 <input type="color" [(ngModel)]="selectedColor" (ngModelChange)="onColorChange()">
 
-<div class="color-picker-container">
+<div class="color-picker-container" (click)="openColorPicker()">
   <div class="color-picker-inner-square"></div>
   <input type="color" [(ngModel)]="selectedBorderColor" (input)="changeBorderColor($event)">
+
 </div>
+<button (click)="toggleShapeBorderStyle()">
+  <span style="font-size: 30px;" class="material-symbols-outlined icon-background-less">
+      resize
+    </span>
+</button>
  </div>
 
 
@@ -74,12 +80,7 @@
 
   <div class="text-formatting">
 
-  <button (click)="exportAsJSON()">
-    <span class="material-symbols-outlined">
-      code
-      </span>
- </button>
-  <button (click)="exportAsPNG()">
+  <button (click)="openExportDialog()">
     <span class="material-symbols-outlined">
       download
       </span></button>

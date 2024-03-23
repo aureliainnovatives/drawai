@@ -45,12 +45,15 @@
   <button (click)="exportAsPNG()">Export as PNG</button> -->
 <!-- <input type="color" [(ngModel)]="selectedColor" (input)="onColorChange($event)"> -->
 
+<!-- canvas.component.html -->
+
+
 <app-toolbar
     (canvasSizeChanged)="onChangeCanvasSize($event)"
+    (transparentBackgroundChanged)="onTransparentBackgroundChange($event)"
     (boldToggled)="toggleBold()" 
     (italicToggled)="toggleItalic()" 
     (underlineToggled)="toggleUnderline()"
-    (textSizeChanged)="applySelectedTextSize($event)"
     (textColorChanged)="applySelectedTextColor($event)"
     (fontFamilyChanged)="applySelectedFontFamily($event)"
   >
@@ -58,8 +61,8 @@
 
 <div class="canvas">
   <div #canvasContainer  class="canvas-container" 
-    (drop)="onDrop($event)" 
-    (drop)="ImageonDrop($event)" 
+    (drop)="onshapeDrop($event)" 
+ 
     (drop)="onTextDrop($event)"
     (dragover)="onDragOver($event)">
   <div class="buttons">    
