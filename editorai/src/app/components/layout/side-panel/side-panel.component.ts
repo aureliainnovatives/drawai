@@ -21,7 +21,10 @@ export class SidePanelComponent  {
   @Output() addTextToCanvas: EventEmitter<string> = new EventEmitter<string>()
 
 
-  constructor(private renderer: Renderer2, private el: ElementRef,private textAdditionService: TextAdditionService, private canvasSizeService : CanvasSizeService) {}
+  constructor(private renderer: Renderer2,
+     private el: ElementRef,
+     private textAdditionService: TextAdditionService,
+      private canvasSizeService : CanvasSizeService) {}
 
 
   selectedImage: { name: string, data: string } | null = null;
@@ -61,13 +64,10 @@ export class SidePanelComponent  {
     fullfilledstar: 'assets/icons/fullfilledstar.svg',
   };
 
-  addstylishText(text: string, fontFamily: string, fill: string, shadow: string) {
-    this.textAdditionService.addTextWithStyle.next({ text, fontFamily, fill, shadow });
+  addstylishText(text: string, fontFamily: string, fill: string, shadow: string,fontWeight: string) {
+    this.textAdditionService.addTextWithStyle.next({ text, fontFamily, fill, shadow, fontWeight });
   }
-  onTextDragStart(event: DragEvent, textStyle: string) {
-    event.dataTransfer?.setData('textStyle', textStyle);
-  }
- 
+
 
   get filteredShapeArrays() {
     if (!this.searchTerm.trim()) {
@@ -125,9 +125,23 @@ export class SidePanelComponent  {
     },
   ];
 
+  //text section//
 
+
+  //////////
+
+  onTextDragStart(event: DragEvent, textStyle: string) {
+    event.dataTransfer?.setData('textStyle', textStyle);
+  }
+ 
   onDragStart(event: DragEvent, shape: string) {
     event.dataTransfer!.setData('text/plain', shape);
+    
+  }
+
+  onHDragStart(event: DragEvent, type: string) {
+    event.dataTransfer!.setData('text/plain', type);
+    
   }
   ImageonDragStart(event: DragEvent, imageData: string) {
     console.log(imageData)

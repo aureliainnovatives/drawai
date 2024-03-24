@@ -62,8 +62,9 @@
 <div class="canvas">
   <div #canvasContainer  class="canvas-container" 
     (drop)="onshapeDrop($event)" 
- 
+    (drop)="ImageonDrop($event)" 
     (drop)="onTextDrop($event)"
+    (drop)="onHeadingsDrop($event)"
     (dragover)="onDragOver($event)">
   <div class="buttons">    
   <!-- <button class="custom-button" (click)="deleteSelectedObject()">

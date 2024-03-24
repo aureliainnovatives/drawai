@@ -6,7 +6,7 @@ import { fabric } from 'fabric';
 })
 export class TextAdditionService {
   textEdited: Subject<string> = new Subject<string>();
-  addTextWithStyle = new Subject<{ text: string, fontFamily: string, fill: string, shadow: string }>();
+  addTextWithStyle = new Subject<{ text: string, fontFamily: string, fill: string, shadow: string, fontWeight: string;  }>();
   editText(newText: string) {
     this.textEdited.next(newText);
   }

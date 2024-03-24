@@ -141,7 +141,7 @@ export class CanvasComponent implements AfterViewInit {
       this.selectedColorService.setSelectedColor(fillColor);
     }
     this.subscription = this.textAdditionService.addTextWithStyle.subscribe(data => {
-      this.addTextWithStyle(data.text, data.fontFamily, data.fill, data.shadow);
+      this.addTextWithStyle(data.text, data.fontFamily, data.fill, data.shadow , data.fontWeight);
     });
 
     this.selectedColorService.borderColor$.subscribe(color => {
@@ -158,7 +158,7 @@ export class CanvasComponent implements AfterViewInit {
 
   }
   
-  addTextWithStyle(text: string, fontFamily: string, fill: string, shadow: string) {
+  addTextWithStyle(text: string, fontFamily: string, fill: string, shadow: string, fontWeight: string) {
     const left = 50;
     const top = 50 + this.canvas.getObjects().length * 50;
     const newText = new fabric.Textbox(text, {
@@ -167,13 +167,14 @@ export class CanvasComponent implements AfterViewInit {
       fontFamily: fontFamily,
       fill: fill,
       shadow: shadow,
-      fontSize: 90 // Set the desired font size
+      fontSize: 90, // Set the desired font size
+      fontWeight: fontWeight
     });
     
        setTimeout(() => {
     this.canvas.add(newText);
       this.canvas.renderAll();
-    }, 100);
+    }, 200);
   }
   
   onTextDrop(event: DragEvent) {
@@ -183,6 +184,7 @@ export class CanvasComponent implements AfterViewInit {
     let fontFamily = '';
     let fill = '';
     let shadow = '';
+    let fontWeight = '';
     switch (textStyle) {
       case 'style1.png':
         text = 'HELLO';
@@ -262,7 +264,44 @@ export class CanvasComponent implements AfterViewInit {
         
     
     }
-    this.addTextWithStyle(text, fontFamily, fill, shadow);
+    this.addTextWithStyle(text, fontFamily, fill, shadow, fontWeight);
+  
+      this.canvas.renderAll();
+  }
+
+  onHeadingsDrop(event: DragEvent) {
+    event.preventDefault();
+    const heading = event.dataTransfer?.getData('text/plain');
+    let text = '';
+    let fontFamily = '';
+    let fill = '';
+    let shadow = '';
+    let fontWeight = '';
+    switch (heading) {
+      case 'Heading':
+          text = 'Heading';
+          fontFamily = 'Arial';
+          fill = '#00000';
+          shadow = '';
+          fontWeight = '1000';
+        break;
+      case 'Subheading':
+          text = 'Subheading';
+          fontFamily = 'Arial';
+          fill = '#00000';
+          shadow = '';
+          fontWeight = '600';
+        break;
+      case 'BodyText':
+          text = 'BodyText';
+          fontFamily = 'Arial';
+          fill = '#00000';
+          shadow = '';
+          fontWeight = '100';
+        break;
+  
+    }
+    this.addTextWithStyle(text, fontFamily, fill, shadow,fontWeight);
   
       this.canvas.renderAll();
   }
@@ -587,47 +626,36 @@ onDragOver(event: DragEvent) {
   event.preventDefault();
 }
 
-
 ImageonDrop(event: DragEvent) {
   event.preventDefault();
-  const imageURL2 = event.dataTransfer!.getData('text/plain');
+  const imageData = event.dataTransfer!.getData('text/plain');
+  const img = new Image();
+  img.src = imageData;
+  const canvas = this.canvas;
 
-  this.http.get(imageURL2, { responseType: 'blob' }).subscribe((blob: Blob) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64Data = reader.result as string;
+  img.onload = () => {
+    const fabricImg = new fabric.Image(img, {
+      left: event.offsetX,
+      top: event.offsetY,
+    });
 
-      fabric.Image.fromURL(base64Data, (fabricImg) => {
-        const canvasWidth = this.canvas.getWidth();
-        const canvasHeight = this.canvas.getHeight();
-        const imgWidth = fabricImg.width || fabricImg.getScaledWidth();
-        const imgHeight = fabricImg.height || fabricImg.getScaledHeight();
+    // Scale the image to fit within the canvas dimensions
+    fabricImg.scaleToWidth(canvas.getWidth() * 0.4); // Adjust the scale as needed
+    fabricImg.scaleToHeight(canvas.getHeight() * 0.4); // Adjust the scale as needed
 
-     
-        if (canvasWidth && canvasHeight) {
-    
-          if (imgWidth > canvasWidth || imgHeight > canvasHeight) {
+    // Center the image within the canvas
+    fabricImg.set({
+      originX: 'center',
+      originY: 'center',
+    });
 
-            const scale = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight);
-            fabricImg.scale(scale);
-          }
-        }
+    canvas.add(fabricImg);
+    canvas.setActiveObject(fabricImg); // Select the added image
+    canvas.renderAll();
 
-
-        fabricImg.set({
-          left: event.offsetX,
-          top: event.offsetY,
-        });
-
-
-        this.canvas.add(fabricImg);
-        this.canvas.setActiveObject(fabricImg);
-        this.canvas.renderAll();
-
-      });
-    };
-    reader.readAsDataURL(blob);
-  });
+    // Emit event to add the image to the "Added Images" category
+    this.addImageToCategory.emit({ name: 'New Image', data: imageData });
+  };
 }
 
 
@@ -995,6 +1023,7 @@ ImageonDrop(event: DragEvent) {
     if (fabricShape) {
         this.canvas.add(fabricShape);
         this.canvas.setActiveObject(fabricShape);
+        
     }
 }
 

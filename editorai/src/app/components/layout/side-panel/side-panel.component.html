@@ -89,13 +89,13 @@
       <button class="addtextbutton" mat-raised-button color="primary" (click)="addEnteredText()">Add Text</button>
 </div>
 
-      <div class="headings"> 
+      <div  draggable="true"  (dragstart)="onHDragStart($event, 'Heading')"  class="headings" > 
         Heading
       </div>
-      <div class="headings2">
+      <div  draggable="true"  (dragstart)="onHDragStart($event, 'Subheading')"   class="headings2">
         Subheading
       </div>
-      <div class="headings3">
+      <div  draggable="true"  (dragstart)="onHDragStart($event, 'BodyText')"  class="headings3">
         Body text
       </div>
       

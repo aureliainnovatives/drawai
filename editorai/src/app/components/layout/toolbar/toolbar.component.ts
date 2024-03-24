@@ -44,7 +44,8 @@ export class ToolbarComponent implements OnInit {
   
   @Output() canvasSizeChanged: EventEmitter<string> = new EventEmitter<string>();
 
-  fontFamilies: string[] = ['Arial', 'Helvetica', 'Times New Roman', 'Courier New','roguedash','cathilda','myford','catcut','rainbow','chunkfive','milvasten','kleptocracy','ph','prida01','poppins'];
+  fontFamilies: string[] = ['Arial', 'Helvetica', 'Times New Roman', 'Courier New'];
+  // fontFamilies: string[] = ['Arial', 'Helvetica', 'Times New Roman', 'Courier New','roguedash','cathilda','myford','catcut','rainbow','chunkfive','milvasten','kleptocracy','ph','prida01','poppins'];
   selectedFontColor: string = '#000000';
 
   isBold: boolean = false;

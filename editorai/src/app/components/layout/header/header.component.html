@@ -1,4 +1,5 @@
 <mat-toolbar color="primary">
+  
     <!-- Logo on the left -->
     <span class="logo" (click)="gotohome()">
         <img src="assets/images/logoo1.png" width="58px" alt="" srcset=""> EditorAI
@@ -6,6 +7,7 @@
   
     <!-- Centered text box for the project name and save button -->
     <span class="project-input-container">
+      
       <input matInput placeholder="Project Name" [(ngModel)]="projectName" class="project-name">
       <button mat-button class="project-save-btn" (click)="saveProject()">
         <i class="material-symbols-outlined">done</i>

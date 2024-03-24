@@ -25,9 +25,16 @@ button {
   }
 
   .example-margin {
-   
     width: 100%;
     border-radius: 5px;
   }
   
+  .amber-purple-theme .mat-checkbox-checked .mat-checkbox-background {
+    background-color: purple !important; /* Change the tick color to purple */
+  }
+  
+  .mat-checkbox-inner-container {
+    background-color: purple !important;
+  }
 
+  
