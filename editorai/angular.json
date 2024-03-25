@@ -37,9 +37,14 @@
             "styles": [
               "@angular/material/prebuilt-themes/deeppurple-amber.css",
               "node_modules/ng-zorro-antd/slider/style/index.min.css",
+              "src/assets/css/coloris.min.css",
               "src/styles.css"
+              
             ],
-            "scripts": []
+            "scripts": [
+
+              "src/assets/css/coloris.min.js"
+            ]
           },
           "configurations": {
             "production": {

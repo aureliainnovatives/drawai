@@ -6,6 +6,8 @@ import { SelectedColorService } from '../../Services/selected-color.service';
 import { fabric } from 'fabric';
 import { MatDialog } from '@angular/material/dialog';
 import { ExportDialogComponent } from './DownloadDialog/export-dialog/export-dialog.component';
+
+declare var Coloris: any;
 @Component({
   selector: 'app-toolbar',
   templateUrl: './toolbar.component.html',
@@ -93,6 +95,27 @@ export class ToolbarComponent implements OnInit {
 
 ngOnInit() {
 
+  Coloris({
+    // themeMode: 'dark',
+    wrap: true,
+    format: 'hex',
+    theme : 'large',
+    swatches: [
+      '#264653',
+      '#2a9d8f',
+      '#e9c46a',
+      'rgb(244,162,97)',
+      '#e76f51',
+      '#d62828',
+      'navy',
+      '#07b',
+      '#0096c7',
+      '#00b4d880',
+      'rgba(0,119,182,0.8)'
+    ],
+    el: '[data-coloris]', // Initialize Coloris for elements with class 'coloris'
+    onChange: this.onColorChange // Call onColorChange function when color is picked
+  });
   
   this.selectedColorService.selectedColor$.subscribe(color => {
     this.selectedColor = color;
@@ -102,6 +125,11 @@ ngOnInit() {
     this.selectedBorderColor = color;
   });
   this.subscribeToSelectionType();
+}
+
+onColorisColorChange(color: any) {
+  console.log('Selected color:', color);
+  // You can perform actions with the selected color here
 }
   onAddCanvas(): void {
     this.addCanvas.emit();

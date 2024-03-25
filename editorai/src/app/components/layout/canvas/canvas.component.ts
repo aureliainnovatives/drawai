@@ -7,7 +7,6 @@ import { SelectedColorService } from '../../Services/selected-color.service';
 import { TextAdditionService } from '../../Services/text-addition.service';
 import { HttpClient } from '@angular/common/http';
 
-
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
@@ -49,7 +48,7 @@ export class CanvasComponent implements AfterViewInit {
   
   canvasWidth: number = 700; // Initial canvas width
   canvasHeight: number = 700; // Initial canvas height
-
+  Coloris: any; 
   copiedObject: fabric.Object | null = null; 
   
   constructor(private elementRef: ElementRef,
@@ -156,8 +155,10 @@ export class CanvasComponent implements AfterViewInit {
       }
     });
 
+
   }
-  
+
+
   addTextWithStyle(text: string, fontFamily: string, fill: string, shadow: string, fontWeight: string) {
     const left = 50;
     const top = 50 + this.canvas.getObjects().length * 50;

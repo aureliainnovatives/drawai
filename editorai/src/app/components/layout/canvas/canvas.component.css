@@ -134,3 +134,8 @@ app-toolbar {
 .transparent-square.selected {
   background-color: transparent;
 }
+
+data-coloris {
+  width: 100%;
+  height: 100%;
+}
