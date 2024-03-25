@@ -64,9 +64,17 @@ export class CanvasComponent implements AfterViewInit {
       this.subscription = this.canvasSizeService.textToAdd$.subscribe(text => {
         this.textToAdd = text;
 
+        const canvasElement: HTMLCanvasElement = this.elementRef.nativeElement.querySelector('canvas');
+        const canvasWidth = canvasElement.width;
+        const canvasHeight = canvasElement.height;
+
+        // Calculate center coordinates of the canvas
+        const centerX = canvasWidth / 2.5;
+        const centerY = canvasHeight / 2.4;
+
       const fabricText = new fabric.Textbox(this.textToAdd, {
-        left: 10,
-        top: 10,
+         left: centerX,
+            top: centerY,
         fontFamily: 'Arial',
         fontSize:45,
         fill: 'black',
@@ -374,7 +382,7 @@ onChangeCanvasSize(size: string) {
           cornerStyle: 'circle',
           cornerColor: 'white', // Change corner color to white
           cornerSize: 10,
-          borderColor: 'red',
+          borderColor: 'blue',
           cornerStrokeColor: 'gray',
           transparentCorners: false, 
           borderScaleFactor: 2,
@@ -670,38 +678,46 @@ onHeadingsDrop( data:string, event: DragEvent) {
 
 
 ImageonDrop(data:string,event: DragEvent,) {
-  console.log(event)
   event.preventDefault();
-  const imageData = data;
-  const img = new Image();
-  img.src = imageData;
-  const canvas = this.canvas;
+  const imageURL2 = data;
 
-  img.onload = () => {
-    const fabricImg = new fabric.Image(img, {
-      left: event.offsetX,
-      top: event.offsetY,
-    });
+  this.http.get(imageURL2, { responseType: 'blob' }).subscribe((blob: Blob) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64Data = reader.result as string;
 
-    // Scale the image to fit within the canvas dimensions
-    fabricImg.scaleToWidth(canvas.getWidth() * 0.4); // Adjust the scale as needed
-    fabricImg.scaleToHeight(canvas.getHeight() * 0.4); // Adjust the scale as needed
+      fabric.Image.fromURL(base64Data, (fabricImg) => {
+        const canvasWidth = this.canvas.getWidth();
+        const canvasHeight = this.canvas.getHeight();
+        const imgWidth = fabricImg.width || fabricImg.getScaledWidth();
+        const imgHeight = fabricImg.height || fabricImg.getScaledHeight();
 
-    // Center the image within the canvas
-    fabricImg.set({
-      originX: 'center',
-      originY: 'center',
-    });
+     
+        if (canvasWidth && canvasHeight) {
+    
+          if (imgWidth > canvasWidth || imgHeight > canvasHeight) {
 
-    canvas.add(fabricImg);
-    canvas.setActiveObject(fabricImg); // Select the added image
-    canvas.renderAll();
+            const scale = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight);
+            fabricImg.scale(scale);
+          }
+        }
 
-    // Emit event to add the image to the "Added Images" category
-    this.addImageToCategory.emit({ name: 'New Image', data: imageData });
-  };
+
+        fabricImg.set({
+          left: event.offsetX,
+          top: event.offsetY,
+        });
+
+
+        this.canvas.add(fabricImg);
+        this.canvas.setActiveObject(fabricImg);
+        this.canvas.renderAll();
+
+      });
+    };
+    reader.readAsDataURL(blob);
+  });
 }
-
 
 ///shape section
   onshapeDrop(data:string,event: DragEvent) {
