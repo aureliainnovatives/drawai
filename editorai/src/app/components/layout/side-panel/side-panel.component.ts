@@ -64,8 +64,8 @@ export class SidePanelComponent  {
     fullfilledstar: 'assets/icons/fullfilledstar.svg',
   };
 
-  addstylishText(text: string, fontFamily: string, fill: string, shadow: string,fontWeight: string) {
-    this.textAdditionService.addTextWithStyle.next({ text, fontFamily, fill, shadow, fontWeight });
+  addstylishText(text: string, fontFamily: string,dropX :number, dropY:number ,fill: string, shadow: string,fontWeight: string) {
+    this.textAdditionService.addTextWithStyle.next({ text, fontFamily, dropX, dropY ,fill, shadow, fontWeight });
   }
 
 
@@ -131,21 +131,33 @@ export class SidePanelComponent  {
   //////////
 
   onTextDragStart(event: DragEvent, textStyle: string) {
-    event.dataTransfer?.setData('textStyle', textStyle);
+    event.dataTransfer!.setData('dragmeta', JSON.stringify({
+      type: 'StylishText',
+      data: textStyle,
+    }));
   }
  
   onDragStart(event: DragEvent, shape: string) {
-    event.dataTransfer!.setData('text/plain', shape);
+    event.dataTransfer!.setData('dragmeta', JSON.stringify({
+      type: 'shapes',
+      data: shape,
+    }));
     
   }
 
   onHDragStart(event: DragEvent, type: string) {
-    event.dataTransfer!.setData('text/plain', type);
-    
+    event.dataTransfer!.setData('dragmeta', JSON.stringify({
+      type: 'Headings',
+      data: type,
+    }));
   }
+
+
   ImageonDragStart(event: DragEvent, imageData: string) {
-    console.log(imageData)
-    event.dataTransfer!.setData('text/plain', imageData);
+    event.dataTransfer!.setData('dragmeta', JSON.stringify({
+      type: 'image',
+      data: imageData,
+    }));
   }
   
 

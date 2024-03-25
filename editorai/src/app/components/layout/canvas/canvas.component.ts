@@ -140,7 +140,7 @@ export class CanvasComponent implements AfterViewInit {
       this.selectedColorService.setSelectedColor(fillColor);
     }
     this.subscription = this.textAdditionService.addTextWithStyle.subscribe(data => {
-      this.addTextWithStyle(data.text, data.fontFamily, data.fill, data.shadow , data.fontWeight);
+      this.addTextWithStyle(data.text, data.fontFamily, data.dropY , data.dropX, data.fill, data.shadow , data.fontWeight);
     });
 
     this.selectedColorService.borderColor$.subscribe(color => {
@@ -159,12 +159,11 @@ export class CanvasComponent implements AfterViewInit {
   }
 
 
-  addTextWithStyle(text: string, fontFamily: string, fill: string, shadow: string, fontWeight: string) {
-    const left = 50;
-    const top = 50 + this.canvas.getObjects().length * 50;
+  addTextWithStyle(text: string, fontFamily: string, dropX: number, dropY: number, fill: string, shadow: string, fontWeight: string) {
+    const fontSize = 90;
     const newText = new fabric.Textbox(text, {
-      left: left,
-      top: top,
+      left: dropX - (fontSize / 2), // Subtract half of the text's width
+      top: dropY - (fontSize / 2),
       fontFamily: fontFamily,
       fill: fill,
       shadow: shadow,
@@ -178,14 +177,22 @@ export class CanvasComponent implements AfterViewInit {
     }, 200);
   }
   
-  onTextDrop(event: DragEvent) {
+  onTextDrop(data:string, event: DragEvent) {
+    console.log('text : ', data)
     event.preventDefault();
-    const textStyle = event.dataTransfer?.getData('textStyle') || '';
+    const textStyle = data;
     let text = '';
     let fontFamily = '';
     let fill = '';
     let shadow = '';
     let fontWeight = '';
+
+    const canvasRect = (event.target as HTMLElement).getBoundingClientRect();
+    const dropX = event.clientX - canvasRect.left;
+    const dropY = event.clientY - canvasRect.top;
+  
+
+
     switch (textStyle) {
       case 'style1.png':
         text = 'HELLO';
@@ -265,47 +272,12 @@ export class CanvasComponent implements AfterViewInit {
         
     
     }
-    this.addTextWithStyle(text, fontFamily, fill, shadow, fontWeight);
+    this.addTextWithStyle(text, fontFamily, dropX, dropY, fill, shadow, fontWeight);
   
       this.canvas.renderAll();
   }
 
-  onHeadingsDrop(event: DragEvent) {
-    event.preventDefault();
-    const heading = event.dataTransfer?.getData('text/plain');
-    let text = '';
-    let fontFamily = '';
-    let fill = '';
-    let shadow = '';
-    let fontWeight = '';
-    switch (heading) {
-      case 'Heading':
-          text = 'Heading';
-          fontFamily = 'Arial';
-          fill = '#00000';
-          shadow = '';
-          fontWeight = '1000';
-        break;
-      case 'Subheading':
-          text = 'Subheading';
-          fontFamily = 'Arial';
-          fill = '#00000';
-          shadow = '';
-          fontWeight = '600';
-        break;
-      case 'BodyText':
-          text = 'BodyText';
-          fontFamily = 'Arial';
-          fill = '#00000';
-          shadow = '';
-          fontWeight = '100';
-        break;
-  
-    }
-    this.addTextWithStyle(text, fontFamily, fill, shadow,fontWeight);
-  
-      this.canvas.renderAll();
-  }
+
 
 private updateSelectionType() {
   const activeObject = this.canvas.getActiveObject();
@@ -627,9 +599,80 @@ onDragOver(event: DragEvent) {
   event.preventDefault();
 }
 
-ImageonDrop(event: DragEvent) {
+onDrop(event: DragEvent) {
+  const dragDataString = event.dataTransfer!.getData("dragmeta");
+  console.log(dragDataString)
+  if (dragDataString) {
+    try {
+      const metaObject = JSON.parse(dragDataString);
+      const type = metaObject.type;
+      const data = metaObject.data;
+
+      if (type === "shapes")
+        this.onshapeDrop(data,event);
+      else if (type === "image")
+        this.ImageonDrop(data,event);
+      else if (type === "StylishText")
+        this.onTextDrop(data,event);
+      else if (type === "Headings")
+        this.onHeadingsDrop(data,event);
+
+    } catch (error) {
+      console.error("Error parsing drag data:", error);
+    }
+  } else {
+    console.error("No drag data found");
+  }
+}
+
+onHeadingsDrop( data:string, event: DragEvent) {
   event.preventDefault();
-  const imageData = event.dataTransfer!.getData('text/plain');
+  const heading = data;
+  let text = '';
+  let fontFamily = '';
+  let fill = '';
+  let shadow = '';
+  let fontWeight = '';
+
+  const canvasRect = (event.target as HTMLElement).getBoundingClientRect();
+  const dropX = event.clientX - canvasRect.left;
+  const dropY = event.clientY - canvasRect.top;
+
+
+  switch (heading) {
+    case 'Heading':
+        text = 'Heading';
+        fontFamily = 'Arial';
+        fill = '#00000';
+        shadow = '';
+        fontWeight = '1000';
+      break;
+    case 'Subheading':
+        text = 'Subheading';
+        fontFamily = 'Arial';
+        fill = '#00000';
+        shadow = '';
+        fontWeight = '600';
+      break;
+    case 'BodyText':
+        text = 'BodyText';
+        fontFamily = 'Arial';
+        fill = '#00000';
+        shadow = '';
+        fontWeight = '100';
+      break;
+
+  }
+  this.addTextWithStyle(text, fontFamily, dropX, dropY, fill, shadow,fontWeight );
+
+    this.canvas.renderAll();
+}
+
+
+ImageonDrop(data:string,event: DragEvent,) {
+  console.log(event)
+  event.preventDefault();
+  const imageData = data;
   const img = new Image();
   img.src = imageData;
   const canvas = this.canvas;
@@ -661,16 +704,23 @@ ImageonDrop(event: DragEvent) {
 
 
 ///shape section
-  onshapeDrop(event: DragEvent) {
-    event.preventDefault();
-    const shapeName = event.dataTransfer!.getData('text/plain');
+  onshapeDrop(data:string,event: DragEvent) {
+    console.log(event)
+    const shapeName = data;
+    console.log(shapeName)
+    let canvas = this.canvas
     let fabricShape: fabric.Object | undefined;
 
+    const canvasRect = (event.target as HTMLElement).getBoundingClientRect(); // Get canvas bounding rectangle
+
+    // Calculate the drop point coordinates relative to the canvas
+    const dropX = event.clientX - canvasRect.left;
+    const dropY = event.clientY - canvasRect.top;
     switch (shapeName) {
         case 'filledcircle':
             fabricShape = new fabric.Circle({
-                left: event.offsetX,
-                top: event.offsetY,
+              left: dropX - 50, // Subtract half of the shape's width
+              top: dropY - 50, // Subtract half of the shape's height
                 fill: 'black',
                 stroke: 'black',
                 strokeWidth: 2,
@@ -680,8 +730,8 @@ ImageonDrop(event: DragEvent) {
             break;
             case 'emptycircle':
               fabricShape = new fabric.Circle({
-                  left: event.offsetX,
-                  top: event.offsetY,
+                left: dropX - 50, // Subtract half of the shape's width
+                top: dropY - 50, // Subtract half of the shape's height
                   fill: '',
                   stroke: 'black',
                   strokeWidth: 2,
@@ -691,8 +741,8 @@ ImageonDrop(event: DragEvent) {
               break;
             case 'emptysquare':
               fabricShape = new fabric.Rect({
-                  left: event.offsetX,
-                  top: event.offsetY,
+                left: dropX - 50, // Subtract half of the shape's width
+                top: dropY - 50, // Subtract half of the shape's height
                   fill: '',
                   stroke: 'black',
                   strokeWidth: 2,
@@ -702,8 +752,8 @@ ImageonDrop(event: DragEvent) {
               break;
               case 'roundedtriangle':
                 fabricShape = new fabric.Triangle({ 
-                    left: event.offsetX,
-                    top: event.offsetY,
+                  left: dropX - 50, // Subtract half of the shape's width
+                  top: dropY - 50, // Subtract half of the shape's height
                     fill: '', // You can specify a color for the fill if needed
                     stroke: 'black',
                     strokeWidth: 2,
@@ -713,8 +763,8 @@ ImageonDrop(event: DragEvent) {
                 break;
                 case 'filledtriangle':
                   fabricShape = new fabric.Triangle({ 
-                      left: event.offsetX,
-                      top: event.offsetY,
+                    left: dropX - 50, // Subtract half of the shape's width
+                    top: dropY - 50, // Subtract half of the shape's height
                       fill: 'black', // You can specify a color for the fill if needed
                       stroke: 'black',
                       strokeWidth: 2,
@@ -724,8 +774,8 @@ ImageonDrop(event: DragEvent) {
                   break;
               case 'filledsquare':
                 fabricShape = new fabric.Rect({ 
-                    left: event.offsetX,
-                    top: event.offsetY,
+                  left: dropX - 50, // Subtract half of the shape's width
+                  top: dropY - 50, // Subtract half of the shape's height
                     fill: 'black',
                     stroke: 'black',
                     strokeWidth: 2,
@@ -760,8 +810,8 @@ ImageonDrop(event: DragEvent) {
                       { x: -15, y: -15 },
                     ];
                     fabricShape = new fabric.Polygon(starPoints1, {
-                        left: event.offsetX,
-                        top: event.offsetY,
+                      left: dropX - 50, // Subtract half of the shape's width
+                      top: dropY - 50, // Subtract half of the shape's height
                         fill: '', // You can specify a color for the fill if needed
                         stroke: 'black',
                         strokeWidth: 2,
@@ -799,8 +849,8 @@ ImageonDrop(event: DragEvent) {
                         fill: 'black',
                         stroke: 'black',
                         strokeWidth: 2,
-                        left: event.offsetX,
-                      top: event.offsetY,
+                        left: dropX - 50, // Subtract half of the shape's width
+                        top: dropY - 50, // Subtract half of the shape's height
                       });
                       break;
 
@@ -825,8 +875,8 @@ ImageonDrop(event: DragEvent) {
 
                       // Create fabric polygon with scaled points
                       fabricShape = new fabric.Polygon(scaledHexagonPoints, {
-                          left: event.offsetX,
-                          top: event.offsetY,
+                        left: dropX - 50, // Subtract half of the shape's width
+                        top: dropY - 50, // Subtract half of the shape's height
                           fill: 'black',
                           stroke: 'black',
                           strokeWidth: 2
@@ -854,8 +904,8 @@ ImageonDrop(event: DragEvent) {
                     
                         // Create fabric polygon with scaled points
                         fabricShape = new fabric.Polygon(scaledHexagonPoints1, {
-                            left: event.offsetX,
-                            top: event.offsetY,
+                          left: dropX - 50, // Subtract half of the shape's width
+                          top: dropY - 50, // Subtract half of the shape's height
                             fill: '',
                             stroke: 'black',
                             strokeWidth: 2
@@ -893,8 +943,8 @@ ImageonDrop(event: DragEvent) {
                           fill: '',
                           stroke: 'black',
                           strokeWidth: 3,
-                          left: 250,
-                          top: 250,
+                          left: dropX - 50, // Subtract half of the shape's width
+                          top: dropY - 50, // Subtract half of the shape's height
                         });
 
                         break;
@@ -925,9 +975,8 @@ ImageonDrop(event: DragEvent) {
                           fill: '',
                           stroke : 'black',
                           strokeWidth: 2,
-                    
-                          left: 250,
-                          top: 250,
+                          left: dropX - 50, // Subtract half of the shape's width
+                          top: dropY - 50, // Subtract half of the shape's height
                         });
 
                         break;
@@ -958,33 +1007,31 @@ ImageonDrop(event: DragEvent) {
                           fill: 'black',
                           stroke : 'black',
                           strokeWidth: 2,
-                          left: 250,
-                          top: 250,
+                          left: dropX - 50, // Subtract half of the shape's width
+                          top: dropY - 50, // Subtract half of the shape's height
                         });
                     
                         break;
 
                         
-                        case 'halfemptystar':
-                          const svgUrl = '/assets/Svgs/halfstar.svg';
+                        // case 'halfemptystar':
+                        //   const svgUrl = '/assets/Svgs/halfstar.svg';
 
-                        fabric.loadSVGFromURL(svgUrl, (objects, options) => {
-                          const [halfFilledStar] = objects as fabric.Object[];
+                        // fabric.loadSVGFromURL(svgUrl, (objects, options) => {
+                        //   const [halfFilledStar] = objects as fabric.Object[];
 
-                          // Adjust the scale to make the star smaller
-                          const scaleRatio = 4.0; // Change this value as needed
-                          halfFilledStar.scaleX = scaleRatio;
-                          halfFilledStar.scaleY = scaleRatio;
+                        //   // Adjust the scale to make the star smaller
+                        //   const scaleRatio = 4.0; // Change this value as needed
+                        //   halfFilledStar.scaleX = scaleRatio;
+                        //   halfFilledStar.scaleY = scaleRatio;
 
-                          halfFilledStar.set({
-                            left: this.canvas?.width ? this.canvas.width / 2 : 0,
-                            top: this.canvas?.height ? this.canvas.height / 2 : 0,
-                            originX: 'center',
-                            originY: 'center',
-                          });
+                        //   halfFilledStar.set({
+                        //     left: dropX - 50, // Subtract half of the shape's width
+                        //     top: dropY - 50, // Subtract half of the shape's height
+                        //   });
                           
-                        })        
-                        break;
+                        // })        
+                        // break;
                     
                   
                   case 'sevenedgestar':
@@ -1011,8 +1058,8 @@ ImageonDrop(event: DragEvent) {
                     fill: '',
                     stroke :'black',
                     strokeWidth: 2,
-                    left: event.offsetX,
-                    top: event.offsetY,
+                    left: dropX - 50, // Subtract half of the shape's width
+                    top: dropY - 50, // Subtract half of the shape's height
                   });
                   break;
 
