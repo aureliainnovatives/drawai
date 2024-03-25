@@ -39,26 +39,27 @@
         </div>
        </div>
       </mat-tab> -->
-
       <mat-tab label="All Shapes">
         <div class="shape-content-container">
-        <div class="element" >
-              <ng-container *ngFor="let shapeArray of filteredShapeArrays">
-                <span class="category-title">{{ shapeArray.category }}</span>
-                  <div class="card-container">
-                    <mat-card class="card-box" *ngFor="let shape of shapeArray.shapes"  >
-                      <mat-card-header>
-                      <div  class="card-icon" draggable="true" (dragstart)="onDragStart($event, shape.name)">
-                        <img class="cardicons"  [src]="shape.icon" alt="{{ shape.name }}">
-                      </div>
-                    </mat-card-header>
-                    </mat-card>
-                  </div>
-              </ng-container>
+            <div class="element">
+                <ng-container *ngFor="let shapeArray of filteredShapeArrays">
+                    <span class="category-title">{{ shapeArray.category }}</span>
+                    <div class="card-container">
+                        <mat-card class="card-box" *ngFor="let shape of shapeArray.shapes">
+                            <mat-card-header>
+                                <!-- Add the placeholder element for the preview -->
+                                <div class="card-icon" draggable="true" (dragstart)="onDragStart($event, shape.name)"
+                                    (drag)="onDrag($event, shape)">
+                                    <img class="cardicons" [src]="shape.icon" alt="{{ shape.name }}">
+                                </div>
+                            </mat-card-header>
+                        </mat-card>
+                    </div>
+                </ng-container>
             </div>
-         </div>
-      </mat-tab>
-
+        </div>
+    </mat-tab>
+    
 
     <!-- <ng-template #notFound>
       <div class="not-found-container">

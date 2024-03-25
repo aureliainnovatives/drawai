@@ -159,6 +159,15 @@ export class SidePanelComponent  {
       data: imageData,
     }));
   }
+
+  onDrag(event: DragEvent, shape: any) {
+    // Get the placeholder element
+    const placeholder = document.getElementById('shape-preview');
+    if (placeholder) {
+        // Update the placeholder with the actual shape object
+        placeholder.innerHTML = `<img src="${shape.icon}" alt="${shape.name}" style="width: 50px; height: 50px;">`;
+    }
+}
   
 
   // onTabSelected(tab: string) {

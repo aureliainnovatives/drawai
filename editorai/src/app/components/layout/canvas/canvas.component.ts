@@ -121,7 +121,7 @@ export class CanvasComponent implements AfterViewInit {
       this.onSelectionChange();
       this.updateSelectedBorderColor();
   };
-    // this.enableDragAndDrop();
+    this.enableDragAndDrop();
     this.canvas.on('selection:created', this.updateSelectionType.bind(this));
     this.canvas.on('selection:updated', this.updateSelectionType.bind(this));
     this.canvas.on('selection:cleared', this.updateSelectionType.bind(this));
@@ -276,16 +276,13 @@ export class CanvasComponent implements AfterViewInit {
           fontFamily = 'prida';
           fill = 'rgb(32, 1, 33)';
           shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
-          break;
-        
+          break; 
     
     }
     this.addTextWithStyle(text, fontFamily, dropX, dropY, fill, shadow, fontWeight);
   
       this.canvas.renderAll();
   }
-
-
 
 private updateSelectionType() {
   const activeObject = this.canvas.getActiveObject();
@@ -503,61 +500,61 @@ onChangeCanvasSize(size: string) {
   }
   
 
-//   private enableDragAndDrop(): void {
-//     this.containerElement.addEventListener('dragover', (event) => {
-//       event.preventDefault();
-//     });
+  private enableDragAndDrop(): void {
+    this.containerElement.addEventListener('dragover', (event) => {
+      event.preventDefault();
+    });
 
-//     this.containerElement.addEventListener('drop', (event) => {
-//       event.preventDefault();
-//       const file = event.dataTransfer?.files[0];
-//       if (file) {
-//         this.loadImageFromFile(file);
-//    }
-// });
-// }
+    this.containerElement.addEventListener('drop', (event) => {
+      event.preventDefault();
+      const file = event.dataTransfer?.files[0];
+      if (file) {
+        this.loadImageFromFile(file);
+   }
+});
+}
   
   
-  // private loadImageFromFile(file: File): void {
-  //   const reader = new FileReader();
-  //   reader.onload = (event: any) => {
-  //     const imgURL = event.target.result;
+  private loadImageFromFile(file: File): void {
+    const reader = new FileReader();
+    reader.onload = (event: any) => {
+      const imgURL = event.target.result;
   
-  //     fabric.Image.fromURL(imgURL, (img) => {
-  //       if (this.canvas && this.canvas.width && this.canvas.height && img.width && img.height) {
-  //         // Define fixed width and height for all images
-  //         const fixedWidth = 200; // Adjust as needed
-  //         const fixedHeight = 200; // Adjust as needed
+      fabric.Image.fromURL(imgURL, (img) => {
+        if (this.canvas && this.canvas.width && this.canvas.height && img.width && img.height) {
+          // Define fixed width and height for all images
+          const fixedWidth = 200; // Adjust as needed
+          const fixedHeight = 200; // Adjust as needed
   
-  //         // Calculate scaling factors to fit the image within the fixed dimensions
-  //         const scaleX = fixedWidth / img.width;
-  //         const scaleY = fixedHeight / img.height;
-  //         const scale = Math.min(scaleX, scaleY);
+          // Calculate scaling factors to fit the image within the fixed dimensions
+          const scaleX = fixedWidth / img.width;
+          const scaleY = fixedHeight / img.height;
+          const scale = Math.min(scaleX, scaleY);
   
-  //         // Scale the image proportionally
-  //         const scaledWidth = img.width * scale;
-  //         const scaledHeight = img.height * scale;
+          // Scale the image proportionally
+          const scaledWidth = img.width * scale;
+          const scaledHeight = img.height * scale;
   
-  //         // Calculate position to center the image within the canvas
-  //         const left = (this.canvas.width - scaledWidth) / 2;
-  //         const top = (this.canvas.height - scaledHeight) / 2;
+          // Calculate position to center the image within the canvas
+          const left = (this.canvas.width - scaledWidth) / 2;
+          const top = (this.canvas.height - scaledHeight) / 2;
   
-  //         // Set image properties
-  //         img.set({
-  //           left: left,
-  //           top: top,
-  //           scaleX: scale,
-  //           scaleY: scale,
-  //         });
+          // Set image properties
+          img.set({
+            left: left,
+            top: top,
+            scaleX: scale,
+            scaleY: scale,
+          });
   
-  //         // Add image to canvas
-  //         this.canvas.add(img);
-  //         this.canvas.renderAll();
-  //       }
-  //     });
-  //   };
-  //   reader.readAsDataURL(file);
-  // }
+          // Add image to canvas
+          this.canvas.add(img);
+          this.canvas.renderAll();
+        }
+      });
+    };
+    reader.readAsDataURL(file);
+  }
 
   zoomIn() {
     if (this.zoomLevel < 200) {
@@ -603,8 +600,28 @@ onChangeCanvasSize(size: string) {
     }
   }
   // Dragover event handler
-onDragOver(event: DragEvent) {
-  event.preventDefault();
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+
+    const canvasRect = (event.target as HTMLElement).getBoundingClientRect();
+    const mouseX = event.clientX - canvasRect.left;
+    const mouseY = event.clientY - canvasRect.top;
+
+    // Show the preview at the current mouse position
+    const placeholder = document.getElementById('shape-preview');
+    if (placeholder) {
+        placeholder.style.left = `${mouseX}px`;
+        placeholder.style.top = `${mouseY}px`;
+        placeholder.style.display = 'block';
+    }
+}
+
+onDragLeave(event: DragEvent) {
+  // Hide the preview when leaving the canvas
+  const placeholder = document.getElementById('shape-preview');
+  if (placeholder) {
+      placeholder.style.display = 'none';
+  }
 }
 
 onDrop(event: DragEvent) {
