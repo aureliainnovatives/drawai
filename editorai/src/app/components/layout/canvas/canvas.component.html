@@ -60,8 +60,9 @@
 
 <div class="canvas">
   <div #canvasContainer  class="canvas-container" 
-    (drop)="onDrop($event)" >
-    
+    (drop)="onDrop($event)" 
+    (dragover)="onDragOver($event)">
+
   <div class="buttons">    
   <!-- <button class="custom-button" (click)="deleteSelectedObject()">
   <span class="material-symbols-outlined icon-background-less">
@@ -87,9 +88,8 @@
 </button>
   </div>
 
- <div id="shape-preview" style="position: absolute; display: none;"></div>
-<canvas (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"  id='canvas' [height]="canvasHeight" [width]="canvasWidth"></canvas>
-
+  
+<canvas id='canvas' [height]="canvasHeight" [width]="canvasWidth"></canvas>
 
 </div>
 </div>

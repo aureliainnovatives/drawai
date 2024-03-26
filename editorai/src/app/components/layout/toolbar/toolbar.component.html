@@ -69,15 +69,14 @@
     </button> -->
 
 <div class="CanvasSize">
-  <div class="canvas-container" *ngIf="isCanvasContainerVisible">
+  <div class="canvasContainer" *ngIf="isCanvasContainerVisible">
     <div class="toolbar-color-container" >
       <input type="color" (input)="changeCanvasColor($event)" class="toolbar-color-button">
     </div>
-  
-     </div>
+    </div>
+    
 
   <div class="text-formatting">
-
   <button (click)="openExportDialog()">
     <span class="material-symbols-outlined">
       download

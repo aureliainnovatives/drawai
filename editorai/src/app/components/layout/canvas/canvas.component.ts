@@ -26,6 +26,8 @@ export class CanvasComponent implements AfterViewInit {
   minZoom = 0.1; // Minimum zoom
   containerElement!: HTMLElement;
   zoomLevel = 100; // Initial zoom level (100%)
+
+
   @Output() addImageToCategory: EventEmitter<{ name: string, data: string }> = new EventEmitter<{ name: string, data: string }>();
   @Output() textboxSelected: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() zoomLevelChanged = new EventEmitter<number>();
@@ -48,7 +50,7 @@ export class CanvasComponent implements AfterViewInit {
   
   canvasWidth: number = 700; // Initial canvas width
   canvasHeight: number = 700; // Initial canvas height
-  Coloris: any; 
+
   copiedObject: fabric.Object | null = null; 
   
   constructor(private elementRef: ElementRef,
@@ -73,8 +75,8 @@ export class CanvasComponent implements AfterViewInit {
         const centerY = canvasHeight / 2.4;
 
       const fabricText = new fabric.Textbox(this.textToAdd, {
-         left: centerX,
-            top: centerY,
+        left: centerX,
+        top: centerY,
         fontFamily: 'Arial',
         fontSize:45,
         fill: 'black',
@@ -121,7 +123,7 @@ export class CanvasComponent implements AfterViewInit {
       this.onSelectionChange();
       this.updateSelectedBorderColor();
   };
-    this.enableDragAndDrop();
+    // this.enableDragAndDrop();
     this.canvas.on('selection:created', this.updateSelectionType.bind(this));
     this.canvas.on('selection:updated', this.updateSelectionType.bind(this));
     this.canvas.on('selection:cleared', this.updateSelectionType.bind(this));
@@ -500,19 +502,19 @@ onChangeCanvasSize(size: string) {
   }
   
 
-  private enableDragAndDrop(): void {
-    this.containerElement.addEventListener('dragover', (event) => {
-      event.preventDefault();
-    });
+//   private enableDragAndDrop(): void {
+//     this.containerElement.addEventListener('dragover', (event) => {
+//       event.preventDefault();
+//     });
 
-    this.containerElement.addEventListener('drop', (event) => {
-      event.preventDefault();
-      const file = event.dataTransfer?.files[0];
-      if (file) {
-        this.loadImageFromFile(file);
-   }
-});
-}
+//     this.containerElement.addEventListener('drop', (event) => {
+//       event.preventDefault();
+//       const file = event.dataTransfer?.files[0];
+//       if (file) {
+//         this.loadImageFromFile(file);
+//    }
+// });
+// }
   
   
   private loadImageFromFile(file: File): void {
@@ -599,30 +601,10 @@ onChangeCanvasSize(size: string) {
       event.preventDefault();
     }
   }
-  // Dragover event handler
   onDragOver(event: DragEvent) {
     event.preventDefault();
-
-    const canvasRect = (event.target as HTMLElement).getBoundingClientRect();
-    const mouseX = event.clientX - canvasRect.left;
-    const mouseY = event.clientY - canvasRect.top;
-
-    // Show the preview at the current mouse position
-    const placeholder = document.getElementById('shape-preview');
-    if (placeholder) {
-        placeholder.style.left = `${mouseX}px`;
-        placeholder.style.top = `${mouseY}px`;
-        placeholder.style.display = 'block';
-    }
 }
 
-onDragLeave(event: DragEvent) {
-  // Hide the preview when leaving the canvas
-  const placeholder = document.getElementById('shape-preview');
-  if (placeholder) {
-      placeholder.style.display = 'none';
-  }
-}
 
 onDrop(event: DragEvent) {
   const dragDataString = event.dataTransfer!.getData("dragmeta");
@@ -650,7 +632,24 @@ onDrop(event: DragEvent) {
   }
 }
 
-onHeadingsDrop( data:string, event: DragEvent) {
+addHeadingText(text: string, fontFamily: string, dropX: number, dropY: number, fill: string, shadow: string,fontSize: number,fontWeight: string, ) {
+  const newText = new fabric.Textbox(text, {
+    left: dropX - (fontSize / 2), // Subtract half of the text's width
+    top: dropY - (fontSize / 2),
+    fontFamily: fontFamily,
+    fill: fill,
+    shadow: shadow,
+    fontSize: fontSize, // Set the desired font size
+    fontWeight: fontWeight,
+  });
+  
+     setTimeout(() => {
+  this.canvas.add(newText);
+    this.canvas.renderAll();
+  }, 200);
+}
+
+onHeadingsDrop(data: string, event: DragEvent) {
   event.preventDefault();
   const heading = data;
   let text = '';
@@ -658,39 +657,42 @@ onHeadingsDrop( data:string, event: DragEvent) {
   let fill = '';
   let shadow = '';
   let fontWeight = '';
-
+  let fontSize: number | null = null; // Initialize fontSize to null
   const canvasRect = (event.target as HTMLElement).getBoundingClientRect();
   const dropX = event.clientX - canvasRect.left;
   const dropY = event.clientY - canvasRect.top;
 
-
   switch (heading) {
     case 'Heading':
-        text = 'Heading';
-        fontFamily = 'Arial';
-        fill = '#00000';
-        shadow = '';
-        fontWeight = '1000';
+      text = 'Heading';
+      fontFamily = 'Arial';
+      fill = '#00000';
+      shadow = '';
+      fontWeight = '900';
+      fontSize = 90; // Font size for heading
       break;
     case 'Subheading':
-        text = 'Subheading';
-        fontFamily = 'Arial';
-        fill = '#00000';
-        shadow = '';
-        fontWeight = '600';
+      text = 'Subheading';
+      fontFamily = 'Arial';
+      fill = '#00000';
+      shadow = '';
+      fontWeight = '600';
+      fontSize = 60; // Font size for subheading
       break;
     case 'BodyText':
-        text = 'BodyText';
-        fontFamily = 'Arial';
-        fill = '#00000';
-        shadow = '';
-        fontWeight = '100';
+      text = 'BodyText';
+      fontFamily = 'Arial';
+      fill = '#00000';
+      shadow = '';
+      fontWeight = '100';
+      fontSize = 25; // Font size for body text
       break;
-
   }
-  this.addTextWithStyle(text, fontFamily, dropX, dropY, fill, shadow,fontWeight );
 
+  if (fontSize !== null) {
+    this.addHeadingText(text, fontFamily, dropX, dropY, fill, shadow, fontSize, fontWeight);
     this.canvas.renderAll();
+  }
 }
 
 
@@ -819,8 +821,8 @@ ImageonDrop(data:string,event: DragEvent,) {
                 break;
                 case 'roundedsquare':
                   fabricShape = new fabric.Rect({ 
-                      left: event.offsetX,
-                      top: event.offsetY,
+                    left: dropX - 50, // Subtract half of the shape's width
+                    top: dropY - 50, // Subtract half of the shape's height
                       fill: 'black',
                       stroke: 'black',
                       strokeWidth: 2,

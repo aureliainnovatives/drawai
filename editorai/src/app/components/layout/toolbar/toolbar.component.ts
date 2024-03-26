@@ -114,7 +114,7 @@ ngOnInit() {
       'rgba(0,119,182,0.8)'
     ],
     el: '[data-coloris]', // Initialize Coloris for elements with class 'coloris'
-    onChange: this.onColorChange // Call onColorChange function when color is picked
+    onChange: this.onColorisColorChange // Call onColorChange function when color is picked
   });
   
   this.selectedColorService.selectedColor$.subscribe(color => {
