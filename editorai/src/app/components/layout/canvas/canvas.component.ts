@@ -139,8 +139,12 @@ export class CanvasComponent implements AfterViewInit {
 
 
     this.canvas.on('selection:cleared', () => this.selectedColorService.setBorderColor('')); // Reset when no selection
-
-    this.selectedColorService.selectedColor$.subscribe(color => {
+ 
+ 
+    this.canvas.on('selection:created', this.SendonSelectionChange.bind(this));
+   
+ 
+ this.selectedColorService.selectedColor$.subscribe(color => {
       this.selectedColor = color;
       this.changeShapeColor(color); // Call method to change shape color
     });
@@ -1272,6 +1276,17 @@ moveObjectForward(): void {
   if (activeObject) {
     this.canvas.bringForward(activeObject);
     this.canvas.renderAll();
+  }
+}
+
+private SendonSelectionChange(event: fabric.IEvent): void {
+  const activeObjects = this.canvas.getActiveObjects();
+  if (activeObjects.length === 1) {
+    // Single object selected
+    console.log('Single object selected:', activeObjects[0]);
+  } else {
+    // No or multiple objects selected
+    console.log('No or multiple objects selected');
   }
 }
 
