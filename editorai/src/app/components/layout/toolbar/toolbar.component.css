@@ -172,21 +172,48 @@ input[type="color"]::-webkit-color-swatch {
   gap: 7px;
 }
 
+.text-color input[type=color]
+{
+  margin: 0 3px;
+  padding: 2px;
+  border: 1px solid #ccc; /* light grey border */
+  border-radius:3px;
+  background-color: #ffffff; /* light grey background */
+}
+
 .color-picker-container {
   display: inline-block;
   position: relative; /* To position the inner square */
   cursor: pointer;
 }
 
-.color-picker-inner-square {
+.color-picker-container input[type=color] {
+  margin: 3px;
+  padding: 2px;
+  border: 1px solid #ccc; /* light grey border */
+  border-radius:3px;
+  background-color: #ffffff; /* light grey background */
+}
+
+
+ .color-picker-inner-square {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* Centers the square */
-  width: 80%;  /* Adjust percentage for the desired empty space */
-  height: 80%;
+  transform: translate(-50%, -50%);
+  width: 60%; 
+  height: 60%;
   background-color: white;
-}
+} 
 
+
+.shape-color input[type=color]
+{
+  margin: 3px;
+  padding: 2px;
+  border: 1px solid #ccc; /* light grey border */
+  border-radius:3px;
+  background-color: #ffffff; /* light grey background */
+}
 
 

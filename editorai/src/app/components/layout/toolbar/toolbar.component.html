@@ -38,8 +38,8 @@
  <!-- Shape container -->
  <div class="shape-container"  *ngIf="isShapeSelected">
 
-<div class="container" >
-  <input type="text" data-coloris [(ngModel)]="selectedColor" (ngModelChange)="onColorChange()" />
+<div class="shape-color" >
+  <input type="color" class="coloris" data-coloris [(ngModel)]="selectedColor" (ngModelChange)="onColorChange()"  (click)="preventDefaultColorPicker($event)" />
 </div>
 <!-- <input type="color" [(ngModel)]="selectedColor" (ngModelChange)="onColorChange()"> -->
 

@@ -15,7 +15,6 @@ declare var Coloris: any;
 })
 export class ToolbarComponent implements OnInit {
 
-  color: string = '#ffffff'; 
   @Output() addCanvas: EventEmitter<void> = new EventEmitter<void>();
   @Output() changeCanvasSize: EventEmitter<string> = new EventEmitter<string>();
   @Input() selectedCanvasSizeOption: string = 'letter';
@@ -125,6 +124,10 @@ ngOnInit() {
     this.selectedBorderColor = color;
   });
   this.subscribeToSelectionType();
+}
+
+preventDefaultColorPicker(event: MouseEvent): void {
+  event.preventDefault();
 }
 
 onColorisColorChange(color: any) {

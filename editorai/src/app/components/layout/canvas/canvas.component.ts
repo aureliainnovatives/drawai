@@ -1232,13 +1232,26 @@ pasteCopied() {
   }
 }
 
+// deleteSelectedObject(): void {
+//   const activeObject = this.canvas.getActiveObject();
+//   if (activeObject) {
+//     this.canvas.remove(activeObject);
+//     this.canvas.renderAll();
+//   }
+// }
+
+
 deleteSelectedObject(): void {
-  const activeObject = this.canvas.getActiveObject();
-  if (activeObject) {
-    this.canvas.remove(activeObject);
+  const activeObjects = this.canvas.getActiveObjects();
+  if (activeObjects && activeObjects.length > 0) {
+    activeObjects.forEach(obj => {
+      this.canvas.remove(obj);
+    });
+    this.canvas.discardActiveObject(); // Deselect all objects
     this.canvas.renderAll();
-  }
 }
+}
+
 flipSelectedImage(): void {
   const activeObject = this.canvas.getActiveObject();
   if (activeObject && activeObject.type === 'image') {
