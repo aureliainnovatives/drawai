@@ -46,7 +46,6 @@
 <!-- <input type="color" [(ngModel)]="selectedColor" (input)="onColorChange($event)"> -->
 
 <!-- canvas.component.html -->
-
 <app-toolbar
     (canvasSizeChanged)="onChangeCanvasSize($event)"
     (transparentBackgroundChanged)="onTransparentBackgroundChange($event)"
@@ -55,6 +54,9 @@
     (underlineToggled)="toggleUnderline()"
     (textColorChanged)="applySelectedTextColor($event)"
     (fontFamilyChanged)="applySelectedFontFamily($event)"
+    [borderStyles]="borderStyles"
+    [selectedBorderStyle]="selectedBorderStyle"
+    (borderStyleChanged)="applyBorderStyle($event)"
   >
 </app-toolbar>
 

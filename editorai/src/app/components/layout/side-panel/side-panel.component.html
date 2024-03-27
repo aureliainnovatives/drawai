@@ -48,7 +48,7 @@
                         <mat-card class="card-box" *ngFor="let shape of shapeArray.shapes">
                             <mat-card-header>
                                 <!-- Add the placeholder element for the preview -->
-                                <div class="card-icon" draggable="true" (dragstart)="onDragStart($event, shape.name)"
+                                <div class="card-icon" draggable="true" (dragstart)="onDragStart($event, shape)"
                                     (drag)="onDrag($event, shape)">
                                     <img class="cardicons" [src]="shape.icon" alt="{{ shape.name }}">
                                 </div>

@@ -39,7 +39,7 @@
  <div class="shape-container"  *ngIf="isShapeSelected">
 
 <div class="shape-color" >
-  <input type="color" class="coloris" data-coloris [(ngModel)]="selectedColor" (ngModelChange)="onColorChange()"  (click)="preventDefaultColorPicker($event)" />
+  <input type="color"  class="coloris" data-coloris [(ngModel)]="selectedColor" (ngModelChange)="onColorChange()"  (click)="preventDefaultColorPicker($event)" />
 </div>
 <!-- <input type="color" [(ngModel)]="selectedColor" (ngModelChange)="onColorChange()"> -->
 
@@ -48,11 +48,14 @@
   <input type="color" [(ngModel)]="selectedBorderColor" (input)="changeBorderColor($event)">
 
 </div>
-<button (click)="toggleShapeBorderStyle()">
-  <span style="font-size: 30px;" class="material-symbols-outlined icon-background-less">
-      resize
-    </span>
-</button>
+<div class="CanvasSize">
+<div class="canvas-style">
+  <select id="canvasSizeDropdown"  [(ngModel)]="selectedBorderStyle" (change)="onBorderStyleChange($event)">
+    <option *ngFor="let style of borderStyles" [value]="style">{{ style }}</option>
+  </select>
+   </div>
+</div>
+
  </div>
 
 
@@ -82,6 +85,7 @@
       download
       </span></button>
 </div>
+
   <div class="canvas-style">
   <select id="canvasSizeDropdown" (change)="onChangeCanvasSize($event)">
     <option value="700x700">Letter</option>
@@ -90,6 +94,7 @@
   </select>
   </div>
 </div>
+
 
 </div>
   </mat-toolbar>

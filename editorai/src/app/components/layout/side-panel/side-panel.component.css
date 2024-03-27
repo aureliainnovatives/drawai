@@ -323,14 +323,9 @@ input[type=text], select {
   padding-left: 40px; /* Adjust the padding to leave space for the icon */
 }
 
+
 .headings {
-/* font-family: Poppins; */
-/* color: #007bff; */
-/* background: linear-gradient(to right, #f32170, #ff6b08,#cf23cf, #eedd44);
-    -webkit-text-fill-color: transparent;
-    -webkit-background-clip: text;
-    text-shadow: 2px 2px #030303; */
-font-family: Poppins;
+font-family: poppins;
 padding: 10px;
 margin-top: 14px;
 font-size: xx-large;

@@ -5,6 +5,13 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 import { CanvasSizeService } from '../../Services/canvas-size.service';
 import { TextAdditionService } from '../../Services/text-addition.service';
 
+
+interface Shape {
+  name: string;
+  icon: string; // Path to icon (optional, for displaying in the UI)
+  svg: string; // SVG markup for the shape
+}
+
 @Component({
   selector: 'app-side-panel',
   templateUrl: './side-panel.component.html',
@@ -80,49 +87,49 @@ export class SidePanelComponent  {
   }
 
 
- shapeArrays: { category: string, shapes: { name: string, icon: string }[] }[] = [
+ shapeArrays: { category: string, shapes: { name: string, icon: string, svg : string }[] }[] = [
     { 
       category: 'Squares', 
       shapes: [
-        { name: 'emptysquare', icon: this.shapeIconsMapping['emptysquare'] },
-        { name: 'filledsquare', icon: this.shapeIconsMapping['filledsquare'] },
-        { name: 'roundedsquare', icon: this.shapeIconsMapping['roundedsquare'] }
-      ]
+        { name: 'emptysquare', icon: this.shapeIconsMapping['emptysquare'] ,  svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="5" y="5" width="90" height="90" fill="none" stroke="black" stroke-width="2"/></svg>'  },
+        { name: 'filledsquare', icon: this.shapeIconsMapping['filledsquare']  , svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="black"/></svg>'  },
+        { name: 'roundedsquare', icon: this.shapeIconsMapping['roundedsquare'] , svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="black"/></svg>'  }
+      ]  
     },
     { 
       category: 'Circles', 
       shapes: [
-        { name: 'filledcircle', icon: this.shapeIconsMapping['filledcircle'] },
-        { name: 'emptycircle', icon: this.shapeIconsMapping['emptycircle'] },
+        { name: 'filledcircle', icon: this.shapeIconsMapping['filledcircle'] , svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="black"/></svg>'  },
+        { name: 'emptycircle', icon: this.shapeIconsMapping['emptycircle'] , svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="black" stroke-width="2"/></svg>'  },
        
       ]
     },
-    { 
-      category: 'Triangles', 
-      shapes: [
-        { name: 'filledtriangle', icon: this.shapeIconsMapping['filledtriangle'] },
-        { name: 'roundedtriangle', icon: this.shapeIconsMapping['roundedtriangle'] }
-      ]
-    }, { 
-      category: 'Hexagons', 
-      shapes: [
-        { name: 'filledhexa', icon: this.shapeIconsMapping['filledhexa'] },
-        { name: 'emptyhexa', icon: this.shapeIconsMapping['emptyhexa'] }
-      ]
-    },
-    { 
-      category: 'Stars', 
-      shapes: [
-        { name: 'emptystar', icon: this.shapeIconsMapping['emptystar'] },
-        { name: 'fullfilledstar', icon: this.shapeIconsMapping['fullfilledstar'] },
-        { name: 'fouremptystar', icon: this.shapeIconsMapping['fouremptystar'] },
-        { name: 'sevenedgestar', icon: this.shapeIconsMapping['sevenedgestar'] },
-        // { name: 'halfemptystar', icon: this.shapeIconsMapping['halfemptystar'] },
-        { name: 'halfstarempty', icon: this.shapeIconsMapping['halfstarempty'] },
-        { name: 'halffilledstar', icon: this.shapeIconsMapping['halffilledstar'] },
+    // { 
+    //   category: 'Triangles', 
+    //   shapes: [
+    //     { name: 'filledtriangle', icon: this.shapeIconsMapping['filledtriangle'] },
+    //     { name: 'roundedtriangle', icon: this.shapeIconsMapping['roundedtriangle'] }
+    //   ]
+    // }, { 
+    //   category: 'Hexagons', 
+    //   shapes: [
+    //     { name: 'filledhexa', icon: this.shapeIconsMapping['filledhexa'] },
+    //     { name: 'emptyhexa', icon: this.shapeIconsMapping['emptyhexa'] }
+    //   ]
+    // },
+    // { 
+    //   category: 'Stars', 
+    //   shapes: [
+    //     { name: 'emptystar', icon: this.shapeIconsMapping['emptystar'] },
+    //     { name: 'fullfilledstar', icon: this.shapeIconsMapping['fullfilledstar'] },
+    //     { name: 'fouremptystar', icon: this.shapeIconsMapping['fouremptystar'] },
+    //     { name: 'sevenedgestar', icon: this.shapeIconsMapping['sevenedgestar'] },
+    //     // { name: 'halfemptystar', icon: this.shapeIconsMapping['halfemptystar'] },
+    //     { name: 'halfstarempty', icon: this.shapeIconsMapping['halfstarempty'] },
+    //     { name: 'halffilledstar', icon: this.shapeIconsMapping['halffilledstar'] },
   
-      ]
-    },
+    //   ]
+    // },
   ];
 
   //text section//
@@ -136,15 +143,29 @@ export class SidePanelComponent  {
       data: textStyle,
     }));
   }
- 
-  onDragStart(event: DragEvent, shape: string) {
+  onDragStart(event: DragEvent, shape: Shape) {
+    const dragImage = new Image();
+    // Set the source of the drag image to the SVG markup
+    dragImage.src = 'data:image/svg+xml;base64,' + btoa(shape.svg);
+  
+    // Calculate the center position of the drag image
+    const dragImageWidth = 100; // Adjust according to your shape's size
+    const dragImageHeight = 100; // Adjust according to your shape's size
+    const offsetX = dragImageWidth / 2;
+    const offsetY = dragImageHeight / 2;
+  
+    // Set the size of the drag image
+    dragImage.width = dragImageWidth;
+    dragImage.height = dragImageHeight;
+  
+    // Set the drag image and data
+    event.dataTransfer!.setDragImage(dragImage, offsetX, offsetY);
     event.dataTransfer!.setData('dragmeta', JSON.stringify({
       type: 'shapes',
-      data: shape,
+      data: shape.name,
     }));
-    
   }
-
+  
   onHDragStart(event: DragEvent, type: string) {
     event.dataTransfer!.setData('dragmeta', JSON.stringify({
       type: 'Headings',

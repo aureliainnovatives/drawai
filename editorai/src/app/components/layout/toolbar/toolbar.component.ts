@@ -33,6 +33,10 @@ export class ToolbarComponent implements OnInit {
   @Input() selectedFontFamily: string = 'Arial'; 
   @Input() selectedTextColor: string = '#000000'; 
 
+    @Input() borderStyles: string[] = [];
+  @Input() selectedBorderStyle: string = '';
+  @Output() borderStyleChanged: EventEmitter<string> = new EventEmitter<string>();
+
   isCanvasContainerVisible: boolean = true;
 
 
@@ -52,8 +56,7 @@ export class ToolbarComponent implements OnInit {
   isBold: boolean = false;
   isItalic: boolean = false;
   isUnderline: boolean = false;
-
-
+  
   selectedColor: string = '#000000';
   onChangeCanvasSize(event: Event) {
     const target = event.target as HTMLSelectElement;
@@ -94,6 +97,10 @@ export class ToolbarComponent implements OnInit {
 
 ngOnInit() {
 
+  this.selectedColorService.selectedBorderStyle$.subscribe(style => {
+    this.selectedBorderStyle = style;
+  });
+
   Coloris({
     // themeMode: 'dark',
     wrap: true,
@@ -124,6 +131,11 @@ ngOnInit() {
     this.selectedBorderColor = color;
   });
   this.subscribeToSelectionType();
+}
+
+onBorderStyleChange(event: any) {
+  const borderStyle = event.target.value;
+  this.borderStyleChanged.emit(borderStyle);
 }
 
 preventDefaultColorPicker(event: MouseEvent): void {
@@ -212,10 +224,6 @@ exportAsJSON() {
       // Check visibility of other containers and toggle canvas container visibility accordingly
       this.isCanvasContainerVisible = !(this.isTextboxSelected || this.isImageSelected || this.isShapeSelected);
     });
-  }
-
-  toggleShapeBorderStyle() {
-    this.canvasComponent.toggleShapeBorderStyle();
   }
 
   openExportDialog(): void {
