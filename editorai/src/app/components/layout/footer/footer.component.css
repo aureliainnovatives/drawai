@@ -1,20 +1,21 @@
 .toolbar {
-    background-color:rgb(255, 255, 255); 
-    max-height: 40px;
-    border: 1px solid rgba(202, 202, 202, 0.644); 
-    justify-content: end;
+  background-color:rgb(255, 255, 255); 
+  max-height: 40px;
+  border: 1px solid #cacacaa4;  
+  display: flex;
+  justify-content: start;
+  position: relative;
 }
-
   .progress-tooltip {
     font-size: 14px;
     margin-right: 50px;
     margin-left: 15px;
   }
   .ProgressContainer {
-    display: flex;
-    justify-content: end;
-
+    display: flex ;
+    justify-content: end ;
+    width: 100%;
   }
   .progressBar {
-     width: 300px;
+     width: 270px;
   }

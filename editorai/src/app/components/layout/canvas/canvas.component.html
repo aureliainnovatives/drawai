@@ -32,40 +32,36 @@
 
 <!-- canvas.component.html -->
 
-<app-toolbar 
-  (boldToggled)="toggleBold()" 
-  (italicToggled)="toggleItalic()" 
-  (underlineToggled)="toggleUnderline()"
-  (textSizeChanged)="applySelectedTextSize($event)"
-  (textColorChanged)="applySelectedTextColor($event)"
-   (fontFamilyChanged)="applySelectedFontFamily($event)">
+
+<!-- <div>
+  <select (change)="onChangeCanvasSize($event)">
+    <option value="700x700">Letter</option>
+    <option value="950x600">Landscape</option>
+    <option value="450x700">Portrait</option>
+  </select>
+</div> -->
+
+<!-- <button (click)="exportAsJSON()">Export as JSON</button>
+  <button (click)="exportAsPNG()">Export as PNG</button> -->
+<!-- <input type="color" [(ngModel)]="selectedColor" (input)="onColorChange($event)"> -->
+
+<!-- canvas.component.html -->
+
+<app-toolbar
+    (canvasSizeChanged)="onChangeCanvasSize($event)"
+    (transparentBackgroundChanged)="onTransparentBackgroundChange($event)"
+    (boldToggled)="toggleBold()" 
+    (italicToggled)="toggleItalic()" 
+    (underlineToggled)="toggleUnderline()"
+    (textColorChanged)="applySelectedTextColor($event)"
+    (fontFamilyChanged)="applySelectedFontFamily($event)"
+  >
 </app-toolbar>
 
-
-
-<!-- <button draggable="true" (dragstart)="onDragStart($event, 'filledcircle')">
-  <span class="material-symbols-outlined">radio_button_unchecked</span>
-</button>
-
-
-<button draggable="true" (dragstart)="onDragStart($event, 'filledtriangle')">
-  <span class="material-symbols-outlined">
-    change_history
-    </span>
-</button>
-
-
-<button draggable="true" (dragstart)="onDragStart($event, 'filledsquare')">
-  <span class="material-symbols-outlined">rectangle</span>
-</button> -->
-<div class="canvas"   >
+<div class="canvas">
   <div #canvasContainer  class="canvas-container" 
-  
-       (drop)="onDrop($event)" 
-       (drop)="ImageonDrop($event)" 
-       (dragover)="onDragOver($event)">
+    (drop)="onDrop($event)" >
     
-       
   <div class="buttons">    
   <!-- <button class="custom-button" (click)="deleteSelectedObject()">
   <span class="material-symbols-outlined icon-background-less">
@@ -80,22 +76,34 @@
 
   <button  class="custom-button" (click)="moveObjectBackward()">
     <span class="material-symbols-outlined icon-background-less">
-      flip_to_front
+      flip_to_back
       </span>
 </button>
 
 <button  class="custom-button" (click)="moveObjectForward()">
-  <span class="material-symbols-outlined icon-background-less">
-    flip_to_back
-    </span>
+ <span class="material-symbols-outlined icon-background-less">
+      flip_to_front
+      </span>
 </button>
 
 
 
-</div> 
- 
-<canvas #canvasEl id='canvas' height="700px" width="700px"></canvas>
+
+
+
+
+
   </div>
+
+
+
+
+  
+ <div id="shape-preview" style="position: absolute; display: none;"></div>
+<canvas (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"  id='canvas' [height]="canvasHeight" [width]="canvasWidth"></canvas>
+
+
+</div>
 </div>
 <app-property></app-property>
 <app-footer></app-footer>

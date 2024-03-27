@@ -2,9 +2,11 @@ import { Component, ElementRef, AfterViewInit, HostListener, EventEmitter, Outpu
 import { fabric } from 'fabric';
 import { CanvasSizeService } from '../../Services/canvas-size.service';
 import { Subscription } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
-import { CanvasSelectionService } from '../../Services/canvasselection.service';
-
+import { CanvasSelectionService } from '../../Services/canvas-selection.service';
+import { SelectedColorService } from '../../Services/selected-color.service';
+import { TextAdditionService } from '../../Services/text-addition.service';
+import { HttpClient } from '@angular/common/http';
+import { size } from 'lodash';
 
 @Component({
   selector: 'app-canvas',
@@ -12,10 +14,13 @@ import { CanvasSelectionService } from '../../Services/canvasselection.service';
   styleUrls: ['./canvas.component.css']
 })
 export class CanvasComponent implements AfterViewInit {
+ 
   textToAdd: string = '';
   @ViewChild('fileInput') fileInput!: ElementRef;
   private subscription: Subscription;
   private textboxes: fabric.Textbox[] = []; 
+
+  selectedColor: string = '#000000';
 
   canvas!: fabric.Canvas;
   scaleFactor = 1.1; // Zoom factor
@@ -25,34 +30,56 @@ export class CanvasComponent implements AfterViewInit {
   zoomLevel = 100; // Initial zoom level (100%)
   @Output() addImageToCategory: EventEmitter<{ name: string, data: string }> = new EventEmitter<{ name: string, data: string }>();
   @Output() textboxSelected: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() zoomLevelChanged = new EventEmitter<number>();
+  @Output() canvasColorChanged: EventEmitter<string> = new EventEmitter<string>();
 
+  selectedBorderColor: string = '#000000'; // Default border color
 
   isBold: boolean = false;
   isItalic: boolean = false;
   isUnderline: boolean = false;
+
+  exportTransparentBackground: boolean = false;
+
   currentTextStyle: string = '';
   selectedTextSize: number = 20;
   currentTextSize: number = 20;
   selectedTextColor: string = '#000000';
+  showColorChooser: boolean = true;
 
-  copiedObject: fabric.Object | null = null; 
   
+  canvasWidth: number = 700; // Initial canvas width
+  canvasHeight: number = 700; // Initial canvas height
+  Coloris: any; 
+  copiedObject: fabric.Object | null = null; 
+  private undoStack: any[] = [];
+  private redoStack: any[] = [];
   constructor(private elementRef: ElementRef,
     private cdr: ChangeDetectorRef,
-    public dialog: MatDialog,
+    private changeDetectorRef: ChangeDetectorRef,
     public canvasSizeService: CanvasSizeService,
+    private selectedColorService: SelectedColorService,
+    private textAdditionService: TextAdditionService,
+    private http: HttpClient,
     private canvasSelectionService: CanvasSelectionService,
     private renderer: Renderer2) { 
 
       this.subscription = this.canvasSizeService.textToAdd$.subscribe(text => {
         this.textToAdd = text;
 
-        
+        const canvasElement: HTMLCanvasElement = this.elementRef.nativeElement.querySelector('canvas');
+        const canvasWidth = canvasElement.width;
+        const canvasHeight = canvasElement.height;
+
+        // Calculate center coordinates of the canvas
+        const centerX = canvasWidth / 2.5;
+        const centerY = canvasHeight / 2.4;
+
       const fabricText = new fabric.Textbox(this.textToAdd, {
-        left: 10,
-        top: 10,
+         left: centerX,
+            top: centerY,
         fontFamily: 'Arial',
-        fontSize:25,
+        fontSize:45,
         fill: 'black',
       });
      
@@ -61,13 +88,15 @@ export class CanvasComponent implements AfterViewInit {
       this.canvas.renderAll();
     });
     }
-    
 
     ngOnDestroy() {
       this.subscription.unsubscribe();
     }
    
-
+    onTransparentBackgroundChange(event: Event) {
+      const detail = (event as CustomEvent).detail;
+      this.exportTransparentBackground = detail;
+    }
   ngAfterViewInit() {
     this.containerElement = this.elementRef.nativeElement.querySelector('.canvas-container');
     this.canvas = new fabric.Canvas('canvas', {
@@ -75,35 +104,337 @@ export class CanvasComponent implements AfterViewInit {
     });
     this.canvas.preserveObjectStacking = true;
     this.resizables();
+    const selectionChangeHandler = () => {
+      const activeObjects = this.canvas.getActiveObjects(); // Get currently selected objects
+
+      
+      if (activeObjects.length > 1) {
+        // Multi-select action
+        console.log('Multiple objects selected:', activeObjects);
+        // Perform actions on selected objects
+      } else if (activeObjects.length === 1) {
+        // Single object selected
+        console.log('Single object selected:', activeObjects[0]);
+        // Perform actions on single selected object
+      } else {
+        // No objects selected
+        console.log('No objects selected');
+      }
+
+      this.onSelectionChange();
+      this.updateSelectedBorderColor();
+  };
     this.enableDragAndDrop();
-   
     this.canvas.on('selection:created', this.updateSelectionType.bind(this));
     this.canvas.on('selection:updated', this.updateSelectionType.bind(this));
     this.canvas.on('selection:cleared', this.updateSelectionType.bind(this));
+
+    this.canvas.on('selection:created', selectionChangeHandler);
+    this.canvas.on('selection:updated', selectionChangeHandler);
+    this.canvas.on('selection:cleared', selectionChangeHandler);
+    
+
+      this.canvas.on('selection:created', selectionChangeHandler);
+      this.canvas.on('selection:updated', selectionChangeHandler);
+      this.canvas.on('selection:cleared', selectionChangeHandler);
+
+
+    this.canvas.on('selection:cleared', () => this.selectedColorService.setBorderColor('')); // Reset when no selection
+
+    this.selectedColorService.selectedColor$.subscribe(color => {
+      this.selectedColor = color;
+      this.changeShapeColor(color); // Call method to change shape color
+    });
+    const activeObject = this.canvas.getActiveObject();
+    if (activeObject) {
+      const fillColor = activeObject.get('fill') as string;
+      this.selectedColorService.setSelectedColor(fillColor);
+    }
+    this.subscription = this.textAdditionService.addTextWithStyle.subscribe(data => {
+      this.addTextWithStyle(data.text, data.fontFamily, data.dropY , data.dropX, data.fill, data.shadow ,data.fontSize, data.fontWeight);
+    });
+
+    this.selectedColorService.borderColor$.subscribe(color => {
+      console.log('Received border color in canvas:', color); // Debugging statement
+      this.changeBorderColor(color);
+    });
+
+    this.selectedColorService.canvasColor$.subscribe(color => {
+      if (this.canvas) {
+        this.canvas.backgroundColor = color;
+        this.canvas.renderAll();
+      }
+    });
+
+
   }
 
-  private updateSelectionType() {
-    const activeObject = this.canvas.getActiveObject();
-    if (activeObject instanceof fabric.Textbox) {
-      this.canvasSelectionService.setSelectionType('textbox');
-    } else if (activeObject instanceof fabric.Image) {
-      this.canvasSelectionService.setSelectionType('image');
-    } else if (activeObject instanceof fabric.Rect || activeObject instanceof fabric.Circle) {
-      this.canvasSelectionService.setSelectionType('shape');
-    } else {
-      this.canvasSelectionService.setSelectionType('none');
+
+  addTextWithStyle(text: string, fontFamily: string, dropX: number, dropY: number, fill: string, shadow: string,  fontSize:number, fontWeight: string) {
+  
+    const newText = new fabric.Textbox(text, {
+      left: dropX - (fontSize / 2), // Subtract half of the text's width
+      top: dropY - (fontSize / 2),
+      fontFamily: fontFamily,
+      fill: fill,
+      shadow: shadow,
+      fontSize: fontSize, // Set the desired font size
+      fontWeight: fontWeight
+    });
+    
+       setTimeout(() => {
+    this.canvas.add(newText);
+      this.canvas.renderAll();
+    }, 200);
+  }
+  
+  onTextDrop(data:string, event: DragEvent) {
+    console.log('text : ', data)
+    event.preventDefault();
+    const textStyle = data;
+    let text = '';
+    let fontFamily = '';
+    let fill = '';
+    let shadow = '';
+    let fontWeight = '';
+    let fontSize: number=0;
+
+    const canvasRect = (event.target as HTMLElement).getBoundingClientRect();
+    const dropX = event.clientX - canvasRect.left;
+    const dropY = event.clientY - canvasRect.top;
+  
+    if (textStyle === 'style1.png') {
+      text = 'HELLO';
+      fontFamily = 'roguedash';
+      fill = '#007bff';
+      shadow = '2px 2px 4px rgba(3, 2, 2, 1)';
+      fontSize = 30;
+  } else if (textStyle === 'style2.png') {
+      text = 'Thanks';
+      fontFamily = 'cathilda';
+      fill = 'black';
+      shadow = '2px 2px 4px rgba(3, 2, 2, 1)';
+      fontSize = 70;
+  } else if (textStyle === 'style3.png') {
+      text = 'Love you';
+      fontFamily = 'myford';
+      fill = 'yellow';
+      shadow = '2px 2px 4px rgba(3, 2, 2, 1)';
+      fontSize = 50;
+  } else if (textStyle === 'style4.png') {
+      text = 'WOW!';
+      fontFamily = 'catcut';
+      fill = 'rgba(255, 20, 147, 0.9)';
+      shadow = '2px 2px 4px rgba(0, 0, 0, 0.5)';
+  } else if (textStyle === 'style5.png') {
+      text = 'Welcome';
+      fontFamily = 'rainbow';
+      fill = 'red';
+      shadow = '';
+  } else if (textStyle === 'style6.png') {
+      text = 'ChiLL!!';
+      fontFamily = 'chunkfive';
+      fill = 'purple';
+      shadow = '';
+  } else if (textStyle === 'style7.png') {
+      text = 'Happy Birthday';
+      fontFamily = 'milvasten';
+      fill = 'rgb(248, 110, 5)';
+      shadow = '2px 2px 4px rgba(0, 0, 0, 0.5)';
+  } else if (textStyle === 'style8.png') {
+      text = 'Enjoy';
+      fontFamily = 'kleptocracy';
+      fill = 'rgb(255, 0, 85)';
+      shadow = '2px 2px 4px rgba(5, 5, 5, 3)';
+  } else if (textStyle === 'style9.png') {
+      text = 'Welcome To India';
+      fontFamily = 'ph';
+      fill = 'blue';
+      shadow = '2px 2px 4px rgba(255, 20, 147, 0.9)';
+  } else if (textStyle === 'style10.png') {
+      text = 'Good';
+      fontFamily = 'prida01';
+      fill = 'rgb(6, 243, 239)';
+      shadow = '2px 2px 4px rgba(255, 43, 20, 0.9)';
+  } else if (textStyle === 'style11.png') {
+      text = 'PLAY';
+      fontFamily = 'prida';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+  } else if (textStyle === 'style12.png') {
+      text = 'POOL PARTY';
+      fontFamily = 'contend';
+      fill = 'rgb(171, 26, 115)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+  } else if (textStyle === 'style13.png') {
+      text = 'now open!';
+      fontFamily = 'Glitch';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+  } else if (textStyle === 'style14.png') {
+      text = 'WorkOut';
+      fontFamily = 'PERSONAL';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+  } else if (textStyle === 'style15.png') {
+      text = 'SALE!!!';
+      fontFamily = 'Portable';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+  } else if (textStyle === 'style16.png') {
+      text = 'SWEET';
+      fontFamily = 'Those';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+  } else if (textStyle === 'style17.png') {
+      text = 'GAME ON';
+      fontFamily = 'Burger';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+  } else if (textStyle === 'style18.png') {
+      text = 'Huge SALE!!';
+      fontFamily = 'Best';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+  } else if (textStyle === 'style19.png') {
+      text = 'FEELIN CUTE';
+      fontFamily = 'Love';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+  } else if (textStyle === 'style20.png') {
+      text = 'shine SHINE shine';
+      fontFamily = 'Yellow';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+  } else if (textStyle === 'style21.png') {
+      text = 'GAME ON';
+      fontFamily = 'moron';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+  } else if (textStyle === 'style22.png') {
+      text = 'sparkle';
+      fontFamily = 'Neo';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+  } else if (textStyle === 'style23.png') {
+      text = 'stay forever';
+      fontFamily = 'Queen';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+  } else if (textStyle === 'style24.png') {
+      text = 'hey';
+      fontFamily = 'taku';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+  }    
+      else if (textStyle === 'style25.png') {
+        text = 'LOve';
+        fontFamily = 'tower';
+        fill = 'rgb(32, 1, 33)';
+        shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+    } else if (textStyle === 'style26.png') {
+        text = 'LIKE';
+        fontFamily = 'used';
+        fill = 'rgb(32, 1, 33)';
+        shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+    } else if (textStyle === 'style27.png') {
+        text = 'KILL IT!!!';
+        fontFamily = 'demo';
+        fill = 'rgb(32, 1, 33)';
+        shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+    } else if (textStyle === 'style28.png') {
+        text = 'Pooja';
+        fontFamily = 'dragon';
+        fill = 'rgb(32, 1, 33)';
+        shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+        fontSize = 30;
+    
+               
+                                                                                                           
+    }
+    this.addTextWithStyle(text, fontFamily, dropX, dropY, fill, shadow, fontSize, fontWeight);
+  
+      this.canvas.renderAll();
+  }
+
+private updateSelectionType() {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject instanceof fabric.Textbox) {
+    this.canvasSelectionService.setSelectionType('textbox');
+  } else if (activeObject instanceof fabric.Image) {
+    this.canvasSelectionService.setSelectionType('image');
+  } else if (
+    activeObject instanceof fabric.Rect ||
+    activeObject instanceof fabric.Polygon ||
+    activeObject instanceof fabric.Circle ||
+    activeObject instanceof fabric.Triangle 
+  ) {
+    this.canvasSelectionService.setSelectionType('shape');
+  } else {
+    this.canvasSelectionService.setSelectionType('none');
+  }
+}
+
+onSelectionChange() {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject) {
+    const fillColor = activeObject.get('fill') as string;
+    this.selectedColorService.setSelectedColor(fillColor);
+    
+    if (activeObject.stroke) {
+      this.selectedBorderColor = activeObject.stroke;
     }
   }
+}
 
+changeShapeColor(color: string) {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject) {
+    activeObject.set('fill', color);
+    this.canvas.renderAll(); // Render canvas to reflect changes
+  }
+}
 
+onColorChange(event: Event, isBorderColor: boolean = false) {
+  const target = event.target as HTMLInputElement;
+  if (isBorderColor) {
+    this.selectedBorderColor = target.value;
+    this.changeBorderColor(this.selectedBorderColor); // Apply border color
+  } else {
+    this.selectedColor = target.value;
+    this.changeShapeColor(this.selectedColor); // Apply fill color
+  }
+}
 
+changeBorderColor(color: string) {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject && activeObject.stroke) {
+    activeObject.set('stroke', color); // Change border color
+    this.canvas.renderAll(); // Render canvas to reflect changes
+  }
+}
 
+updateSelectedBorderColor() {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject && activeObject.stroke) {
+    this.selectedColorService.setBorderColor(activeObject.stroke); // Update selected border color
+  }
+}
+onChangeCanvasSize(size: string) {
+  if (size) {
+    const [width, height] = size.split('x').map(Number);
+    this.canvasWidth = width;
+    this.canvasHeight = height;
+    this.canvas.setDimensions({ width, height });
+  }
+
+}
 
   
   private resizables(): void {
     if (this.canvas) {
 
-      this.canvas.selection = false;
+      this.canvas.selection = true;
        // Apply resizable properties to any object added to the canvas
        this.canvas.on('object:added', (event) => {
         const addedObject = event.target;
@@ -121,7 +452,7 @@ export class CanvasComponent implements AfterViewInit {
           cornerStyle: 'circle',
           cornerColor: 'white', // Change corner color to white
           cornerSize: 10,
-          borderColor: 'darkblue',
+          borderColor: 'blue',
           cornerStrokeColor: 'gray',
           transparentCorners: false, 
           borderScaleFactor: 2,
@@ -131,6 +462,116 @@ export class CanvasComponent implements AfterViewInit {
       };
     }
   }
+  changeCanvasColor(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (target) {
+      const color = target.value;
+      this.selectedColorService.updateCanvasColor(color);
+    }
+  }
+
+  // exportAsJSON() {
+  //   if (this.canvas) {
+  //     const json = JSON.stringify(this.canvas.toJSON());
+  //     const blob = new Blob([json], { type: 'application/json' });
+  //     const url = window.URL.createObjectURL(blob);
+  
+  //     // Create a link element to trigger download
+  //     const link = document.createElement('a');
+  //     link.href = url;
+  //     link.download = 'canvas.json';
+  //     link.click();
+  
+  //     // Clean up
+  //     window.URL.revokeObjectURL(url);
+  //   }
+  // }
+
+
+  exportAsJSON() {
+    if (this.canvas) {
+      const tempCanvas = document.createElement('canvas');
+      const canvasWidth = this.canvas.width || 0; // Default to 0 if canvas width is undefined
+      const canvasHeight = this.canvas.height || 0; // Default to 0 if canvas height is undefined
+  
+      tempCanvas.width = canvasWidth;
+      tempCanvas.height = canvasHeight;
+      const tempFabricCanvas = new fabric.Canvas(tempCanvas);
+  
+      // Set background color or transparency
+      if (this.exportTransparentBackground) {
+        tempFabricCanvas.backgroundColor = 'rgba(0, 0, 0, 0)'; // Transparent background
+      } else {
+        tempFabricCanvas.backgroundColor = this.canvas.backgroundColor; // Use original canvas background color
+      }
+  
+      // Clone objects without resizable properties
+      this.canvas.getObjects().forEach((obj) => {
+        const clone = fabric.util.object.clone(obj);
+        clone.setControlsVisibility({ mt: false, mb: false, ml: false, mr: false, bl: false, br: false, tl: false, tr: false });
+        tempFabricCanvas.add(clone);
+      });
+  
+      const json = JSON.stringify(tempFabricCanvas.toJSON());
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+  
+      // Create a link element to trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'canvas.json';
+      link.click();
+  
+      // Clean up
+      window.URL.revokeObjectURL(url);
+      tempFabricCanvas.dispose();
+    }
+  }
+  
+  
+
+  exportAsPNG() {
+    if (this.canvas) {
+      const tempCanvas = document.createElement('canvas');
+      const canvasWidth = this.canvas.width || 0; // Default to 0 if canvas width is undefined
+      const canvasHeight = this.canvas.height || 0; // Default to 0 if canvas height is undefined
+
+      tempCanvas.width = canvasWidth;
+      tempCanvas.height = canvasHeight;
+      const tempFabricCanvas = new fabric.Canvas(tempCanvas);
+
+      // Set background color or transparency
+      if (this.exportTransparentBackground) {
+        tempFabricCanvas.backgroundColor = 'rgba(0, 0, 0, 0)'; // Transparent background
+      } else {
+        tempFabricCanvas.backgroundColor = this.canvas.backgroundColor; // Use original canvas background color
+      }
+
+      // Clone objects without resizable properties
+      this.canvas.getObjects().forEach((obj) => {
+        const clone = fabric.util.object.clone(obj);
+        clone.setControlsVisibility({ mt: false, mb: false, ml: false, mr: false, bl: false, br: false, tl: false, tr: false });
+        tempFabricCanvas.add(clone);
+      });
+
+      // Use fabric.js toDataURL method to export the canvas as a data URL
+      const dataUrl = tempFabricCanvas.toDataURL({
+        format: 'png',
+        quality: 1, // Set quality to 1 for maximum quality
+        multiplier: 1 // Set multiplier to 1 for original size
+      });
+
+      // Create a link element to trigger download
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = 'canvas_image.png';
+      link.click();
+
+      // Dispose the temporary fabric canvas
+      tempFabricCanvas.dispose();
+    }
+  }
+  
 
   private enableDragAndDrop(): void {
     this.containerElement.addEventListener('dragover', (event) => {
@@ -142,10 +583,10 @@ export class CanvasComponent implements AfterViewInit {
       const file = event.dataTransfer?.files[0];
       if (file) {
         this.loadImageFromFile(file);
-      }
-    });
-  }
-
+   }
+});
+}
+  
   
   private loadImageFromFile(file: File): void {
     const reader = new FileReader();
@@ -187,11 +628,7 @@ export class CanvasComponent implements AfterViewInit {
     };
     reader.readAsDataURL(file);
   }
-  
-  
-  
-  
-  // Function to handle zoom in
+
   zoomIn() {
     if (this.zoomLevel < 200) {
       this.zoomLevel += 1;
@@ -213,10 +650,10 @@ export class CanvasComponent implements AfterViewInit {
     this.applyZoom();
   }
 
-  // Apply zoom transformation to the container element
   applyZoom() {
     const scaleValue = this.zoomLevel / 100;
     this.containerElement.style.transform = `scale(${scaleValue})`;
+    this.zoomLevelChanged.emit(this.zoomLevel); // Emitting zoom level change
   }
   // Host listener for wheel events
   @HostListener('wheel', ['$event'])
@@ -236,62 +673,171 @@ export class CanvasComponent implements AfterViewInit {
     }
   }
   // Dragover event handler
-onDragOver(event: DragEvent) {
-  event.preventDefault();
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+
+    const canvasRect = (event.target as HTMLElement).getBoundingClientRect();
+    const mouseX = event.clientX - canvasRect.left;
+    const mouseY = event.clientY - canvasRect.top;
+
+    // Show the preview at the current mouse position
+    const placeholder = document.getElementById('shape-preview');
+    if (placeholder) {
+        placeholder.style.left = `${mouseX}px`;
+        placeholder.style.top = `${mouseY}px`;
+        placeholder.style.display = 'block';
+    }
 }
 
-ImageonDrop(event: DragEvent) {
+onDragLeave(event: DragEvent) {
+  // Hide the preview when leaving the canvas
+  const placeholder = document.getElementById('shape-preview');
+  if (placeholder) {
+      placeholder.style.display = 'none';
+  }
+}
+
+onDrop(event: DragEvent) {
+  const dragDataString = event.dataTransfer!.getData("dragmeta");
+  console.log(dragDataString)
+  if (dragDataString) {
+    try {
+      const metaObject = JSON.parse(dragDataString);
+      const type = metaObject.type;
+      const data = metaObject.data;
+
+      if (type === "shapes")
+        this.onshapeDrop(data,event);
+      else if (type === "image")
+        this.ImageonDrop(data,event);
+      else if (type === "StylishText")
+        this.onTextDrop(data,event);
+      // else if (type === "Headings")
+      //   this.onHeadingsDrop(data,event);
+
+    } catch (error) {
+      console.error("Error parsing drag data:", error);
+    }
+  } else {
+    console.error("No drag data found");
+  }
+}
+
+// onHeadingsDrop( data:string, event: DragEvent) {
+//   event.preventDefault();
+//   const heading = data;
+//   let text = '';
+//   let fontFamily = '';
+//   let fill = '';
+//   let shadow = '';
+//   let fontWeight = '';
+
+//   const canvasRect = (event.target as HTMLElement).getBoundingClientRect();
+//   const dropX = event.clientX - canvasRect.left;
+//   const dropY = event.clientY - canvasRect.top;
+
+
+//   switch (heading) {
+//     case 'Heading':
+//         text = 'Heading';
+//         fontFamily = 'Arial';
+//         fill = '#00000';
+//         shadow = '';
+//         fontWeight = '1000';
+//       break;
+//     case 'Subheading':
+//         text = 'Subheading';
+//         fontFamily = 'Arial';
+//         fill = '#00000';
+//         shadow = '';
+//         fontWeight = '600';
+//       break;
+//     case 'BodyText':
+//         text = 'BodyText';
+//         fontFamily = 'Arial';
+//         fill = '#00000';
+//         shadow = '';
+//         fontWeight = '100';
+//       break;
+
+//   }
+//   this.addTextWithStyle(text, fontFamily, dropX, dropY, fill, shadow,fontWeight );
+
+//     this.canvas.renderAll();
+// }
+
+
+ImageonDrop(data:string,event: DragEvent,) {
   event.preventDefault();
-  const imageData = event.dataTransfer!.getData('text/plain');
-  const img = new Image();
-  img.src = imageData;
-  const canvas = this.canvas;
+  const imageURL2 = data;
 
-  img.onload = () => {
-    const fabricImg = new fabric.Image(img, {
-      left: event.offsetX,
-      top: event.offsetY,
-    });
+  this.http.get(imageURL2, { responseType: 'blob' }).subscribe((blob: Blob) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64Data = reader.result as string;
 
-    // Scale the image to fit within the canvas dimensions
-    fabricImg.scaleToWidth(canvas.getWidth() * 0.4); // Adjust the scale as needed
-    fabricImg.scaleToHeight(canvas.getHeight() * 0.4); // Adjust the scale as needed
+      fabric.Image.fromURL(base64Data, (fabricImg) => {
+        const canvasWidth = this.canvas.getWidth();
+        const canvasHeight = this.canvas.getHeight();
+        const imgWidth = fabricImg.width || fabricImg.getScaledWidth();
+        const imgHeight = fabricImg.height || fabricImg.getScaledHeight();
 
-    // Center the image within the canvas
-    fabricImg.set({
-      originX: 'center',
-      originY: 'center',
-    });
+     
+        if (canvasWidth && canvasHeight) {
+    
+          if (imgWidth > canvasWidth || imgHeight > canvasHeight) {
 
-    canvas.add(fabricImg);
-    canvas.setActiveObject(fabricImg); // Select the added image
-    canvas.renderAll();
+            const scale = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight);
+            fabricImg.scale(scale);
+          }
+        }
 
-    // Emit event to add the image to the "Added Images" category
-    this.addImageToCategory.emit({ name: 'New Image', data: imageData });
-  };
+
+        fabricImg.set({
+          left: event.offsetX,
+          top: event.offsetY,
+        });
+
+
+        this.canvas.add(fabricImg);
+        this.canvas.setActiveObject(fabricImg);
+        this.canvas.renderAll();
+
+      });
+    };
+    reader.readAsDataURL(blob);
+  });
 }
 
 ///shape section
-  onDrop(event: DragEvent) {
-    event.preventDefault();
-    const shapeName = event.dataTransfer!.getData('text/plain');
+  onshapeDrop(data:string,event: DragEvent) {
+    console.log(event)
+    const shapeName = data;
+    console.log(shapeName)
+    let canvas = this.canvas
     let fabricShape: fabric.Object | undefined;
 
+    const canvasRect = (event.target as HTMLElement).getBoundingClientRect(); // Get canvas bounding rectangle
+
+    // Calculate the drop point coordinates relative to the canvas
+    const dropX = event.clientX - canvasRect.left;
+    const dropY = event.clientY - canvasRect.top;
     switch (shapeName) {
         case 'filledcircle':
             fabricShape = new fabric.Circle({
-                left: event.offsetX,
-                top: event.offsetY,
+              left: dropX - 50, // Subtract half of the shape's width
+              top: dropY - 50, // Subtract half of the shape's height
                 fill: 'black',
+                stroke: 'black',
+                strokeWidth: 2,
                 radius: 50,
                 selectable: true
             });
             break;
             case 'emptycircle':
               fabricShape = new fabric.Circle({
-                  left: event.offsetX,
-                  top: event.offsetY,
+                left: dropX - 50, // Subtract half of the shape's width
+                top: dropY - 50, // Subtract half of the shape's height
                   fill: '',
                   stroke: 'black',
                   strokeWidth: 2,
@@ -301,8 +847,8 @@ ImageonDrop(event: DragEvent) {
               break;
             case 'emptysquare':
               fabricShape = new fabric.Rect({
-                  left: event.offsetX,
-                  top: event.offsetY,
+                left: dropX - 50, // Subtract half of the shape's width
+                top: dropY - 50, // Subtract half of the shape's height
                   fill: '',
                   stroke: 'black',
                   strokeWidth: 2,
@@ -310,10 +856,10 @@ ImageonDrop(event: DragEvent) {
                   height: 100,
               });
               break;
-              case 'emptytriangle':
+              case 'roundedtriangle':
                 fabricShape = new fabric.Triangle({ 
-                    left: event.offsetX,
-                    top: event.offsetY,
+                  left: dropX - 50, // Subtract half of the shape's width
+                  top: dropY - 50, // Subtract half of the shape's height
                     fill: '', // You can specify a color for the fill if needed
                     stroke: 'black',
                     strokeWidth: 2,
@@ -323,8 +869,8 @@ ImageonDrop(event: DragEvent) {
                 break;
                 case 'filledtriangle':
                   fabricShape = new fabric.Triangle({ 
-                      left: event.offsetX,
-                      top: event.offsetY,
+                    left: dropX - 50, // Subtract half of the shape's width
+                    top: dropY - 50, // Subtract half of the shape's height
                       fill: 'black', // You can specify a color for the fill if needed
                       stroke: 'black',
                       strokeWidth: 2,
@@ -332,25 +878,13 @@ ImageonDrop(event: DragEvent) {
                     height: 100, // Specify the height of the triangle
                   });
                   break;
-                  case 'roundedtriangle':
-                    fabricShape = new fabric.Triangle({ 
-                        left: event.offsetX,
-                        top: event.offsetY,
-                        fill: 'black', // You can specify a color for the fill if needed
-                        stroke: 'black',
-                        strokeWidth: 2,
-                        width: 100,
-                        height: 100,// Specify the height of the triangle
-            
-                    });
-                    break;
               case 'filledsquare':
                 fabricShape = new fabric.Rect({ 
-                    left: event.offsetX,
-                    top: event.offsetY,
+                  left: dropX - 50, // Subtract half of the shape's width
+                  top: dropY - 50, // Subtract half of the shape's height
                     fill: 'black',
-                    stroke :'black',
-                    strokeWidth :2,
+                    stroke: 'black',
+                    strokeWidth: 2,
                     width: 100,
                     height: 100,
                    
@@ -382,8 +916,8 @@ ImageonDrop(event: DragEvent) {
                       { x: -15, y: -15 },
                     ];
                     fabricShape = new fabric.Polygon(starPoints1, {
-                        left: event.offsetX,
-                        top: event.offsetY,
+                      left: dropX - 50, // Subtract half of the shape's width
+                      top: dropY - 50, // Subtract half of the shape's height
                         fill: '', // You can specify a color for the fill if needed
                         stroke: 'black',
                         strokeWidth: 2,
@@ -421,8 +955,8 @@ ImageonDrop(event: DragEvent) {
                         fill: 'black',
                         stroke: 'black',
                         strokeWidth: 2,
-                        left: event.offsetX,
-                      top: event.offsetY,
+                        left: dropX - 50, // Subtract half of the shape's width
+                        top: dropY - 50, // Subtract half of the shape's height
                       });
                       break;
 
@@ -447,8 +981,8 @@ ImageonDrop(event: DragEvent) {
 
                       // Create fabric polygon with scaled points
                       fabricShape = new fabric.Polygon(scaledHexagonPoints, {
-                          left: event.offsetX,
-                          top: event.offsetY,
+                        left: dropX - 50, // Subtract half of the shape's width
+                        top: dropY - 50, // Subtract half of the shape's height
                           fill: 'black',
                           stroke: 'black',
                           strokeWidth: 2
@@ -476,13 +1010,134 @@ ImageonDrop(event: DragEvent) {
                     
                         // Create fabric polygon with scaled points
                         fabricShape = new fabric.Polygon(scaledHexagonPoints1, {
-                            left: event.offsetX,
-                            top: event.offsetY,
+                          left: dropX - 50, // Subtract half of the shape's width
+                          top: dropY - 50, // Subtract half of the shape's height
                             fill: '',
                             stroke: 'black',
                             strokeWidth: 2
                         });
                         break;
+                        
+                        
+                      case 'halfstarempty':
+                        const starRadius5 = 50;
+                        const innerRadius5 = 20;
+                        const numberOfPoints5 = 5;
+                        const angleIncrement5 = (2 * Math.PI) / (numberOfPoints5 * 2);
+                    
+                        const outerStarPoints5 = [];
+                        const innerStarPoints5 = [];
+                    
+                        for (let i = 0; i < numberOfPoints5 * 2; i++) {
+                          const radius = i % 2 === 0 ? starRadius5 : innerRadius5;
+                          const angle = i * angleIncrement5 - Math.PI / 2;
+                    
+                          const point = {
+                            x: starRadius5 + radius * Math.cos(angle),
+                            y: starRadius5 + radius * Math.sin(angle),
+                    stroke: 'black',
+                            strokeWidth: 2,
+                          };
+                    
+                          if (i <= numberOfPoints5) {
+                            innerStarPoints5.push(point);
+                          } else {
+                            outerStarPoints5.push(point);
+                          }
+                        }
+                        fabricShape = new fabric.Polygon(innerStarPoints5, {
+                          fill: '',
+                          stroke: 'black',
+                          strokeWidth: 3,
+                          left: dropX - 50, // Subtract half of the shape's width
+                          top: dropY - 50, // Subtract half of the shape's height
+                        });
+
+                        break;
+
+                        case 'emptystar':
+                        const starRadius6 = 50;
+                        const innerRadius6 = 20;
+                        const numberOfPoints6 = 5;
+                        const angleIncrement6 = (2 * Math.PI) / (numberOfPoints6 * 2);
+                    
+                        const starPoints6 = [];
+                    
+                        for (let i = 0; i < numberOfPoints6 * 2; i++) {
+                          const radius = i % 2 === 0 ? starRadius6 : innerRadius6;
+                          const angle = i * angleIncrement6 - Math.PI / 2;
+                    
+                          const point = {
+                            x: starRadius6 + radius * Math.cos(angle),
+                            y: starRadius6 + radius * Math.sin(angle),
+                            stroke: 'blue',
+                            strokeWidth: 2,
+                          };
+                    
+                          starPoints6.push(point);
+                        }
+                    
+                        fabricShape = new fabric.Polygon(starPoints6, {
+                          fill: '',
+                          stroke : 'black',
+                          strokeWidth: 2,
+                          left: dropX - 50, // Subtract half of the shape's width
+                          top: dropY - 50, // Subtract half of the shape's height
+                        });
+
+                        break;
+
+                        case 'fullfilledstar':
+                        const starRadius7 = 50;
+                        const innerRadius7 = 20;
+                        const numberOfPoints7= 5;
+                        const angleIncrement7 = (2 * Math.PI) / (numberOfPoints7 * 2);
+                    
+                        const starPoints7 = [];
+                    
+                        for (let i = 0; i < numberOfPoints7 * 2; i++) {
+                          const radius = i % 2 === 0 ? starRadius7 : innerRadius7;
+                          const angle = i * angleIncrement7 - Math.PI / 2;
+                    
+                          const point = {
+                            x: starRadius7 + radius * Math.cos(angle),
+                            y: starRadius7 + radius * Math.sin(angle),
+                            stroke: 'blue',
+                            strokeWidth: 2,
+                          };
+                    
+                          starPoints7.push(point);
+                        }
+                    
+                        fabricShape = new fabric.Polygon(starPoints7, {
+                          fill: 'black',
+                          stroke : 'black',
+                          strokeWidth: 2,
+                          left: dropX - 50, // Subtract half of the shape's width
+                          top: dropY - 50, // Subtract half of the shape's height
+                        });
+                    
+                        break;
+
+                        
+                        // case 'halfemptystar':
+                        //   const svgUrl = '/assets/Svgs/halfstar.svg';
+
+                        // fabric.loadSVGFromURL(svgUrl, (objects, options) => {
+                        //   const [halfFilledStar] = objects as fabric.Object[];
+
+                        //   // Adjust the scale to make the star smaller
+                        //   const scaleRatio = 4.0; // Change this value as needed
+                        //   halfFilledStar.scaleX = scaleRatio;
+                        //   halfFilledStar.scaleY = scaleRatio;
+
+                        //   halfFilledStar.set({
+                        //     left: dropX - 50, // Subtract half of the shape's width
+                        //     top: dropY - 50, // Subtract half of the shape's height
+                        //   });
+                          
+                        // })        
+                        // break;
                     
                   
                   case 'sevenedgestar':
@@ -509,12 +1164,10 @@ ImageonDrop(event: DragEvent) {
                     fill: '',
                     stroke :'black',
                     strokeWidth: 2,
-                    left: event.offsetX,
-                    top: event.offsetY,
+                    left: dropX - 50, // Subtract half of the shape's width
+                    top: dropY - 50, // Subtract half of the shape's height
                   });
                   break;
-    
-  
 
         default:
             console.error('Unknown shape:', shapeName);
@@ -524,10 +1177,23 @@ ImageonDrop(event: DragEvent) {
     if (fabricShape) {
         this.canvas.add(fabricShape);
         this.canvas.setActiveObject(fabricShape);
+        
     }
 }
 
-
+toggleShapeBorderStyle() {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject instanceof fabric.Object) {
+    if (activeObject.strokeDashArray && activeObject.strokeDashArray.length > 0) {
+      // If shape already has dashed border, remove the dashed border
+      activeObject.set('strokeDashArray', []);
+    } else {
+      // If shape doesn't have dashed border, add dashed border
+      activeObject.set('strokeDashArray', [5, 5]); // Set the border line style to dashed
+    }
+    this.canvas.renderAll();
+}
+}
 
 
 toggleBold() {
@@ -559,33 +1225,39 @@ applySelectedTextStyle() {
 }
 applySelectedTextSize(textSize: number) {
   const activeObject = this.canvas.getActiveObject();
+  if (activeObject instanceof fabric.Textbox) {
+    const scaleFactor = textSize / (activeObject.fontSize || 20); // Default font size if undefined
+    activeObject.set({
+      fontSize: textSize,
+      width: (activeObject.width || 200) * scaleFactor // Default width if undefined
+    });
+    this.selectedTextSize = textSize;
+    this.currentTextSize = textSize; // Update currentTextSize
+    this.canvas.renderAll();
+  }
+}
+     
+
+
+
+applySelectedTextColor(color: string) {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject instanceof fabric.Textbox) {
+    activeObject.set('fill', color);
+    this.selectedTextColor = color; // Update selected text color
+    this.canvas.renderAll();
+  }
+}
+applySelectedFontFamily(fontFamily: string) {
+  const activeObject = this.canvas.getActiveObject();
   if (activeObject && activeObject.type === 'textbox') {
     const textObject = activeObject as fabric.Textbox;
     textObject.set({
-      fontSize: textSize
+      fontFamily: fontFamily
     });
-    this.currentTextSize = textSize; // Update currentTextSize
     this.canvas.requestRenderAll(); // Use requestRenderAll to ensure proper rendering
   }
-}
-
-applySelectedTextColor(color: string) {
-const activeObject = this.canvas.getActiveObject();
-if (activeObject instanceof fabric.Textbox) {
-  activeObject.set('fill', color);
-  this.canvas.renderAll();
-}
-}
-applySelectedFontFamily(fontFamily: string) {
-const activeObject = this.canvas.getActiveObject();
-if (activeObject && activeObject.type === 'textbox') {
-  const textObject = activeObject as fabric.Textbox;
-  textObject.set({
-    fontFamily: fontFamily
-  });
-  this.canvas.requestRenderAll(); // Use requestRenderAll to ensure proper rendering
-}
-}
+  }
 handleTextboxSelection(isSelected: boolean) {
   // Emit the selected state of the textbox
   this.textboxSelected.emit(isSelected);
@@ -601,11 +1273,17 @@ handleKeyboardEvents(event: KeyboardEvent) {
     this.pasteCopied();
   }
   // Delete: Delete or Backspace
-  if (event.key === 'Delete' || event.key === 'Backspace') {
+  if (event.key === 'Delete') {
     this.deleteSelectedObject();
   }
+  if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+    this.undo();
+  }
+  if ((event.ctrlKey || event.metaKey) && event.key === 'y') {
+    this.redo();
+  }
 }
-
+ 
 // Function to copy the currently selected object
 copySelected() {
   const activeObject = this.canvas.getActiveObject();
@@ -634,7 +1312,27 @@ pasteCopied() {
   }
 }
 
+private undo() {
+  if (this.undoStack.length > 0) {
+    const action = this.undoStack.pop();
+    this.redoStack.push(action);
+    
+  }
+}
+
+private redo() {
+  if (this.redoStack.length > 0) {
+    const action = this.redoStack.pop();
+    this.undoStack.push(action);
+    
+  }
+}
+
+
+
+
 deleteSelectedObject(): void {
+ 
   const activeObject = this.canvas.getActiveObject();
   if (activeObject) {
     this.canvas.remove(activeObject);
@@ -642,6 +1340,7 @@ deleteSelectedObject(): void {
   }
 }
 flipSelectedImage(): void {
+
   const activeObject = this.canvas.getActiveObject();
   if (activeObject && activeObject.type === 'image') {
     activeObject.set({ flipX: !activeObject.flipX });
@@ -663,25 +1362,13 @@ moveObjectForward(): void {
     this.canvas.renderAll();
   }
 }
-
-exportAsJSON() {
-  const json = JSON.stringify(this.canvas.toJSON());
-  const blob = new Blob([json], { type: 'application/json' });
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'canvas.json';
-  link.click();
-  window.URL.revokeObjectURL(url);
+setTextAlignment(alignment: 'left' | 'center' | 'right' | 'justify') {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject instanceof fabric.Textbox) {
+    activeObject.set('textAlign', alignment);
+    this.canvas.renderAll();
+  }
 }
-exportAsPNG() {
-  const dataURL = this.canvas.toDataURL({ format: 'png', quality: 1 });
-  const link = document.createElement('a');
-  link.href = dataURL;
-  link.download = 'canvas.png';
-  link.click();
-}
-
 
 }
 

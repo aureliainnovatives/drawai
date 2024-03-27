@@ -3,6 +3,7 @@
 import { Component,Renderer2, Input, Output, EventEmitter, ElementRef, AfterViewInit } from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { CanvasSizeService } from '../../Services/canvas-size.service';
+import { TextAdditionService } from '../../Services/text-addition.service';
 
 @Component({
   selector: 'app-side-panel',
@@ -20,12 +21,24 @@ export class SidePanelComponent  {
   @Output() addTextToCanvas: EventEmitter<string> = new EventEmitter<string>()
 
 
+  constructor(private renderer: Renderer2,
+     private el: ElementRef,
+     private textAdditionService: TextAdditionService,
+      private canvasSizeService : CanvasSizeService) {}
+
+
   selectedImage: { name: string, data: string } | null = null;
   selectedTab: string = '';
   searchTerm: string = '';
   enteredText:string = '';
   showProgressBar: boolean = false;
-  textStyles: string[] = ['style1.png', 'style2.png', 'style3.png', 'style4.png','style5.png','style6.png','style7.png','style8.png','style9.png','style10.png','style11.png'];
+  private _textStyles: string[] = ['style1.png', 'style2.png', 'style3.png', 'style4.png', 'style5.png', 'style6.png', 'style7.png', 'style8.png', 'style9.png', 'style10.png', 'style11.png', 'style12.png', 'style13.png', 'style14.png', 'style15.png', 'style16.png', 'style17.png', 'style18.png', 'style19.png','style20.png','style21.png','style22.png','style23.png','style24.png','style25.png','style26.png','style27.png','style28.png'];
+  public get textStyles(): string[] {
+    return this._textStyles;
+  }
+  public set textStyles(value: string[]) {
+    this._textStyles = value;
+  }
  
  
   // Squares: string[] = ['emptysquare', 'filledsquare', 'roundedsquare'];
@@ -45,7 +58,6 @@ export class SidePanelComponent  {
     filledcircle: 'assets/icons/filledcircle.svg',
     emptycircle: 'assets/icons/Circle2.svg',
     filledtriangle: 'assets/icons/filledtriangle.svg',
-    emptytriangle: 'assets/icons/emptytriangle.svg',
     filledhexa: 'assets/icons/filledhexa.svg',
     emptyhexa: 'assets/icons/emptyhexa.svg',
     roundedtriangle: 'assets/icons/roundedtriangle.svg',
@@ -57,6 +69,11 @@ export class SidePanelComponent  {
     halffilledstar: 'assets/icons/halffilledstar.svg',
     fullfilledstar: 'assets/icons/fullfilledstar.svg',
   };
+
+  addstylishText(text: string, fontFamily: string,dropX :number, dropY:number ,fill: string, shadow: string,fontSize:number,   fontWeight: string) {
+    this.textAdditionService.addTextWithStyle.next({ text, fontFamily, dropX, dropY ,fill, shadow,fontSize,  fontWeight });
+  }
+
 
   get filteredShapeArrays() {
     if (!this.searchTerm.trim()) {
@@ -90,7 +107,6 @@ export class SidePanelComponent  {
       category: 'Triangles', 
       shapes: [
         { name: 'filledtriangle', icon: this.shapeIconsMapping['filledtriangle'] },
-        { name: 'emptytriangle', icon: this.shapeIconsMapping['emptytriangle'] },
         { name: 'roundedtriangle', icon: this.shapeIconsMapping['roundedtriangle'] }
       ]
     }, { 
@@ -107,35 +123,58 @@ export class SidePanelComponent  {
         { name: 'fullfilledstar', icon: this.shapeIconsMapping['fullfilledstar'] },
         { name: 'fouremptystar', icon: this.shapeIconsMapping['fouremptystar'] },
         { name: 'sevenedgestar', icon: this.shapeIconsMapping['sevenedgestar'] },
-        { name: 'halfemptystar', icon: this.shapeIconsMapping['halfemptystar'] },
+        // { name: 'halfemptystar', icon: this.shapeIconsMapping['halfemptystar'] },
         { name: 'halfstarempty', icon: this.shapeIconsMapping['halfstarempty'] },
         { name: 'halffilledstar', icon: this.shapeIconsMapping['halffilledstar'] },
-        { name: 'emptystar', icon: this.shapeIconsMapping['emptystar'] },
-        { name: 'fullfilledstar', icon: this.shapeIconsMapping['fullfilledstar'] },
-        { name: 'fouremptystar', icon: this.shapeIconsMapping['fouremptystar'] },
-        { name: 'sevenedgestar', icon: this.shapeIconsMapping['sevenedgestar'] },
-        { name: 'halfemptystar', icon: this.shapeIconsMapping['halfemptystar'] },
-        { name: 'halfstarempty', icon: this.shapeIconsMapping['halfstarempty'] },
-        { name: 'halffilledstar', icon: this.shapeIconsMapping['halffilledstar'] },
-        
-
-        
+  
       ]
     },
   ];
 
+  //text section//
 
-  constructor(private renderer: Renderer2, private el: ElementRef, private canvasSizeService : CanvasSizeService) {}
+
+  //////////
+
+  onTextDragStart(event: DragEvent, textStyle: string) {
+    event.dataTransfer!.setData('dragmeta', JSON.stringify({
+      type: 'StylishText',
+      data: textStyle,
+    }));
+  }
+ 
   onDragStart(event: DragEvent, shape: string) {
-    event.dataTransfer!.setData('text/plain', shape);
+    event.dataTransfer!.setData('dragmeta', JSON.stringify({
+      type: 'shapes',
+      data: shape,
+    }));
+    
   }
+
+  onHDragStart(event: DragEvent, type: string) {
+    event.dataTransfer!.setData('dragmeta', JSON.stringify({
+      type: 'Headings',
+      data: type,
+    }));
+  }
+
+
   ImageonDragStart(event: DragEvent, imageData: string) {
-    event.dataTransfer!.setData('text/plain', imageData);
+    event.dataTransfer!.setData('dragmeta', JSON.stringify({
+      type: 'image',
+      data: imageData,
+    }));
   }
-  
-  
 
-
+  onDrag(event: DragEvent, shape: any) {
+    // Get the placeholder element
+    const placeholder = document.getElementById('shape-preview');
+    if (placeholder) {
+        // Update the placeholder with the actual shape object
+        placeholder.innerHTML = `<img src="${shape.icon}" alt="${shape.name}" style="width: 50px; height: 50px;">`;
+    }
+}
+  
 
   // onTabSelected(tab: string) {
   //   this.selectedTab = tab;
@@ -282,7 +321,7 @@ imageCategories: { category: string, images: { name: string, data: string }[] }[
     category: 'Sky',
     images: [
       { name: 'Image 1', data: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQV6-DQF2pBwNFV9KzPafu9RghrNF1tZ8J3AA&usqp=CAU' },
-      { name: 'Image 2', data: 'https://wallpaper-mania.com/wp-content/uploads/2018/09/High_resolution_wallpaper_background_ID_77701311660.jpg' },
+      { name: 'Image 3', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
     ]
   },
     {
@@ -291,18 +330,18 @@ imageCategories: { category: string, images: { name: string, data: string }[] }[
         { name: 'Image 3', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
         { name: 'Image 4', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
         { name: 'Image 5', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTILI-pwHf8xieo5W7YKa4_4GzUd1O2_T_Z3w&usqp=CAU' },
-        { name: 'Image 3', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
-        { name: 'Image 4', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
-        { name: 'Image 3', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
-        { name: 'Image 4', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
-        { name: 'Image 3', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
-        { name: 'Image 4', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
-        { name: 'Image 3', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
-        { name: 'Image 4', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
-        { name: 'Image 3', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
-        { name: 'Image 4', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
-        { name: 'Image 3', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
-        { name: 'Image 4', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
+        { name: 'Image 6', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
+        { name: 'Image 7', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
+        { name: 'Image 8', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
+        { name: 'Image 9', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
+        { name: 'Image 10', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
+        { name: 'Image 11', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
+        { name: 'Image 12', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
+        { name: 'Image 13', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
+        { name: 'Image 14', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
+        { name: 'Image 15', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
+        { name: 'Image 16', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P6m-zeDwC2oDBWDtvjSXnst2h2jKfdpbGw&usqp=CAU' },
+        { name: 'Image 17', data:   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5Nmh54qJsJQ1VabUohmNHyGvZdK58zalFxg&usqp=CAU'},
       ]
     },
    

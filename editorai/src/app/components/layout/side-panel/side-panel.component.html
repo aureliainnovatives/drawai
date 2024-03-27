@@ -39,28 +39,27 @@
         </div>
        </div>
       </mat-tab> -->
-
       <mat-tab label="All Shapes">
         <div class="shape-content-container">
-        <div class="element" >
-              <ng-container *ngFor="let shapeArray of filteredShapeArrays">
-                <span class="category-title">{{ shapeArray.category }}</span>
-                <div class="scrollable-container">
-                  <div class="card-container">
-                    <mat-card class="card-box" *ngFor="let shape of shapeArray.shapes"  >
-                      <mat-card-header>
-                      <div  class="card-icon" draggable="true" (dragstart)="onDragStart($event, shape.name)">
-                        <img class="cardicons"  [src]="shape.icon" alt="{{ shape.name }}">
-                      </div>
-                    </mat-card-header>
-                    </mat-card>
-                  </div>
-                </div>
-              </ng-container>
+            <div class="element">
+                <ng-container *ngFor="let shapeArray of filteredShapeArrays">
+                    <span class="category-title">{{ shapeArray.category }}</span>
+                    <div class="card-container">
+                        <mat-card class="card-box" *ngFor="let shape of shapeArray.shapes">
+                            <mat-card-header>
+                                <!-- Add the placeholder element for the preview -->
+                                <div class="card-icon" draggable="true" (dragstart)="onDragStart($event, shape.name)"
+                                    (drag)="onDrag($event, shape)">
+                                    <img class="cardicons" [src]="shape.icon" alt="{{ shape.name }}">
+                                </div>
+                            </mat-card-header>
+                        </mat-card>
+                    </div>
+                </ng-container>
             </div>
-         </div>
-      </mat-tab>
-
+        </div>
+    </mat-tab>
+    
 
     <!-- <ng-template #notFound>
       <div class="not-found-container">
@@ -91,30 +90,35 @@
       <button class="addtextbutton" mat-raised-button color="primary" (click)="addEnteredText()">Add Text</button>
 </div>
 
-      <div class="headings"> 
+      <div  draggable="true"  (dragstart)="onHDragStart($event, 'Heading')"  class="headings" > 
         Heading
       </div>
-      <div class="headings2">
+      <div  draggable="true"  (dragstart)="onHDragStart($event, 'Subheading')"   class="headings2">
         Subheading
       </div>
-      <div class="headings3">
+      <div  draggable="true"  (dragstart)="onHDragStart($event, 'BodyText')"  class="headings3">
         Body text
       </div>
       
+      <!-- side-panel.component.html -->
+<!-- side-panel.component.html -->
+<!-- <div draggable="true" (dragstart)=" onTextDragStart($event, 'Hello', 'roguedash', '#007bff', '2px 2px 4px rgba(3, 2, 2, 1)')">Hello Text</div>
+<div draggable="true" (dragstart)=" onTextDragStart($event, 'Thanks', 'cathilda', 'black', '2px 2px 4px rgba(3, 2, 2, 1)')">Thanks Text</div>
+<div draggable="true" (dragstart)=" onTextDragStart($event, 'Open', 'myford', 'yellow', '2px 2px 4px rgba(3, 2, 2, 1)')">Open Text</div> -->
+
      <h3>Font Combinations</h3>
 
-      <div class="text-content-container">
+     <div class="text-content-container">
       <div class="text-style-thumbnails">
         <ng-container *ngFor="let textStyle of textStyles; let i = index">
-          <div class="thumbnail-container" *ngIf="i % 2 === 0">
-            <img [src]="'assets/textstyles/' + textStyle" alt="Text Style {{i + 1}}">
-          </div>
-          <div class="thumbnail-container" *ngIf="i % 2 !== 0">
-            <img [src]="'assets/textstyles/' + textStyle" alt="Text Style {{i + 1}}">
+          <div class="thumbnail-container" 
+               draggable="true" 
+               (dragstart)="onTextDragStart($event, textStyle)">
+            <img [src]="'assets/textstyles/' + textStyle" [alt]="'Text Style ' + (i + 1)">
           </div>
         </ng-container>
       </div>
-  </div>
+    </div>
 </div>
 
 

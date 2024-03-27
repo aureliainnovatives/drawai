@@ -1,0 +1,40 @@
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    overflow: hidden;
+    padding: 10px;
+    justify-content:center ;
+    align-items: center;
+}
+
+button {
+    width: 300px;
+    margin: 3px;
+}
+
+.heading {
+  font-size: larger;
+  font-family: poppins;
+  margin: 15px;
+}
+
+.mat-checkbox-label .example-margin {
+    font-size: 12px;
+  }
+
+  .example-margin {
+    width: 100%;
+    border-radius: 5px;
+  }
+  
+  .amber-purple-theme .mat-checkbox-checked .mat-checkbox-background {
+    background-color: purple !important; /* Change the tick color to purple */
+  }
+  
+  .mat-checkbox-inner-container {
+    background-color: purple !important;
+  }
+
+  

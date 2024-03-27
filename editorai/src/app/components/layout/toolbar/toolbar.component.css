@@ -1,39 +1,29 @@
-/* .toolbar {
-    background-color:rgb(255, 255, 255); 
-    max-height: 50px;
-    border: 1px solid rgba(202, 202, 202, 0.644);  
-    display: flex;
-    justify-content: end;
-} */
-
-
-  .CanvasSize select{
+.CanvasSize select{
     font-size: 15px;
     font-weight: 200;
-    text-align: center;
     padding: 7px ;
-    border:none;
-    border-radius:4px;
+    border: 1px solid #ccc; /* light grey border */
+    border-radius:3px;
     background-color: rgb(255, 255, 255);
     color: rgb(65, 65, 65);
     cursor: pointer;
-  } 
 
-  .CanvasSize select :hover {
-    background-color: #e0e0e0;
-  }
-  
+  } 
 
 
   .CanvasSize {
     display: flex;
     justify-content: end;
-    align-items: end;
+    align-items: center;
+    
   }
 
   #canvasSizeDropdown {
       margin-right: 50px;
       margin-left: 2px;
+      padding-right: 29px;
+      font-weight: 400;
+      color: #000000;
   }
 
 .custom-button {
@@ -43,6 +33,7 @@
     border: none;
     cursor: pointer;
     transition: background-color 0.3s; 
+   
 }
 
 .icon-background-less {
@@ -54,13 +45,8 @@
 
 .icon-background-less:hover {
   background-color: #eeeeee;
-  border-radius: 10%; 
+  border-radius:3px;
 } 
-.text-container{
-  display: flex;
-}
-
-
 
 .toolbar {
   background-color:rgb(255, 255, 255); 
@@ -76,16 +62,16 @@
   margin: 0 3px;
   padding: 8px;
   border: 1px solid #ccc; /* light grey border */
-  border-radius: 6px;
+  border-radius:3px;
   background-color: #ffffff; /* light grey background */
 }
 
 .text-color input[type=color]
 {
   margin: 0 3px;
-  padding: 4.5px;
+  padding: 2px;
   border: 1px solid #ccc; /* light grey border */
-  border-radius: 6px;
+  border-radius:3px;
   background-color: #ffffff; /* light grey background */
 }
 
@@ -101,13 +87,11 @@
   color: #000000; /* dark grey color for icons */
 }
 
-.text-formatting button:focus,
-.text-formatting button:hover {
-  background-color: #e0e0e0; /* light grey background on hover/focus */
+.text-formatting button.active {
+  background-color: #e0e0e0; 
 }
 
 .text-style label,
-.text-color label,
 .text-size-control label {
   margin-right: 8px;
 }
@@ -124,7 +108,9 @@ select {
 }
 
 /* Styling for the dropdown arrow */
+.canvas-style select,
 .text-style select {
+  padding-right: 22px;
   background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
   background-repeat: no-repeat;
   background-position-x: calc(100% - 2px);
@@ -153,13 +139,11 @@ input[type="color"]::-webkit-color-swatch {
   width: 60px; /* fixed width */
 }
 
-/* You may need additional cross-browser styles for the select elements */
-
 .text-size-control {
   display: flex;
   align-items: center;
   border: 1px solid #cccccc;
-  border-radius: 6px;
+  border-radius:3px;
 }
 
 .text-size-control button {
@@ -182,4 +166,55 @@ input[type="color"]::-webkit-color-swatch {
   width: 3em; 
   font-size: 16px;
   user-select: none;
+}
+
+.shape-container {
+  display: flex;
+  gap: 7px;
+}
+
+.color-picker-container {
+  display: inline-block;
+  position: relative; /* To position the inner square */
+  cursor: pointer;
+}
+
+.color-picker-inner-square {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centers the square */
+  width: 80%;  /* Adjust percentage for the desired empty space */
+  height: 80%;
+  background-color: white;
+}
+
+
+.container {
+ width: 60px;
+ padding: 0;
+}
+
+
+
+.alignment-button.active {
+  background-color: #e0e0e0; 
+  padding: 2px;
+}
+
+.alignment-button:hover {
+  background-color:  #adabae ;
+ 
+
+}
+
+
+
+.alignment-button{
+background-color: transparent;
+margin-right: 5px;
+color: rgb(0, 0, 0);
+border: none;
+cursor: pointer;
+transition: background-color 0.3s; 
 }
