@@ -114,10 +114,12 @@ const MY_DATE_FORMATS = {
     MatSliderModule,
     DragDropModule,
     NzSliderModule,
+
   
 
    ],
  
+
   providers: [CanvasComponent,
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS, } // Replace MY_DATE_FORMATS with your custom formats
     

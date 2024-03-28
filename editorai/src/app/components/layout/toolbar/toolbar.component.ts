@@ -15,7 +15,6 @@ declare var Coloris: any;
 })
 export class ToolbarComponent implements OnInit {
 
-  color: string = '#ffffff'; 
   @Output() addCanvas: EventEmitter<void> = new EventEmitter<void>();
   @Output() changeCanvasSize: EventEmitter<string> = new EventEmitter<string>();
   @Input() selectedCanvasSizeOption: string = 'letter';
@@ -34,10 +33,14 @@ export class ToolbarComponent implements OnInit {
   @Input() selectedFontFamily: string = 'Arial'; 
   @Input() selectedTextColor: string = '#000000'; 
 
+    @Input() borderStyles: string[] = [];
+  @Input() selectedBorderStyle: string = '';
+  @Output() borderStyleChanged: EventEmitter<string> = new EventEmitter<string>();
+
   isCanvasContainerVisible: boolean = true;
+
+
   textAlignment: 'left' | 'center' | 'right' | 'justify' = 'left'; // Default alignment
-
-
   selectedBorderColor: string = '';
   isTextboxSelected: boolean = false;
   isImageSelected: boolean = false;
@@ -54,8 +57,7 @@ export class ToolbarComponent implements OnInit {
   isBold: boolean = false;
   isItalic: boolean = false;
   isUnderline: boolean = false;
-
-
+  
   selectedColor: string = '#000000';
   onChangeCanvasSize(event: Event) {
     const target = event.target as HTMLSelectElement;
@@ -96,6 +98,18 @@ export class ToolbarComponent implements OnInit {
 
 ngOnInit() {
 
+  this.canvasComponent.canvas.on('selection:cleared', () => {
+    this.textAlignment = 'left'; // or whatever default alignment you want
+  });
+
+  this.canvasComponent.canvas.on('selection:created', this.updateTextAlignment.bind(this));
+  this.canvasComponent.canvas.on('selection:updated', this.updateTextAlignment.bind(this));
+
+
+  this.selectedColorService.selectedBorderStyle$.subscribe(style => {
+    this.selectedBorderStyle = style;
+  });
+
   Coloris({
     // themeMode: 'dark',
     wrap: true,
@@ -115,21 +129,9 @@ ngOnInit() {
       'rgba(0,119,182,0.8)'
     ],
     el: '[data-coloris]', // Initialize Coloris for elements with class 'coloris'
-    onChange: this.onColorChange // Call onColorChange function when color is picked
+    onChange: this.onColorisColorChange // Call onColorChange function when color is picked
   });
   
-  this.canvasComponent.canvas.on('selection:cleared', () => {
-    this.textAlignment = 'left'; // or whatever default alignment you want
-  });
-
-  this.canvasComponent.canvas.on('selection:created', this.updateTextAlignment.bind(this));
-  this.canvasComponent.canvas.on('selection:updated', this.updateTextAlignment.bind(this));
-
-
-
-
-
-
   this.selectedColorService.selectedColor$.subscribe(color => {
     this.selectedColor = color;
   });
@@ -138,6 +140,15 @@ ngOnInit() {
     this.selectedBorderColor = color;
   });
   this.subscribeToSelectionType();
+}
+
+onBorderStyleChange(event: any) {
+  const borderStyle = event.target.value;
+  this.borderStyleChanged.emit(borderStyle);
+}
+
+preventDefaultColorPicker(event: MouseEvent): void {
+  event.preventDefault();
 }
 
 onColorisColorChange(color: any) {
@@ -224,15 +235,12 @@ exportAsJSON() {
     });
   }
 
-  toggleShapeBorderStyle() {
-    this.canvasComponent.toggleShapeBorderStyle();
-  }
-
   openExportDialog(): void {
     this.dialog.open(ExportDialogComponent, {
       data: this.canvasComponent // Pass the CanvasComponent instance to the dialog
     });
   }
+
   updateTextAlignment(): void {
     const activeObject = this.canvasComponent.canvas.getActiveObject();
     if (activeObject instanceof fabric.Textbox) {
@@ -255,4 +263,6 @@ exportAsJSON() {
     }
     return false;
   }
+
 }
+

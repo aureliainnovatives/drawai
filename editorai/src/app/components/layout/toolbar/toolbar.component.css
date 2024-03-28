@@ -1,214 +1,251 @@
 .CanvasSize select{
-    font-size: 15px;
-    font-weight: 200;
-    padding: 7px ;
-    border: 1px solid #ccc; /* light grey border */
-    border-radius:3px;
-    background-color: rgb(255, 255, 255);
-    color: rgb(65, 65, 65);
-    cursor: pointer;
+  font-size: 15px;
+  font-weight: 200;
+  padding: 7px ;
+  border: 1px solid #ccc; /* light grey border */
+  border-radius:3px;
+  background-color: rgb(255, 255, 255);
+  color: rgb(65, 65, 65);
+  cursor: pointer;
 
-  } 
+} 
 
 
-  .CanvasSize {
-    display: flex;
-    justify-content: end;
-    align-items: center;
-    
-  }
+.CanvasSize {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  
+}
 
-  #canvasSizeDropdown {
-      margin-right: 50px;
-      margin-left: 2px;
-      padding-right: 29px;
-      font-weight: 400;
-      color: #000000;
-  }
+#canvasSizeDropdown {
+    margin-right: 50px;
+    margin-left: 2px;
+    padding-right: 29px;
+    font-weight: 400;
+    color: #000000;
+}
 
 .custom-button {
-    background-color: transparent;
-    margin-left: 7px;
-    color: rgb(0, 0, 0);
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s; 
-   
+  background-color: transparent;
+  margin-left: 7px;
+  color: rgb(0, 0, 0);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s; 
+ 
 }
 
 .icon-background-less {
-    background-color: #ffffff;
-    font-size: 27px;
-    padding: 2px;
-    font-weight: 300;
+  background-color: #ffffff;
+  font-size: 27px;
+  padding: 2px;
+  font-weight: 300;
 }
 
 .icon-background-less:hover {
-  background-color: #eeeeee;
-  border-radius:3px;
+background-color: #eeeeee;
+border-radius:3px;
 } 
 
 .toolbar {
-  background-color:rgb(255, 255, 255); 
-  max-height: 50px;
-  border: 1px solid rgba(202, 202, 202, 0.644);  
-  display: flex;
-  justify-content: start;
+background-color:rgb(255, 255, 255); 
+max-height: 50px;
+border: 1px solid rgba(202, 202, 202, 0.644);  
+display: flex;
+justify-content: start;
 }
 
 .text-formatting button,
 .text-style select,
 .text-size-control select {
-  margin: 0 3px;
-  padding: 8px;
-  border: 1px solid #ccc; /* light grey border */
-  border-radius:3px;
-  background-color: #ffffff; /* light grey background */
+margin: 0 3px;
+padding: 8px;
+border: 1px solid #ccc; /* light grey border */
+border-radius:3px;
+background-color: #ffffff; /* light grey background */
 }
 
 .text-color input[type=color]
 {
-  margin: 0 3px;
-  padding: 2px;
-  border: 1px solid #ccc; /* light grey border */
-  border-radius:3px;
-  background-color: #ffffff; /* light grey background */
+margin: 0 3px;
+padding: 2px;
+border: 1px solid #ccc; /* light grey border */
+border-radius:3px;
+background-color: #ffffff; /* light grey background */
 }
 
 .text-formatting button {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
+display: inline-flex;
+justify-content: center;
+align-items: center;
 
 }
 
 .text-formatting button .material-symbols-outlined {
-  font-size: 17px; /* size of the icons */
-  color: #000000; /* dark grey color for icons */
+font-size: 17px; /* size of the icons */
+color: #000000; /* dark grey color for icons */
 }
 
 .text-formatting button.active {
-  background-color: #e0e0e0; 
+background-color: #e0e0e0; /* Change to the desired active color */
 }
 
 .text-style label,
 .text-size-control label {
-  margin-right: 8px;
+margin-right: 8px;
 }
 
 select {
-  border: none;
-  background-color: transparent;
-  -webkit-appearance: none; /* Removes default chrome and safari style */
-  -moz-appearance: none; /* Removes default style Firefox */
-  appearance: none;
-  font-family: inherit;
-  padding: 5px 10px;
-  cursor: pointer;
+border: none;
+background-color: transparent;
+-webkit-appearance: none; /* Removes default chrome and safari style */
+-moz-appearance: none; /* Removes default style Firefox */
+appearance: none;
+font-family: inherit;
+padding: 5px 10px;
+cursor: pointer;
 }
 
 /* Styling for the dropdown arrow */
 .canvas-style select,
 .text-style select {
-  padding-right: 22px;
-  background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
-  background-repeat: no-repeat;
-  background-position-x: calc(100% - 2px);
-  background-position-y: center;
+padding-right: 22px;
+background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+background-repeat: no-repeat;
+background-position-x: calc(100% - 2px);
+background-position-y: center;
 }
 
 
 input[type=color] {
-  border: none;
-  padding: 0;
-  width: 38px;
-  height: 36px;
-  -webkit-appearance: none;
-  cursor: pointer;
+border: none;
+padding: 0;
+width: 38px;
+height: 36px;
+cursor: pointer;
 }
 
 /* To remove the color input's default styling on Chrome */
 input[type="color"]::-webkit-color-swatch-wrapper {
-  padding: 0;
+padding: 0;
 }
 input[type="color"]::-webkit-color-swatch {
-  border: none;
+border: none;
 }
 
 .text-size-control select {
-  width: 60px; /* fixed width */
+width: 60px; /* fixed width */
 }
 
 .text-size-control {
-  display: flex;
-  align-items: center;
-  border: 1px solid #cccccc;
-  border-radius:3px;
+display: flex;
+align-items: center;
+border: 1px solid #cccccc;
+border-radius:3px;
 }
 
 .text-size-control button {
-  background-color: white;
-  border: none;
-  padding: 5px 8px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  user-select: none;
+background-color: white;
+border: none;
+padding: 5px 8px;
+cursor: pointer;
+font-size: 16px;
+font-weight: bold;
+user-select: none;
 }
 
 .text-size-control input[type="text"] {
-  text-align: center;
-  border-top: none;
-  border-bottom: none;
-  border-left: 1px solid #cccccc;
-  border-right: 1px solid #cccccc;
-  padding: 5px 10px;
-  width: 3em; 
-  font-size: 16px;
-  user-select: none;
+text-align: center;
+border-top: none;
+border-bottom: none;
+border-left: 1px solid #cccccc;
+border-right: 1px solid #cccccc;
+padding: 5px 10px;
+width: 3em; 
+font-size: 16px;
+user-select: none;
 }
 
 .shape-container {
-  display: flex;
-  gap: 7px;
+display: flex;
+gap: 7px;
+}
+
+.text-color input[type=color]
+{
+margin: 0 3px;
+padding: 2px;
+border: 1px solid #ccc; /* light grey border */
+border-radius:3px;
+background-color: #ffffff; /* light grey background */
 }
 
 .color-picker-container {
-  display: inline-block;
-  position: relative; /* To position the inner square */
-  cursor: pointer;
+display: inline-block;
+position: relative; /* To position the inner square */
+cursor: pointer;
 }
+
+.color-picker-container input[type=color] {
+margin: 3px;
+padding: 2px;
+border: 1px solid #ccc; /* light grey border */
+border-radius:3px;
+background-color: #ffffff; /* light grey background */
+}
+
 
 .color-picker-inner-square {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* Centers the square */
-  width: 80%;  /* Adjust percentage for the desired empty space */
-  height: 80%;
-  background-color: white;
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+width: 60%; 
+height: 60%;
+background-color: white;
+} 
+
+
+.shape-color input[type=color]
+{
+margin: 3px;
+padding: 2px;
+border: 1px solid #ccc; /* light grey border */
+border-radius:3px;
+background-color: #ffffff; /* light grey background */
 }
 
 
-.container {
- width: 60px;
- padding: 0;
+
+.toolbar-color-container input[type=color]
+{
+margin: 3px;
+padding: 2px;
+border: 1px solid #ccc; /* light grey border */
+border-radius:3px;
+background-color: #ffffff; /* light grey background */
 }
+
+
+.border-width-slider {
+
+width: 300px;
+}
+
 
 
 
 .alignment-button.active {
-  background-color: #e0e0e0; 
-  padding: 2px;
+background-color: #e0e0e0; 
+padding: 2px;
 }
 
 .alignment-button:hover {
-  background-color:  #adabae ;
- 
+background-color:  #adabae ;
+
 
 }
-
-
 
 .alignment-button{
 background-color: transparent;
@@ -218,3 +255,6 @@ border: none;
 cursor: pointer;
 transition: background-color 0.3s; 
 }
+
+
+

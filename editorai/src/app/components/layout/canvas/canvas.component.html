@@ -1,3 +1,4 @@
+
 <!-- <div>
     <label for="canvasSize">Canvas Size:</label>
     <select [(ngModel)]="selectedCanvasSize" (change)="onCanvasSizeChange(selectedCanvasSize)">
@@ -45,7 +46,13 @@
   <button (click)="exportAsPNG()">Export as PNG</button> -->
 <!-- <input type="color" [(ngModel)]="selectedColor" (input)="onColorChange($event)"> -->
 
-<!-- canvas.component.html -->
+<!-- <div>
+  <input type="range" id="borderWidthSlider" min="0" max="10" [(ngModel)]="borderWidth" (input)="onBorderWidthChange()">
+</div> -->
+
+<mat-slider min="1" max="10" step="0.5"  >
+  <input matSliderThumb [(ngModel)]="borderWidth" (input)="onBorderWidthChange()">
+</mat-slider>
 
 <app-toolbar
     (canvasSizeChanged)="onChangeCanvasSize($event)"
@@ -55,13 +62,17 @@
     (underlineToggled)="toggleUnderline()"
     (textColorChanged)="applySelectedTextColor($event)"
     (fontFamilyChanged)="applySelectedFontFamily($event)"
+    [borderStyles]="borderStyles"
+    [selectedBorderStyle]="selectedBorderStyle"
+    (borderStyleChanged)="applyBorderStyle($event)"
   >
 </app-toolbar>
 
 <div class="canvas">
   <div #canvasContainer  class="canvas-container" 
-    (drop)="onDrop($event)" >
-    
+    (drop)="onDrop($event)" 
+    (dragover)="onDragOver($event)">
+
   <div class="buttons">    
   <!-- <button class="custom-button" (click)="deleteSelectedObject()">
   <span class="material-symbols-outlined icon-background-less">
@@ -85,23 +96,10 @@
       flip_to_front
       </span>
 </button>
-
-
-
-
-
-
-
-
   </div>
 
-
-
-
   
- <div id="shape-preview" style="position: absolute; display: none;"></div>
-<canvas (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"  id='canvas' [height]="canvasHeight" [width]="canvasWidth"></canvas>
-
+<canvas id='canvas' [height]="canvasHeight" [width]="canvasWidth"></canvas>
 
 </div>
 </div>
@@ -109,4 +107,3 @@
 <app-footer></app-footer>
 
 
-  

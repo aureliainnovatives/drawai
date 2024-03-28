@@ -1,3 +1,4 @@
+
 <mat-toolbar class="toolbar mat-elevation-z2"> 
   <div style="display: flex;" class="text-container" *ngIf="isTextboxSelected">
   <div class="text-formatting">
@@ -31,34 +32,27 @@
     <input type="color" id="fontColor" [(ngModel)]="selectedTextColor" (ngModelChange)="textColorChanged.emit(selectedTextColor)">
   </div>
 
-  <!-- Text alignment buttons -->
-
-    <button class="alignment-button" (click)="setTextAlignment('left')" [ngClass]="{'active': isAlignmentActive('left')}">
-      <span class="material-symbols-outlined ">
-        format_align_left
-      </span>
-    </button>
-    <button class="alignment-button" (click)="setTextAlignment('center')" [ngClass]="{'active': isAlignmentActive('center')}">
-      <span class="material-symbols-outlined ">
-        format_align_center
-      </span>
-    </button>
-    <button class="alignment-button" (click)="setTextAlignment('right')" [ngClass]="{'active': isAlignmentActive('right')}">
-      <span class="material-symbols-outlined ">
-        format_align_right
-      </span>
-    </button>
-    <button class="alignment-button" (click)="setTextAlignment('justify')" [ngClass]="{'active': isAlignmentActive('justify')}">
-      <span class="material-symbols-outlined ">
-        format_align_justify
-      </span>
-    </button>
-    
-
-  </div>
-
-
-
+  <button class="alignment-button" (click)="setTextAlignment('left')" [ngClass]="{'active': isAlignmentActive('left')}">
+    <span class="material-symbols-outlined ">
+      format_align_left
+    </span>
+  </button>
+  <button class="alignment-button" (click)="setTextAlignment('center')" [ngClass]="{'active': isAlignmentActive('center')}">
+    <span class="material-symbols-outlined ">
+      format_align_center
+    </span>
+  </button>
+  <button class="alignment-button" (click)="setTextAlignment('right')" [ngClass]="{'active': isAlignmentActive('right')}">
+    <span class="material-symbols-outlined ">
+      format_align_right
+    </span>
+  </button>
+  <button class="alignment-button" (click)="setTextAlignment('justify')" [ngClass]="{'active': isAlignmentActive('justify')}">
+    <span class="material-symbols-outlined ">
+      format_align_justify
+    </span>
+  </button>
+</div>
 <div class="image-container" *ngIf="isImageSelected">
   <span>image-container</span>
  </div>
@@ -66,8 +60,8 @@
  <!-- Shape container -->
  <div class="shape-container"  *ngIf="isShapeSelected">
 
-<div class="container" >
-  <input type="text" data-coloris [(ngModel)]="selectedColor" (ngModelChange)="onColorChange()" />
+<div class="shape-color" >
+  <input type="color"  class="coloris" data-coloris [(ngModel)]="selectedColor" (ngModelChange)="onColorChange()"  (click)="preventDefaultColorPicker($event)" />
 </div>
 <!-- <input type="color" [(ngModel)]="selectedColor" (ngModelChange)="onColorChange()"> -->
 
@@ -76,11 +70,15 @@
   <input type="color" [(ngModel)]="selectedBorderColor" (input)="changeBorderColor($event)">
 
 </div>
-<button  (click)="toggleShapeBorderStyle()">
-  <span style="font-size: 30px;" class="material-symbols-outlined icon-background-less">
-      resize
-    </span>
-</button>
+<div class="CanvasSize">
+<div class="canvas-style">
+  <select id="canvasSizeDropdown"  [(ngModel)]="selectedBorderStyle" (change)="onBorderStyleChange($event)">
+    <option *ngFor="let style of borderStyles" [value]="style">{{ style }}</option>
+  </select>
+   </div>
+</div>
+
+
  </div>
 
 
@@ -97,20 +95,20 @@
     </button> -->
 
 <div class="CanvasSize">
-  <div class="container" *ngIf="isCanvasContainerVisible">
+  <div class="canvasContainer" *ngIf="isCanvasContainerVisible">
     <div class="toolbar-color-container" >
       <input type="color" (input)="changeCanvasColor($event)" class="toolbar-color-button">
     </div>
-  
-     </div>
+    </div>
+    
 
   <div class="text-formatting">
-
   <button (click)="openExportDialog()">
     <span class="material-symbols-outlined">
       download
       </span></button>
 </div>
+
   <div class="canvas-style">
   <select id="canvasSizeDropdown" (change)="onChangeCanvasSize($event)">
     <option value="700x700">Letter</option>
@@ -119,6 +117,7 @@
   </select>
   </div>
 </div>
+
 
 </div>
   </mat-toolbar>
