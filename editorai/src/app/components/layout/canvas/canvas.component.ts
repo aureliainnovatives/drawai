@@ -165,7 +165,7 @@ export class CanvasComponent implements AfterViewInit {
       this.selectedColorService.setSelectedColor(fillColor);
     }
     this.subscription = this.textAdditionService.addTextWithStyle.subscribe(data => {
-      this.addTextWithStyle(data.text, data.fontFamily, data.dropY , data.dropX, data.fill, data.shadow , data.fontWeight);
+      this.addTextWithStyle(data.text, data.fontFamily, data.dropY , data.dropX, data.fill, data.shadow ,data.fontSize, data.fontWeight);
     });
 
     this.selectedColorService.borderColor$.subscribe(color => {
@@ -347,15 +347,15 @@ setTextAlignment(alignment: 'left' | 'center' | 'right' | 'justify') {
 }
 
 
-  addTextWithStyle(text: string, fontFamily: string, dropX: number, dropY: number, fill: string, shadow: string, fontWeight: string) {
-    const fontSize = 90;
+  addTextWithStyle(text: string, fontFamily: string, dropX: number, dropY: number, fill: string, shadow: string,  fontSize:number, fontWeight: string) {
+  
     const newText = new fabric.Textbox(text, {
       left: dropX - (fontSize / 2), // Subtract half of the text's width
       top: dropY - (fontSize / 2),
       fontFamily: fontFamily,
       fill: fill,
       shadow: shadow,
-      fontSize: 90, // Set the desired font size
+      fontSize: fontSize,
       fontWeight: fontWeight
     });
     
@@ -374,92 +374,183 @@ setTextAlignment(alignment: 'left' | 'center' | 'right' | 'justify') {
     let fill = '';
     let shadow = '';
     let fontWeight = '';
-
+    let fontSize: number  = 0;
     const canvasRect = (event.target as HTMLElement).getBoundingClientRect();
     const dropX = event.clientX - canvasRect.left;
     const dropY = event.clientY - canvasRect.top;
   
-
-
-    switch (textStyle) {
-      case 'style1.png':
-        text = 'HELLO';
-        fontFamily = 'roguedash';
-        fill = '#007bff';
-        shadow = '2px 2px 4px rgba(3, 2, 2, 1)';
-        break;
-        case 'style2.png':
-          text = 'Thanks';
-          fontFamily = 'cathilda';
-          fill = 'black';
-          shadow = '2px 2px 4px rgba(3, 2, 2, 1)';
-          break;
-  
-      case 'style3.png':
-          text = 'Love you';
-          fontFamily = 'myford';
-          fill = 'yellow';
-          shadow = '2px 2px 4px rgba(3, 2, 2, 1)';
-          break;
-  
-      case 'style4.png':
-          text = 'WOW!';
-          fontFamily = 'catcut';
-          fill = 'rgba(255, 20, 147, 0.9)';
-          shadow = '2px 2px 4px rgba(0, 0, 0, 0.5)';
-          break;
-  
-      case 'style5.png':
-          text = 'Welcome';
-          fontFamily = 'rainbow';
-          fill = 'red';
-          shadow = '';
-          break;
-  
-      case 'style6.png':
-          text = 'ChiLL!!';
-          fontFamily = 'chunkfive';
-          fill = 'purple';
-          shadow = '';
-          break;
-  
-      case 'style7.png':
-          text = 'Happy Birthday';
-          fontFamily = 'milvasten';
-          fill = 'rgb(248, 110, 5)';
-          shadow = '2px 2px 4px rgba(0, 0, 0, 0.5)';
-          break;
-  
-      case 'style8.png':
-          text = 'Enjoy';
-          fontFamily = 'kleptocracy';
-          fill = 'rgb(255, 0, 85)';
-          shadow = '2px 2px 4px rgba(5, 5, 5, 3)';
-          break;
-  
-      case 'style9.png':
-          text = 'Welcome To India';
-          fontFamily = 'ph';
-          fill = 'blue';
-          shadow = '2px 2px 4px rgba(255, 20, 147, 0.9)';
-          break;
-  
-      case 'style10.png':
-          text = 'Good';
-          fontFamily = 'prida01';
-          fill = 'rgb(6, 243, 239)';
-          shadow = '2px 2px 4px rgba(255, 43, 20, 0.9)';
-          break;
-  
-      case 'style11.png':
-          text = 'PLAY';
-          fontFamily = 'prida';
-          fill = 'rgb(32, 1, 33)';
-          shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
-          break; 
+    if (textStyle === 'style1.png') {
+      text = 'HELLO';
+      fontFamily = 'roguedash';
+      fill = '#007bff';
+      shadow = '2px 2px 4px rgba(3, 2, 2, 1)';
+      fontSize = 30;
+  } else if (textStyle === 'style2.png') {
+      text = 'Thanks';
+      fontFamily = 'cathilda';
+      fill = 'black';
+      shadow = '2px 2px 4px rgba(3, 2, 2, 1)';
+      fontSize = 70;
+  } else if (textStyle === 'style3.png') {
+      text = 'Love you';
+      fontFamily = 'myford';
+      fill = 'yellow';
+      shadow = '2px 2px 4px rgba(3, 2, 2, 1)';
+      fontSize = 50;
+  } else if (textStyle === 'style4.png') {
+      text = 'WOW!';
+      fontFamily = 'catcut';
+      fill = 'rgba(255, 20, 147, 0.9)';
+      shadow = '2px 2px 4px rgba(0, 0, 0, 0.5)';
+      fontSize = 30;
+  } else if (textStyle === 'style5.png') {
+      text = 'Welcome';
+      fontFamily = 'rainbow';
+      fill = 'red';
+      shadow = '';
+      fontSize = 30;
+  } else if (textStyle === 'style6.png') {
+      text = 'ChiLL!!';
+      fontFamily = 'chunkfive';
+      fill = 'purple';
+      shadow = '';
+      fontSize = 30;
+  } else if (textStyle === 'style7.png') {
+      text = 'Happy Birthday';
+      fontFamily = 'milvasten';
+      fill = 'rgb(248, 110, 5)';
+      shadow = '2px 2px 4px rgba(0, 0, 0, 0.5)';
+      fontSize = 30;
+  } else if (textStyle === 'style8.png') {
+      text = 'Enjoy';
+      fontFamily = 'kleptocracy';
+      fill = 'rgb(255, 0, 85)';
+      shadow = '2px 2px 4px rgba(5, 5, 5, 3)';
+      fontSize = 30;
+  } else if (textStyle === 'style9.png') {
+      text = 'Welcome To India';
+      fontFamily = 'ph';
+      fill = 'blue';
+      shadow = '2px 2px 4px rgba(255, 20, 147, 0.9)';
+      fontSize = 30;
+  } else if (textStyle === 'style10.png') {
+      text = 'Good';
+      fontFamily = 'prida01';
+      fill = 'rgb(6, 243, 239)';
+      shadow = '2px 2px 4px rgba(255, 43, 20, 0.9)';
+      fontSize = 30;
+  } else if (textStyle === 'style11.png') {
+      text = 'PLAY';
+      fontFamily = 'prida';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+      fontSize = 30;
+  } else if (textStyle === 'style12.png') {
+      text = 'POOL PARTY';
+      fontFamily = 'contend';
+      fill = 'rgb(171, 26, 115)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+      fontSize = 30;
+  } else if (textStyle === 'style13.png') {
+      text = 'now open!';
+      fontFamily = 'Glitch';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+      fontSize = 30;
+  } else if (textStyle === 'style14.png') {
+      text = 'WorkOut';
+      fontFamily = 'PERSONAL';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+      fontSize = 30;
+  } else if (textStyle === 'style15.png') {
+      text = 'SALE!!!';
+      fontFamily = 'Portable';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+      fontSize = 30;
+  } else if (textStyle === 'style16.png') {
+      text = 'SWEET';
+      fontFamily = 'Those';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+      fontSize = 10;
+  } else if (textStyle === 'style17.png') {
+      text = 'GAME ON';
+      fontFamily = 'Burger';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+      fontSize = 30;
+  } else if (textStyle === 'style18.png') {
+      text = 'Huge SALE!!';
+      fontFamily = 'Best';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+      fontSize = 30;
+  } else if (textStyle === 'style19.png') {
+      text = 'FEELIN CUTE';
+      fontFamily = 'Love';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+      fontSize = 30;
+  } else if (textStyle === 'style20.png') {
+      text = 'shine SHINE shine';
+      fontFamily = 'Yellow';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+      fontSize = 30;
+  } else if (textStyle === 'style21.png') {
+      text = 'GAME ON';
+      fontFamily = 'moron';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+      fontSize = 30;
+  } else if (textStyle === 'style22.png') {
+      text = 'sparkle';
+      fontFamily = 'Neo';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+      fontSize = 30;
+  } else if (textStyle === 'style23.png') {
+      text = 'stay forever';
+      fontFamily = 'Queen';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+      fontSize = 30;
+  } else if (textStyle === 'style24.png') {
+      text = 'Good!!';
+      fontFamily = 'taku';
+      fill = 'rgb(32, 1, 33)';
+      shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+      fontSize = 30;
+  }    else if (textStyle === 'style25.png') {
+        text = 'LOve';
+        fontFamily = 'tower';
+        fill = 'rgb(32, 1, 33)';
+        shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+    } else if (textStyle === 'style26.png') {
+        text = 'LIKE';
+        fontFamily = 'used';
+        fill = 'rgb(32, 1, 33)';
+        shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+        fontSize = 30;
+    } else if (textStyle === 'style27.png') {
+        text = 'KILL IT!!!';
+        fontFamily = 'demo';
+        fill = 'rgb(32, 1, 33)';
+        shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+        fontSize = 30;
+  } else if (textStyle === 'style28.png') {
+        text = 'Pooja';
+        fontFamily = 'dragon';
+        fill = 'rgb(32, 1, 33)';
+        shadow = '2px 2px 4px rgba(67, 232, 7, 0.9)';
+        fontSize = 30;
     
+    
+
     }
-    this.addTextWithStyle(text, fontFamily, dropX, dropY, fill, shadow, fontWeight);
+    this.addTextWithStyle(text, fontFamily, dropX, dropY, fill, shadow, fontSize, fontWeight);
   
       this.canvas.renderAll();
   }
