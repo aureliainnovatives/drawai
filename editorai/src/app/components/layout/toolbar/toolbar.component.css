@@ -257,3 +257,37 @@ cursor: pointer;
 transition: background-color 0.3s; 
 }
 
+
+
+
+.container {
+  position: relative;
+  margin: 10px;
+}
+
+.btn {
+  padding: 10px 20px;
+  background-color: #ddd;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.panel {
+  display: none;
+  position: absolute;
+  top: 50px;
+  left: 0;
+  width: 200px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.panel p {
+  margin-bottom: 5px;
+}
+
+.panel.visible {
+  display: block; 
+}

@@ -193,7 +193,6 @@ export class CanvasComponent implements AfterViewInit {
         const currentStrokeWidth = object.strokeWidth || 0; // Get current border width
         object.set('stroke', borderStyle === 'none' ? '' : 'black'); // Set the border color if needed
         object.set('strokeWidth', this.getBorderWidth(borderStyle)); // Apply the selected border width
-        this.borderWidth = this.getBorderWidth(borderStyle); // Update the borderWidth variable
         object.set('strokeDashArray', this.getStrokeDashArray(borderStyle, currentStrokeWidth)); // Apply the selected border style
         object.setCoords(); // Update object coordinates
       }
@@ -227,9 +226,10 @@ export class CanvasComponent implements AfterViewInit {
       case 'none':
         return 0;
       default:
-        return 2; // You can adjust this value based on your requirements
+        return 2;
     }
   }
+  
   
   // Update border style dropdown to reflect the selected object's border style and width
   updateBorderStyleDropdown() {
@@ -250,6 +250,18 @@ export class CanvasComponent implements AfterViewInit {
       this.selectedBorderStyle = 'Solid'; // Default to 'solid' when no single object is selected
     }
   }
+
+  onBorderWidthChange() {
+    const activeObjects = this.canvas.getActiveObjects();
+    activeObjects.forEach(object => {
+      if (object instanceof fabric.Object) {
+        object.set('strokeWidth', this.borderWidth);
+        object.setCoords();
+      }
+    });
+    this.canvas.renderAll();
+  }
+  
   
 
 // applyBorderStyle(borderStyle: string) {
@@ -1283,16 +1295,7 @@ onshapeDrop(data: string, event: DragEvent) {
     }
     
 }
-onBorderWidthChange() {
-  const activeObjects = this.canvas.getActiveObjects();
-  activeObjects.forEach(object => {
-    if (object instanceof fabric.Object) {
-      object.set('strokeWidth', this.borderWidth);
-      object.setCoords();
-    }
-  });
-  this.canvas.renderAll();
-}
+
 
 
 

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component,ChangeDetectorRef , EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CanvasComponent } from '../canvas/canvas.component';
 import { Subscription } from 'rxjs';
 import { CanvasSelectionService } from '../../Services/canvas-selection.service';
@@ -26,6 +26,11 @@ export class ToolbarComponent implements OnInit {
   @Output() boldToggled = new EventEmitter<void>();
   @Output() italicToggled = new EventEmitter<void>();
   @Output() underlineToggled = new EventEmitter<void>();
+
+
+  borderWidth: number = 2; // Default border width
+  @Output() borderWidthChange = new EventEmitter<number>();
+
 
   @Output() textColorChanged = new EventEmitter<string>();
   @Output() fontFamilyChanged = new EventEmitter<string>();
@@ -66,7 +71,10 @@ export class ToolbarComponent implements OnInit {
   }
 
   textSize: number = 20; 
-  constructor(private canvasComponent: CanvasComponent,private dialog: MatDialog ,private selectedColorService: SelectedColorService,private canvasSelectionService: CanvasSelectionService) {
+  constructor(private canvasComponent: CanvasComponent,
+    private dialog: MatDialog ,
+    private selectedColorService: SelectedColorService,
+    private canvasSelectionService: CanvasSelectionService) {
    
     
     this.selectedColorService.borderColor$.subscribe(color => {
@@ -95,6 +103,7 @@ export class ToolbarComponent implements OnInit {
    ngOnDestroy() {
     this.subscription.unsubscribe();
 }
+
 
 ngOnInit() {
 
@@ -262,6 +271,11 @@ exportAsJSON() {
       return activeObject.textAlign === alignment;
     }
     return false;
+  }
+
+  onBorderWidthChange(newWidth: number) {
+    this.borderWidth = newWidth;
+    // Call your canvas update method here if necessary
   }
 
 }
