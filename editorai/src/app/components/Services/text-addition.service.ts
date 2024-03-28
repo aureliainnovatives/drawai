@@ -10,5 +10,7 @@ export class TextAdditionService {
   editText(newText: string) {
     this.textEdited.next(newText);
   }
-  constructor() { }
+  constructor(){
+
+  }
 }

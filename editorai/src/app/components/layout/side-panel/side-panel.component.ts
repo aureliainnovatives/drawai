@@ -384,7 +384,3 @@ addTextToCanvasFromSidePanel(text: string) {
 
 
 }
-
-
-
-

@@ -1,3 +1,4 @@
+
 import { Component, ElementRef, AfterViewInit, HostListener, EventEmitter, Output, ChangeDetectorRef, Renderer2, ViewChild } from '@angular/core';
 import { fabric } from 'fabric';
 import { CanvasSizeService } from '../../Services/canvas-size.service';

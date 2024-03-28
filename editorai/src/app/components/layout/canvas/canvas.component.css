@@ -1,141 +1,141 @@
- .canvas {
-    height: calc(100% - 155px);
-    width: calc(100% - 60px);
-    position: fixed;
-    display: flex;
-    align-items: center;
-    overflow: auto;
-    flex-direction: column; 
-    justify-content: center;
-    background-color: rgb(236, 236, 236);
+.canvas {
+  height: calc(100% - 155px);
+  width: calc(100% - 60px);
+  position: fixed;
+  display: flex;
+  align-items: center;
+  overflow: auto;
+  flex-direction: column; 
+  justify-content: center;
+  background-color: rgb(236, 236, 236);
 }
 
 app-footer {
-    position: fixed;
-    bottom:0;
-    width: 100%;
+  position: fixed;
+  bottom:0;
+  width: 100%;
 }
 
 app-toolbar {
-    position: relative;
-    top: 0;
-    width: 100%;
+  position: relative;
+  top: 0;
+  width: 100%;
 } 
 .buttons{
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  gap: 10px;
-  margin: 10px;
-  position: relative;
+align-items: center;
+justify-content: center;
+display: flex;
+gap: 10px;
+margin: 10px;
+position: relative;
 
 }
 .custom-button {
-    background-color: transparent;
-    margin-left: 7px;
-    color: rgb(0, 0, 0);
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s; 
+  background-color: transparent;
+  margin-left: 7px;
+  color: rgb(0, 0, 0);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s; 
 }
 .icon-background-less {
-  background-color: rgb(236, 236, 236);
-  font-size: 27px;
-  padding: 2px;
-  font-weight: 300;
+background-color: rgb(236, 236, 236);
+font-size: 27px;
+padding: 2px;
+font-weight: 300;
 }
 
 .icon-background-less:hover {
-  background-color: #c5c3c3;
-  border-radius: 10%; 
+background-color: #c5c3c3;
+border-radius: 10%; 
 } 
 
-  #canvas {
-    position: fixed;
-    border: 2px solid rgba(125, 5, 206, 0.774);
-    overflow: auto;
-    background-color: rgb(255, 255, 255);
-    box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px;
+#canvas {
+  position: fixed;
+  border: 2px solid rgba(125, 5, 206, 0.774);
+  overflow: auto;
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px;
 
-  }
-
-  @font-face {
-    font-family: 'roguedash' ;
-    src: url(/assets/textFonts/Roguedash-Solid.otf);
-  }
+}
 
 @font-face {
-    font-family: 'cathilda' ;
-      /* src: url(BungeeSpice-Regular.ttf); */
-    src: url(/assets/textFonts/Cathilda-400.otf);
-  }
-    
+  font-family: 'roguedash' ;
+  src: url(/assets/textFonts/Roguedash-Solid.otf);
+}
+
 @font-face {
-    font-family: 'myford' ;
+  font-family: 'cathilda' ;
     /* src: url(BungeeSpice-Regular.ttf); */
-    src: url(/assets/textFonts/Mayford-Display-Regular-400.otf);
-  }
-  @font-face {
-    font-family: 'catcut' ;
-    /* src: url(BungeeSpice-Regular.ttf); */
-    src: url(/assets/textFonts/Catcut-400.otf);
-  }
-  @font-face {
-    font-family: 'rainbow' ;
-    /* src: url(BungeeSpice-Regular.ttf); */
-    src: url(/assets/textFonts/Rainbow-Layer-400.otf);
-  }    
-  @font-face {
-    font-family: 'chunkfive' ;
-    /* src: url(BungeeSpice-Regular.ttf); */
-    src: url(/assets/textFonts/Chunk-Five-Print.otf);
-  }  
- 
-  @font-face {
-    font-family: 'milvasten' ;
-    /* src: url(BungeeSpice-Regular.ttf); */
-    src: url(/assets/textFonts/Milvasten-Regular-400.otf);
- } 
- @font-face {
-    font-family: 'kleptocracy' ;
-    /* src: url(BungeeSpice-Regular.ttf); */
-    src: url(/assets/textFonts/kleptocracy-titling-ex-bd.otf);
-  } 
-  @font-face {
-    font-family:  'ph';
-    /* src: url(BungeeSpice-Regular.ttf); */
-    src: url(/assets/textFonts/PH-300-Cond-Caps.otf);
-  }
-  @font-face {
-    font-family: 'prida01' ;
-    /* src: url(BungeeSpice-Regular.ttf); */
-    src: url(/assets/textFonts/Prida01.otf);
-  }
-  @font-face {
-    font-family: 'prida' ;
-    /* src: url(BungeeSpice-Regular.ttf); */
-    src: url(/assets/textFonts/Prida01Light.otf);
+  src: url(/assets/textFonts/Cathilda-400.otf);
+}
+  
+@font-face {
+  font-family: 'myford' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Mayford-Display-Regular-400.otf);
+}
+@font-face {
+  font-family: 'catcut' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Catcut-400.otf);
+}
+@font-face {
+  font-family: 'rainbow' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Rainbow-Layer-400.otf);
+}    
+@font-face {
+  font-family: 'chunkfive' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Chunk-Five-Print.otf);
+}  
+
+@font-face {
+  font-family: 'milvasten' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Milvasten-Regular-400.otf);
+} 
+@font-face {
+  font-family: 'kleptocracy' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/kleptocracy-titling-ex-bd.otf);
+} 
+@font-face {
+  font-family:  'ph';
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/PH-300-Cond-Caps.otf);
+}
+@font-face {
+  font-family: 'prida01' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Prida01.otf);
+}
+@font-face {
+  font-family: 'prida' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Prida01Light.otf);
 }
 
 .transparent-option {
-  cursor: pointer;
+cursor: pointer;
 }
 
 .transparent-square {
-  width: 20px;
-  height: 20px;
-  border: 1px solid #000;
-  background-color: #fff; /* Default background color */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+width: 20px;
+height: 20px;
+border: 1px solid #000;
+background-color: #fff; /* Default background color */
+display: flex;
+align-items: center;
+justify-content: center;
 }
 
 .transparent-square.selected {
-  background-color: transparent;
+background-color: transparent;
 }
 
 data-coloris {
-  width: 100%;
-  height: 100%;
+width: 100%;
+height: 100%;
 }

@@ -45,7 +45,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
 import { ExportDialogComponent } from './components/layout/toolbar/DownloadDialog/export-dialog/export-dialog.component';
-import { ColorPickerModule } from 'ngx-color-picker';
+
 
 const MY_DATE_FORMATS = {
   parse: {
@@ -114,12 +114,12 @@ const MY_DATE_FORMATS = {
     MatSliderModule,
     DragDropModule,
     NzSliderModule,
-    ColorPickerModule
+
+  
 
    ],
-   exports: [
-    ColorPickerModule
-  ],
+ 
+
   providers: [CanvasComponent,
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS, } // Replace MY_DATE_FORMATS with your custom formats
     
