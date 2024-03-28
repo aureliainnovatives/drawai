@@ -30,6 +30,27 @@
   <div class="text-color">
     <input type="color" id="fontColor" [(ngModel)]="selectedTextColor" (ngModelChange)="textColorChanged.emit(selectedTextColor)">
   </div>
+
+  <button class="alignment-button" (click)="setTextAlignment('left')" [ngClass]="{'active': isAlignmentActive('left')}">
+    <span class="material-symbols-outlined ">
+      format_align_left
+    </span>
+  </button>
+  <button class="alignment-button" (click)="setTextAlignment('center')" [ngClass]="{'active': isAlignmentActive('center')}">
+    <span class="material-symbols-outlined ">
+      format_align_center
+    </span>
+  </button>
+  <button class="alignment-button" (click)="setTextAlignment('right')" [ngClass]="{'active': isAlignmentActive('right')}">
+    <span class="material-symbols-outlined ">
+      format_align_right
+    </span>
+  </button>
+  <button class="alignment-button" (click)="setTextAlignment('justify')" [ngClass]="{'active': isAlignmentActive('justify')}">
+    <span class="material-symbols-outlined ">
+      format_align_justify
+    </span>
+  </button>
 </div>
 <div class="image-container" *ngIf="isImageSelected">
   <span>image-container</span>
@@ -55,6 +76,7 @@
   </select>
    </div>
 </div>
+
 
  </div>
 

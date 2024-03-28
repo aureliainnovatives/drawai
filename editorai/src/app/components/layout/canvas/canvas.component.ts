@@ -36,7 +36,8 @@ export class CanvasComponent implements AfterViewInit {
   selectedBorderColor: string = '#000000'; // Default border color
 
   borderStyles: string[] = ['Solid', 'Dashed', 'Dotted', 'Double'];
-  selectedBorderStyle: string = 'Solid'; // Default to 'solid', you can change it to match your default style
+  selectedBorderStyle: string = 'Solid'; // Default to 'solid'
+  borderWidth: number = 2; // Initial border width
 
 
   isBold: boolean = false;
@@ -184,47 +185,59 @@ export class CanvasComponent implements AfterViewInit {
 
   }
 
-applyBorderStyle(borderStyle: string) {
-  const activeObjects = this.canvas.getActiveObjects();
-  activeObjects.forEach(object => {
-    if (object instanceof fabric.Object) {
-      object.set('stroke', borderStyle === 'none' ? '' : 'black');
-      object.set('strokeWidth', borderStyle === 'none' ? 0 : 2);
-      object.set('strokeDashArray', this.getStrokeDashArray(borderStyle));
-      object.setCoords();
-    }
-  });
-  this.canvas.renderAll();
-}
-
-
-
-  // Helper function to get stroke dash array based on selected border style
-// Helper function to get stroke dash array based on selected border style
-getStrokeDashArray(borderStyle: string): number[] | undefined {
-  switch (borderStyle) {
-    case 'Solid':
-      return undefined; // No dash array for solid style
-    case 'Dashed':
-      return [5, 5]; // Adjust dash array as needed
-    case 'Dotted':
-      return [1, 3]; // Adjust dash array as needed
-    case 'Double':
-      return [2, 2]; // Adjust dash array as needed
-    default:
-      return undefined;
+  applyBorderStyle(borderStyle: string) {
+    const activeObjects = this.canvas.getActiveObjects();
+    activeObjects.forEach(object => {
+      if (object instanceof fabric.Object) {
+        const currentStrokeWidth = object.strokeWidth || 0; // Get current border width
+        object.set('stroke', borderStyle === 'none' ? '' : 'black'); // Set the border color if needed
+        object.set('strokeWidth', this.getBorderWidth(borderStyle)); // Apply the selected border width
+        this.borderWidth = this.getBorderWidth(borderStyle); // Update the borderWidth variable
+        object.set('strokeDashArray', this.getStrokeDashArray(borderStyle, currentStrokeWidth)); // Apply the selected border style
+        object.setCoords(); // Update object coordinates
+      }
+    });
+    this.canvas.renderAll();
   }
-}
-
-
-  // Update border style dropdown to reflect the selected object's border style
+  
+  // Helper function to get stroke dash array based on selected border style and current border width
+  getStrokeDashArray(borderStyle: string, borderWidth: number): number[] | undefined {
+    switch (borderStyle) {
+      case 'Solid':
+        return undefined; // No dash array for solid style
+      case 'Dashed':
+        return [10 * borderWidth, 10 * borderWidth]; // Adjust dash array based on border width
+      case 'Dotted':
+        return [1 * borderWidth, 3 * borderWidth]; // Adjust dash array based on border width
+      case 'Double':
+        return [2 * borderWidth, 2 * borderWidth]; // Adjust dash array based on border width
+      case 'Groove':
+        return [6 * borderWidth, 2 * borderWidth, 2 * borderWidth, 2 * borderWidth]; // Adjust dash array based on border width
+      case 'Ridge':
+        return [2 * borderWidth, 2 * borderWidth, 6 * borderWidth, 2 * borderWidth]; // Adjust dash array based on border width
+      default:
+        return undefined;
+    }
+  }
+  
+  // Helper function to get border width based on selected border style
+  getBorderWidth(borderStyle: string): number {
+    switch (borderStyle) {
+      case 'none':
+        return 0;
+      default:
+        return 2; // You can adjust this value based on your requirements
+    }
+  }
+  
+  // Update border style dropdown to reflect the selected object's border style and width
   updateBorderStyleDropdown() {
     const activeObjects = this.canvas.getActiveObjects();
     if (activeObjects.length === 1 && activeObjects[0] instanceof fabric.Object) {
       const activeObject = activeObjects[0] as fabric.Object;
       const strokeDashArray = activeObject.strokeDashArray || [];
       const matchingBorderStyle = this.borderStyles.find(style => {
-        const expectedDashArray = this.getStrokeDashArray(style);
+        const expectedDashArray = this.getStrokeDashArray(style, activeObject.strokeWidth || 0); // Pass border width as well
         return JSON.stringify(strokeDashArray) === JSON.stringify(expectedDashArray);
       });
       if (matchingBorderStyle) {
@@ -236,6 +249,91 @@ getStrokeDashArray(borderStyle: string): number[] | undefined {
       this.selectedBorderStyle = 'Solid'; // Default to 'solid' when no single object is selected
     }
   }
+  
+
+// applyBorderStyle(borderStyle: string) {
+//   const activeObjects = this.canvas.getActiveObjects();
+//   activeObjects.forEach(object => {
+//     if (object instanceof fabric.Object) {
+//       const currentStrokeWidth = object.strokeWidth || 0; // Get current border width
+//       const currentBorderStyle = this.getSelectedBorderStyle(object.strokeDashArray); // Get current border style
+//       object.set('stroke', borderStyle === 'none' ? '' : 'black'); // Set the border color if needed
+//       object.set('strokeWidth', this.borderWidth); // Apply the selected border width
+//       if (currentBorderStyle !== 'solid' && borderStyle !== 'none') {
+//         // Preserve the border style if it's not solid and the new border style is not 'none'
+//         object.set('strokeDashArray', this.getStrokeDashArray(currentBorderStyle, currentStrokeWidth)); // Apply the current border style
+//       }
+//       object.setCoords(); // Update object coordinates
+//     }
+//   });
+//   this.canvas.renderAll();
+// }
+
+// // Function to get the selected border style based on the stroke dash array
+// // Function to get the selected border style based on the stroke dash array
+// getSelectedBorderStyle(strokeDashArray: number[] | null | undefined): string {
+//   if (!strokeDashArray || strokeDashArray.length === 0) {
+//     return 'solid'; // Default to solid if no dash array is present
+//   }
+//   // Check if the stroke dash array matches any known styles
+//   if (JSON.stringify(strokeDashArray) === JSON.stringify([10, 10])) {
+//     return 'dashed';
+//   } else if (JSON.stringify(strokeDashArray) === JSON.stringify([1, 3])) {
+//     return 'dotted';
+//   } else if (JSON.stringify(strokeDashArray) === JSON.stringify([2, 2])) {
+//     return 'double';
+//   }
+//   return 'solid'; // Default to solid if no matching style is found
+// }
+
+// // Helper function to get stroke dash array based on selected border style and current border width
+// // Helper function to get stroke dash array based on selected border style and current border width
+// getStrokeDashArray(borderStyle: string, borderWidth: number): number[] | undefined {
+//   switch (borderStyle) {
+//     case 'solid':
+//       return undefined; // No dash array for solid style
+//     case 'dashed':
+//       return [10 * borderWidth, 10 * borderWidth]; // Adjust dash array based on border width
+//     case 'dotted':
+//       return [1 * borderWidth, 3 * borderWidth]; // Adjust dash array based on border width
+//     case 'double':
+//       return [2 * borderWidth, 2 * borderWidth]; // Adjust dash array based on border width
+//     default:
+//       return undefined;
+//   }
+// }
+
+
+// updateBorderStyleDropdown() {
+//   const activeObjects = this.canvas.getActiveObjects();
+//   if (activeObjects.length === 1 && activeObjects[0] instanceof fabric.Object) {
+//     const activeObject = activeObjects[0] as fabric.Object;
+//     const strokeDashArray = activeObject.strokeDashArray || [];
+//     const matchingBorderStyle = this.borderStyles.find(style => {
+//       const expectedDashArray = this.getStrokeDashArray(style, activeObject.strokeWidth || 0); // Pass border width as well
+//       return JSON.stringify(strokeDashArray) === JSON.stringify(expectedDashArray);
+//     });
+//     if (matchingBorderStyle) {
+//       this.selectedBorderStyle = matchingBorderStyle;
+//     } else {
+//       this.selectedBorderStyle = 'solid'; // Default to 'solid' if no match found
+//     }
+//     this.borderWidth = activeObject.strokeWidth || 0; // Update border width based on selected object
+//   } else {
+//     this.selectedBorderStyle = 'solid'; // Default to 'solid' when no single object is selected
+//     this.borderWidth = 2; // Default border width
+//   }
+// }
+
+setTextAlignment(alignment: 'left' | 'center' | 'right' | 'justify') {
+  const activeObject = this.canvas.getActiveObject();
+  if (activeObject instanceof fabric.Textbox) {
+    activeObject.set('textAlign', alignment);
+    this.canvas.renderAll();
+  }
+}
+
+
   addTextWithStyle(text: string, fontFamily: string, dropX: number, dropY: number, fill: string, shadow: string, fontWeight: string) {
     const fontSize = 90;
     const newText = new fabric.Textbox(text, {
@@ -1182,7 +1280,19 @@ onshapeDrop(data: string, event: DragEvent) {
         this.canvas.setActiveObject(fabricShape);
         
     }
+    
 }
+onBorderWidthChange() {
+  const activeObjects = this.canvas.getActiveObjects();
+  activeObjects.forEach(object => {
+    if (object instanceof fabric.Object) {
+      object.set('strokeWidth', this.borderWidth);
+      object.setCoords();
+    }
+  });
+  this.canvas.renderAll();
+}
+
 
 
 // toggleShapeBorderStyle() {

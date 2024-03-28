@@ -40,6 +40,7 @@ export class ToolbarComponent implements OnInit {
   isCanvasContainerVisible: boolean = true;
 
 
+  textAlignment: 'left' | 'center' | 'right' | 'justify' = 'left'; // Default alignment
   selectedBorderColor: string = '';
   isTextboxSelected: boolean = false;
   isImageSelected: boolean = false;
@@ -96,6 +97,14 @@ export class ToolbarComponent implements OnInit {
 }
 
 ngOnInit() {
+
+  this.canvasComponent.canvas.on('selection:cleared', () => {
+    this.textAlignment = 'left'; // or whatever default alignment you want
+  });
+
+  this.canvasComponent.canvas.on('selection:created', this.updateTextAlignment.bind(this));
+  this.canvasComponent.canvas.on('selection:updated', this.updateTextAlignment.bind(this));
+
 
   this.selectedColorService.selectedBorderStyle$.subscribe(style => {
     this.selectedBorderStyle = style;
@@ -231,4 +240,28 @@ exportAsJSON() {
       data: this.canvasComponent // Pass the CanvasComponent instance to the dialog
     });
   }
+
+  updateTextAlignment(): void {
+    const activeObject = this.canvasComponent.canvas.getActiveObject();
+    if (activeObject instanceof fabric.Textbox) {
+      this.textAlignment = activeObject.textAlign as 'left' | 'center' | 'right' | 'justify';
+    }
+  }
+  setTextAlignment(textAlignment: 'left' | 'center' | 'right' | 'justify'): void {
+    if (this.textAlignment === textAlignment) {
+      this.textAlignment = 'left'; // Reset to default if already selected
+    } else {
+      this.textAlignment = textAlignment;
+    }
+    this.canvasComponent.setTextAlignment(this.textAlignment);
+  }
+
+  isAlignmentActive(alignment: 'left' | 'center' | 'right' | 'justify'): boolean {
+    const activeObject = this.canvasComponent.canvas.getActiveObject();
+    if (activeObject instanceof fabric.Textbox) {
+      return activeObject.textAlign === alignment;
+    }
+    return false;
+  }
+
 }

@@ -227,3 +227,31 @@ input[type="color"]::-webkit-color-swatch {
   background-color: #ffffff; /* light grey background */
 }
 
+
+.border-width-slider {
+  
+  width: 300px;
+}
+
+
+
+
+.alignment-button.active {
+  background-color: #e0e0e0; 
+  padding: 2px;
+}
+
+.alignment-button:hover {
+  background-color:  #adabae ;
+ 
+
+}
+
+.alignment-button{
+background-color: transparent;
+margin-right: 5px;
+color: rgb(0, 0, 0);
+border: none;
+cursor: pointer;
+transition: background-color 0.3s; 
+}
