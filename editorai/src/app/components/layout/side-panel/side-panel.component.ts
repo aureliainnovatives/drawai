@@ -39,7 +39,7 @@ export class SidePanelComponent  {
   searchTerm: string = '';
   enteredText:string = '';
   showProgressBar: boolean = false;
-  textStyles: string[] = ['style1.png', 'style2.png', 'style3.png', 'style4.png','style5.png','style6.png','style7.png','style8.png','style9.png','style10.png','style11.png'];
+  textStyles: string[] = ['style1.png', 'style2.png', 'style3.png', 'style4.png','style5.png','style6.png','style7.png','style8.png','style9.png','style10.png','style11.png','style12.png', 'style13.png', 'style14.png', 'style15.png','style16.png','style17.png','style18.png','style19.png','style20.png','style21.png','style22.png','style23.png','style24.png','style25.png','style26.png','style27.png','style28.png'];
  
  
   // Squares: string[] = ['emptysquare', 'filledsquare', 'roundedsquare'];
@@ -71,8 +71,8 @@ export class SidePanelComponent  {
     fullfilledstar: 'assets/icons/fullfilledstar.svg',
   };
 
-  addstylishText(text: string, fontFamily: string,dropX :number, dropY:number ,fill: string, shadow: string,fontWeight: string) {
-    this.textAdditionService.addTextWithStyle.next({ text, fontFamily, dropX, dropY ,fill, shadow, fontWeight });
+  addstylishText(text: string, fontFamily: string,dropX :number, dropY:number ,fill: string, shadow: string, fontSize:number, fontWeight: string) {
+    this.textAdditionService.addTextWithStyle.next({ text, fontFamily, dropX, dropY ,fill, shadow, fontSize, fontWeight });
   }
 
 

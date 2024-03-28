@@ -116,6 +116,88 @@ border-radius: 10%;
   /* src: url(BungeeSpice-Regular.ttf); */
   src: url(/assets/textFonts/Prida01Light.otf);
 }
+@font-face {
+  font-family: 'burger' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Chieezy-Burger.otf);
+}
+@font-face {
+  font-family: 'demo' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Digital-Glitch-Demo.otf);
+}
+@font-face {
+  font-family: 'portable' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Portable-Creature-Regular.otf);
+}
+@font-face {
+  font-family: 'personal' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Tempting-PERSONAL-USE-ONLY.otf);
+}
+@font-face {
+  font-family: 'those' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Those-Glitch-Regular.otf);
+}
+@font-face {
+  font-family: 'best' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/BestOfTreat-OVdj8.otf);
+}
+@font-face {
+  font-family: 'Dragon' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/DragonHunter-9Ynxj.otf);
+}
+@font-face {
+  font-family: 'love' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/FateOfLove-d9rPg.otf);
+}
+@font-face {
+  font-family: 'Yellow' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Love-of-Yellow.otf);
+}
+@font-face {
+  font-family: 'moron' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Ministry-of-Moron.otf);
+}
+@font-face {
+  font-family: 'neo' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/NeoBulletin-Extruded.otf);
+}
+@font-face {
+  font-family: 'Queen' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Queen-of-Camelot-Outlines.otf);
+}
+@font-face {
+  font-family: 'taku' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Taku.otf);
+}
+@font-face {
+  font-family: 'Tower' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/TowerOfSilence3D-lgD6X.otf);
+}
+@font-face {
+  font-family: 'used' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Used-Servers.otf);
+}
+@font-face {
+  font-family: 'demo' ;
+  /* src: url(BungeeSpice-Regular.ttf); */
+  src: url(/assets/textFonts/Wonderbar-Demo.otf);
+}
+
+
 
 .transparent-option {
 cursor: pointer;

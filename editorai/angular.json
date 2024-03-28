@@ -42,13 +42,12 @@
               
             ],
             "scripts": [
-<<<<<<< HEAD
-              "src/assets/css/coloris.min.js"
-
-=======
 
               "src/assets/css/coloris.min.js"
->>>>>>> ca8121f5dd1b50a53ccf5dc3ebb5f3a7a520cdaf
+
+
+
+
             ]
           },
           "configurations": {
